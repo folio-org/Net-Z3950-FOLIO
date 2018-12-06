@@ -24,7 +24,15 @@ XXX explain
 
 =head1 SEE ALSO
 
-Net::Z3950::SimpleServer
+=over 4
+
+=item The C<z2folio> script conveniently launches the server.
+
+=item C<Net::Z3950::FOLIO::Config> describes the configuration-file format.
+
+=item The C<Net::Z3950::SimpleServer> handles the Z39.50 service.
+
+=back
 
 =head1 AUTHOR
 
@@ -37,3 +45,5 @@ Copyright (C) 2018 by Index Data
 This library is free software; you can redistribute it and/or modify
 it under the terms of the Apache Licence 2.0: see the LICENSE file.
 
+=cut
+    
