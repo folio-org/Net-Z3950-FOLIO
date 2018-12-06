@@ -9,12 +9,12 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
 
   {
     "okapi": {
-      "url": "http://localhost:9130",
+      "url": "http://folio-snapshot-465.aws.indexdata.com:9130",
       "tenant": "diku"
     },
     "login": {
       "username": "diku_admin",
-      "password": "admin"
+      "password": "************"
     },
     "fieldMap": {
       "title": "245$a",
