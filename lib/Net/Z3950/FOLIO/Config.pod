@@ -59,11 +59,11 @@ Contains two elements, both with string values:
 
 =item C<"username">
 
-The name of the user to log in as.
+The name of the user to log in as, unless overridden by authentication information in the Z39.50 init request.
 
 =item C<"password">
 
-The corresponding password.
+The corresponding password, unless overridden by authentication information in the Z39.50 init request.
 
 =back
 
