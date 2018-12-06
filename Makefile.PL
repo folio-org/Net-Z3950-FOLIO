@@ -11,6 +11,7 @@ WriteMakefile(
 	Cpanel::JSON::XS => 4.08,
 	MARC::Record => 2.0,
 	Net::Z3950::ZOOM => 1.30,
+	URI::Escape => 3.31
     }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Net/Z3950/FOLIO.pm', # retrieve abstract from module
