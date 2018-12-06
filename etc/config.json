@@ -7,6 +7,11 @@
     "username": "diku_admin",
     "password": "************"
   },
+  "indexMap": {
+    "1": "author",
+    "4": "title",
+    "21": "subject"
+  },
   "fieldMap": {
     "title": "245$a",
     "author": "100$a"
