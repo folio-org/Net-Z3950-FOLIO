@@ -1,7 +1,10 @@
 Changes.md
 LICENSE
-Makefile.PL
 MANIFEST
+Makefile.PL
 README.md
-t/Net-Z3950-FOLIO.t
+bin/z2folio
+etc/config.json
 lib/Net/Z3950/FOLIO.pm
+lib/Net/Z3950/FOLIO/Config.pod
+t/Net-Z3950-FOLIO.t
