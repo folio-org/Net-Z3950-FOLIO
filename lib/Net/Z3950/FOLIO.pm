@@ -59,8 +59,10 @@ sub new {
     my $this = bless {
 	cfgfile => $cfgfile || 'config.json',
 	cfg => undef,
+	ua => new LWP::UserAgent(),
     }, $class;
 
+    $this->{ua}->agent("z2folio $VERSION");
     $this->_reload_config_file();
 
     $this->{server} = Net::Z3950::SimpleServer->new(
@@ -100,7 +102,6 @@ sub _init_handler {
     my $user = $args->{USER};
     my $pass = $args->{PASS};
     $args->{HANDLE} = {
-	ua => new LWP::UserAgent(),
 	username => $user || '',
 	password => $pass || '',
 	resultsets => {},  # result sets, indexed by setname
@@ -118,15 +119,13 @@ sub _init_handler {
 	if !defined $username || !defined $password;
 
     my $url = $cfg->{okapi}->{url} . '/bl-users/login';
-    my $ua = new LWP::UserAgent();
-    $ua->agent("z2folio $VERSION");
     my $req = new HTTP::Request(POST => $url);
     $req->header('x-okapi-tenant' => $cfg->{okapi}->{tenant});
     $req->header('Content-type' => 'application/json');
     $req->header('Accept' => 'application/json');
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
-    my $res = $ua->request($req);
+    my $res = $gh->{ua}->request($req);
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
