@@ -4,9 +4,11 @@ use 5.008000;
 use strict;
 use warnings;
 
+use IO::File;
+use Data::Dumper; # For debugging output only
+use Cpanel::JSON::XS qw(decode_json);
 use Net::Z3950::SimpleServer;
 use LWP::UserAgent;
-use Cpanel::JSON::XS;
 use MARC::Record;
 
 our $VERSION = '0.01';
@@ -60,7 +62,7 @@ sub new {
     }, $class;
 
     $this->_reload_config_file();
-    $this->_set_defaults();
+    $Data::Dumper::Indent = 1; print Dumper($this->{cfg});
 
     $this->{server} = Net::Z3950::SimpleServer->new(
 	GHANDLE => $this,
@@ -74,6 +76,19 @@ sub new {
     );
 
     return $this;
+}
+
+
+sub _reload_config_file {
+    my $this = shift();
+
+    my $cfgfile = $this->{cfgfile};
+    my $fh = new IO::File("<$cfgfile")
+	or die "$0: can't open config file '$cfgfile': $!";
+    my $json; { local $/; $json = <$fh> };
+    $fh->close();
+
+    $this->{cfg} = decode_json($json);
 }
 
 
