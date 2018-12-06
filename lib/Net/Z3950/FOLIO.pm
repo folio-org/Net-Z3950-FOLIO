@@ -95,9 +95,9 @@ sub _reload_config_file {
 
 sub _init_handler {
     my($args) = @_;
-    my $gh = $args->{GHANDLE};
+    my $this = $args->{GHANDLE};
 
-    $gh->_reload_config_file();
+    $this->_reload_config_file();
 
     my $user = $args->{USER};
     my $pass = $args->{PASS};
@@ -111,7 +111,7 @@ sub _init_handler {
     $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
     $args->{IMP_NAME} = 'z2folio gateway';
 
-    my $cfg = $gh->{cfg};
+    my $cfg = $this->{cfg};
     my $login = $cfg->{login};
     my $username = $user || $login->{username};
     my $password = $pass || $login->{password};
@@ -125,7 +125,7 @@ sub _init_handler {
     $req->header('Accept' => 'application/json');
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
-    my $res = $gh->{ua}->request($req);
+    my $res = $this->{ua}->request($req);
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
