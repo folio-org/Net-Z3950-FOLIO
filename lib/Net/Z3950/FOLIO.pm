@@ -6,6 +6,7 @@ use warnings;
 
 use Net::Z3950::SimpleServer;
 use LWP::UserAgent;
+use Cpanel::JSON::XS;
 use MARC::Record;
 
 our $VERSION = '0.01';
