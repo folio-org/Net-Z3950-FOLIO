@@ -5,9 +5,9 @@ use strict;
 use warnings;
 
 use IO::File;
-use Data::Dumper; # For debugging output only
-use Cpanel::JSON::XS qw(decode_json);
+use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::SimpleServer;
+use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
 
@@ -62,7 +62,6 @@ sub new {
     }, $class;
 
     $this->_reload_config_file();
-    $Data::Dumper::Indent = 1; print Dumper($this->{cfg});
 
     $this->{server} = Net::Z3950::SimpleServer->new(
 	GHANDLE => $this,
@@ -89,6 +88,55 @@ sub _reload_config_file {
     $fh->close();
 
     $this->{cfg} = decode_json($json);
+}
+
+
+sub _init_handler {
+    my($args) = @_;
+    my $gh = $args->{GHANDLE};
+
+    $gh->_reload_config_file();
+
+    my $user = $args->{USER};
+    my $pass = $args->{PASS};
+    $args->{HANDLE} = {
+	ua => new LWP::UserAgent(),
+	username => $user || '',
+	password => $pass || '',
+	resultsets => {},  # result sets, indexed by setname
+    };
+
+    $args->{IMP_ID} = '81';
+    $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
+    $args->{IMP_NAME} = 'z2folio gateway';
+
+    my $cfg = $gh->{cfg};
+    my $login = $cfg->{login};
+    my $username = $user || $login->{username};
+    my $password = $pass || $login->{password};
+    _throw(1014, "credentials not supplied")
+	if !defined $username || !defined $password;
+
+    my $url = $cfg->{okapi}->{url} . '/bl-users/login';
+    my $ua = new LWP::UserAgent();
+    $ua->agent("z2folio $VERSION");
+    my $req = new HTTP::Request(POST => $url);
+    $req->header('x-okapi-tenant' => $cfg->{okapi}->{tenant});
+    $req->header('Content-type' => 'application/json');
+    $req->header('Accept' => 'application/json');
+    $req->content(qq[{ "username": "$username", "password": "$password" }]);
+    # warn "req=", $req->content();
+    my $res = $ua->request($req);
+    # warn "res=", $res->content();
+    _throw(1014, "credentials are bad")
+	if !$res->is_success();
+}
+
+
+sub _throw {
+    my($code, $addinfo, $diagset) = @_;
+    $diagset ||= "Bib-1";
+    die new ZOOM::Exception($code, undef, $addinfo, $diagset);
 }
 
 
