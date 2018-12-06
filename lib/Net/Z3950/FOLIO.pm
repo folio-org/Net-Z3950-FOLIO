@@ -112,23 +112,32 @@ sub _init_handler {
     $args->{IMP_NAME} = 'z2folio gateway';
 
     my $cfg = $this->{cfg};
-    my $login = $cfg->{login};
+    my $login = $cfg->{login} || {};
     my $username = $user || $login->{username};
     my $password = $pass || $login->{password};
     _throw(1014, "credentials not supplied")
 	if !defined $username || !defined $password;
 
     my $url = $cfg->{okapi}->{url} . '/bl-users/login';
-    my $req = new HTTP::Request(POST => $url);
-    $req->header('x-okapi-tenant' => $cfg->{okapi}->{tenant});
-    $req->header('Content-type' => 'application/json');
-    $req->header('Accept' => 'application/json');
+    my $req = $this->_makeHTTPRequest(POST => $url);
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
     my $res = $this->{ua}->request($req);
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
+}
+
+
+sub _makeHTTPRequest() {
+    my $this = shift();
+    my(%args) = @_;
+
+    my $req = new HTTP::Request(%args);
+    $req->header('X-Okapi-tenant' => $this->{cfg}->{okapi}->{tenant});
+    $req->header('Content-type' => 'application/json');
+    $req->header('Accept' => 'application/json');
+    return $req;
 }
 
 
