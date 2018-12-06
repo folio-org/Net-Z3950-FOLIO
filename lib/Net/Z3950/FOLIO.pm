@@ -128,7 +128,7 @@ sub _init_handler {
     # warn "req=", $req->content();
     my $res = $ua->request($req);
     # warn "res=", $res->content();
-    _throw(1014, "credentials are bad")
+    _throw(1014, $res->content())
 	if !$res->is_success();
 }
 
@@ -136,6 +136,13 @@ sub _init_handler {
 sub _throw {
     my($code, $addinfo, $diagset) = @_;
     $diagset ||= "Bib-1";
+
+    # HTTP body for errors is sometimes a plain string, sometimes a JSON structure
+    if ($addinfo =~ /^{/) {
+	my $obj = decode_json($addinfo);
+	$addinfo = $obj->{errorMessage};
+    }
+
     die new ZOOM::Exception($code, undef, $addinfo, $diagset);
 }
 
