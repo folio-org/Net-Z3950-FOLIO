@@ -1,4 +1,12 @@
 {
+  "okapi": {
+    "url": "http://localhost:9130",
+    "tenant": "diku"
+  },
+  "login": {
+    "username": "diku_admin",
+    "password": "admin"
+  },
   "fieldMap": {
     "title": "245$a",
     "author": "100$a"
