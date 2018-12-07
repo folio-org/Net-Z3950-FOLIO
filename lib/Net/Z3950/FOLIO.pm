@@ -71,7 +71,6 @@ sub new {
 	GHANDLE => $this,
 	INIT =>    \&_init_handler,
 	SEARCH =>  \&_search_handler,
-	PRESENT => \&_present_handler,
 	FETCH =>   \&_fetch_handler,
 	SCAN =>    \&_scan_handler,
 	DELETE =>  \&_delete_handler,
