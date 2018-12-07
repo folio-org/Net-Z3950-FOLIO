@@ -344,7 +344,7 @@ sub _toCQL {
     if (defined $field && defined $relation) {
 	$term = "$field $relation $term";
     } elsif (defined $field) {
-	$term = "$field = $term";
+	$term = "$field=$term";
     } elsif (defined $relation) {
 	$term = "cql.serverChoice $relation $term";
     }
