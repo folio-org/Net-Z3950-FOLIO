@@ -61,6 +61,7 @@ sub new {
 	cfgfile => $cfgfile || 'config.json',
 	cfg => undef,
 	ua => new LWP::UserAgent(),
+	token => undef,
     }, $class;
 
     $this->{ua}->agent("z2folio $VERSION");
@@ -127,6 +128,7 @@ sub _init_handler {
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
+    $this->{token} = $res->header('X-Okapi-token');
 }
 
 
@@ -150,7 +152,7 @@ sub _search_handler {
     }
 
     my $search = $this->_do_search($session, $args->{SETNAME}, $cql);
-    $args->{HITS} = $search->{hits};
+    $args->{HITS} = $search->{totalRecords};
 }
 
 
@@ -160,22 +162,20 @@ sub _do_search {
 
     # This should probably be an object of some application-specific
     # class such as Net::Z3950::FOLIO::ResultSet
-    my $search = {
-	setname => $setname,
-	cql => $cql, # Save for subsequent sort requests
-    };
-
     my $escapedQuery = uri_escape($cql);
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?query=$escapedQuery";
     my $req = $this->_makeHTTPRequest(GET => $url);
     my $res = $this->{ua}->request($req);
-    warn "res=", $res->content();
-    _throw(1014, $res->content())
-	if !$res->is_success();
+    # warn "res=", $res->content();
+    _throw(3, $res->content()) if !$res->is_success();
 
-    $search->{resultset} = $res;
-    $search->{hits} = $res->size();
-    $search->{rsid} = $res->option("resultSetId");
+    my $obj = decode_json($res->content());
+    my $search = {
+	setname => $setname,
+	cql => $cql, # Save for subsequent sort requests
+	totalRecords => $obj->{totalRecords} + 0,
+	instances => $obj->{instances},
+    };
 
     $session->{resultsets}->{$setname} = $search;
     return $search;
@@ -210,6 +210,7 @@ sub _makeHTTPRequest() {
     $req->header('X-Okapi-tenant' => $this->{cfg}->{okapi}->{tenant});
     $req->header('Content-type' => 'application/json');
     $req->header('Accept' => 'application/json');
+    $req->header('X-Okapi-token' => $this->{token}) if $this->{token};
     return $req;
 }
 
