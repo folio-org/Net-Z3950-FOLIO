@@ -11,6 +11,7 @@ use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
 use URI::Escape;
+use XML::Simple;
 
 our $VERSION = '0.01';
 
@@ -72,9 +73,9 @@ sub new {
 	INIT =>    \&_init_handler,
 	SEARCH =>  \&_search_handler,
 	FETCH =>   \&_fetch_handler,
-	SCAN =>    \&_scan_handler,
-	DELETE =>  \&_delete_handler,
-	SORT   =>  \&_sort_handler,
+#	SCAN =>    \&_scan_handler,
+#	DELETE =>  \&_delete_handler,
+#	SORT   =>  \&_sort_handler,
     );
 
     return $this;
@@ -96,6 +97,7 @@ sub _reload_config_file {
 
 sub _init_handler { _eval_wrapper(\&_real_init_handler, @_) }
 sub _search_handler { _eval_wrapper(\&_real_search_handler, @_) }
+sub _fetch_handler { _eval_wrapper(\&_real_fetch_handler, @_) }
 
 
 sub _eval_wrapper {
@@ -183,6 +185,28 @@ sub _real_search_handler {
 }
 
 
+sub _real_fetch_handler {
+    my($args) = @_;
+    my $session = $args->{HANDLE};
+
+    my $rs = $session->{resultsets}->{$args->{SETNAME}};
+    _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
+
+    my $offset = $args->{OFFSET};
+    my $rec = $rs->{instances}->[$offset-1];
+    _throw(13, $offset) if !defined $rec;
+
+    my $xml = XMLout($rec, NoAttr => 1);
+    $xml =~ s/<@/<__/;
+    $xml =~ s/<\/@/<\/__/;
+
+    $args->{REP_FORM} = 'xml';
+    $args->{RECORD} = $xml;
+    return;
+
+}
+
+
 sub _do_search {
     my $this = shift();
     my($session, $setname, $cql) = @_;
@@ -199,7 +223,7 @@ sub _do_search {
     my $obj = decode_json($res->content());
     my $search = {
 	setname => $setname,
-	cql => $cql, # Save for subsequent sort requests
+	cql => $cql, # Save for subsequent fetch and sort requests
 	totalRecords => $obj->{totalRecords} + 0,
 	instances => $obj->{instances},
     };
