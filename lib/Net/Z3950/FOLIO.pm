@@ -10,6 +10,7 @@ use Net::Z3950::SimpleServer;
 use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
+use URI::Escape;
 
 our $VERSION = '0.01';
 
@@ -129,6 +130,78 @@ sub _init_handler {
 }
 
 
+sub _search_handler {
+    my($args) = @_;
+    my $session = $args->{HANDLE};
+    my $this = $args->{GHANDLE};
+    
+    # For now, we ignore the dbname. In the future we will use this as
+    # the tenant ID, which will mean postponing the authentication
+    # call from the Init handler to now, when we first discover the
+    # dbname.
+
+    my $cql;
+    if ($args->{CQL}) {
+	$cql = $args->{CQL};
+    } else {
+	my $type1 = $args->{RPN}->{query};
+	$cql = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
+	warn "search: translated '" . $args->{QUERY} . "' to '$cql'\n";
+    }
+
+    my $search = $this->_do_search($session, $args->{SETNAME}, $cql);
+    $args->{HITS} = $search->{hits};
+}
+
+
+sub _do_search {
+    my $this = shift();
+    my($session, $setname, $cql) = @_;
+
+    # This should probably be an object of some application-specific
+    # class such as Net::Z3950::FOLIO::ResultSet
+    my $search = {
+	setname => $setname,
+	cql => $cql, # Save for subsequent sort requests
+    };
+
+    my $escapedQuery = uri_escape($cql);
+    my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?query=$escapedQuery";
+    my $req = $this->_makeHTTPRequest(GET => $url);
+    my $res = $this->{ua}->request($req);
+    warn "res=", $res->content();
+    _throw(1014, $res->content())
+	if !$res->is_success();
+
+    $search->{resultset} = $res;
+    $search->{hits} = $res->size();
+    $search->{rsid} = $res->option("resultSetId");
+
+    $session->{resultsets}->{$setname} = $search;
+    return $search;
+}
+
+
+=head2 launch_server($label, @ARGV)
+
+ $s2z->launch_server("someServer", @ARGV);
+
+Launches the Net::Z3950::FOLIO server: this method never returns.  The
+C<$label> string is used in logging, and the C<@ARGV> vector of
+command-line arguments is interpreted by the YAZ backend server as
+described at
+https://software.indexdata.com/yaz/doc/server.invocation.html
+
+=cut
+
+sub launch_server {
+    my $this = shift();
+    my($label, @argv) = @_;
+
+    return $this->{server}->launch_server($label, @argv);
+}
+
+
 sub _makeHTTPRequest() {
     my $this = shift();
     my(%args) = @_;
@@ -155,24 +228,183 @@ sub _throw {
 }
 
 
-=head2 launch_server($label, @ARGV)
+# 
+# The following code maps Z39.50 Type-1 queries to CQL by providing a
+# _toCQL() method on each query tree node type.
 
- $s2z->launch_server("someServer", @ARGV);
+package Net::Z3950::RPN::Term;
 
-Launches the Net::Z3950::FOLIO server: this method never returns.  The
-C<$label> string is used in logging, and the C<@ARGV> vector of
-command-line arguments is interpreted by the YAZ backend server as
-described at
-https://software.indexdata.com/yaz/doc/server.invocation.html
+sub _toCQL {
+    my $self = shift;
+    my($args, $defaultSet) = @_;
+    my $gh = $args->{GHANDLE};
+    my $field;
+    my $relation;
+    my($left_anchor, $right_anchor) = (0, 0);
+    my($left_truncation, $right_truncation) = (0, 0);
+    my $term = $self->{term};
 
-=cut
+    my $attrs = $self->{attributes};
+    untie $attrs;
 
-sub launch_server {
-    my $this = shift();
-    my($label, @argv) = @_;
+    # First we determine USE attribute
+    foreach my $attr (@$attrs) {
+	my $set = $attr->{attributeSet} || $defaultSet;
+	# Unknown attribute set (anything except BIB-1)
+	_throw(121, $set) if $set ne '1.2.840.10003.3.1';
+	if ($attr->{attributeType} == 1) {
+	    my $val = $attr->{attributeValue};
+	    $field = _ap2index($gh->{cfg}->{indexMap}, $val);
+	}
+    }
 
-    return $this->{server}->launch_server($label, @argv);
+    # Then we can handle any other attributes
+    foreach my $attr (@$attrs) {
+        my $type = $attr->{attributeType};
+        my $value = $attr->{attributeValue};
+
+        if ($type == 2) {
+	    # Relation.  The following switch hard-codes information
+	    # about the crrespondance between the BIB-1 attribute set
+	    # and CQL context set.
+	    if ($value == 1) {
+		$relation = "<";
+	    } elsif ($value == 2) {
+		$relation = "<=";
+	    } elsif ($value == 3) {
+		$relation = "=";
+	    } elsif ($value == 4) {
+		$relation = ">=";
+	    } elsif ($value == 5) {
+		$relation = ">";
+	    } elsif ($value == 6) {
+		$relation = "<>";
+	    } elsif ($value == 100) {
+		$relation = "=/phonetic";
+	    } elsif ($value == 101) {
+		$relation = "=/stem";
+	    } elsif ($value == 102) {
+		$relation = "=/relevant";
+	    } else {
+		_throw(117, $value);
+	    }
+        }
+
+        elsif ($type == 3) { # Position
+            if ($value == 1 || $value == 2) {
+                $left_anchor = 1;
+            } elsif ($value != 3) {
+                _throw(119, $value);
+            }
+        }
+
+        elsif ($type == 4) { # Structure -- we ignore it
+        }
+
+        elsif ($type == 5) { # Truncation
+            if ($value == 1) {
+                $right_truncation = 1;
+            } elsif ($value == 2) {
+                $left_truncation = 1;
+            } elsif ($value == 3) {
+                $right_truncation = 1;
+                $left_truncation = 1;
+            } elsif ($value == 101) {
+		# Process # in search term
+		$term =~ s/#/?/g;
+            } elsif ($value == 104) {
+		# Z39.58-style (CCL) truncation: #=single char, ?=multiple
+		$term =~ s/#/?/g;
+		$term =~ s/\?\d?/*/g;
+            } elsif ($value != 100) {
+                _throw(120, $value);
+            }
+        }
+
+        elsif ($type == 6) { # Completeness
+            if ($value == 2 || $value == 3) {
+		$left_anchor = $right_anchor = 1;
+	    } elsif ($value != 1) {
+                _throw(122, $value);
+            }
+        }
+
+        elsif ($type != 1) { # Unknown attribute type
+            _throw(113, $type);
+        }
+    }
+
+    $term = "*$term" if $left_truncation;
+    $term = "$term*" if $right_truncation;
+    $term = "^$term" if $left_anchor;
+    $term = "$term^" if $right_anchor;
+
+    $term = "\"$term\"" if $term =~ /[\s""\/=]/;
+
+    if (defined $field && defined $relation) {
+	$term = "$field $relation $term";
+    } elsif (defined $field) {
+	$term = "$field = $term";
+    } elsif (defined $relation) {
+	$term = "cql.serverChoice $relation $term";
+    }
+
+    return $term;
 }
+
+
+sub _ap2index {
+    my($indexMap, $value) = @_;
+
+    if (!defined $indexMap) {
+	# This allows us to use string-valued attributes when no indexes are defined.
+	return $value;
+    }
+
+    my $field = $indexMap->{$value};
+    _throw(114, $value) if !defined $field;
+    return $field;
+}
+
+
+package Net::Z3950::RPN::RSID;
+sub _toCQL {
+    my $self = shift;
+    my($args, $defaultSet) = @_;
+    my $session = $args->{HANDLE};
+
+    my $zid = $self->{id};
+    my $rs = $session->{resultsets}->{$zid};
+    _throw(128, $zid) if !defined $rs; # "Illegal result set name"
+
+    my $sid = $rs->{rsid};
+    return qq[cql.resultSetId="$sid"]
+}
+
+package Net::Z3950::RPN::And;
+sub _toCQL {
+    my $self = shift;
+    my $left = $self->[0]->_toCQL(@_);
+    my $right = $self->[1]->_toCQL(@_);
+    return "($left and $right)";
+}
+
+package Net::Z3950::RPN::Or;
+sub _toCQL {
+    my $self = shift;
+    my $left = $self->[0]->_toCQL(@_);
+    my $right = $self->[1]->_toCQL(@_);
+    return "($left or $right)";
+}
+
+package Net::Z3950::RPN::AndNot;
+sub _toCQL {
+    my $self = shift;
+    my $left = $self->[0]->_toCQL(@_);
+    my $right = $self->[1]->_toCQL(@_);
+    return "($left not $right)";
+}
+
 
 =head1 SEE ALSO
 
