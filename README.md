@@ -17,7 +17,7 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
 ## Copyright and licence
 
-Copyright (C) 2018 by Index Data
+Copyright (C) 2018 by The Open Library Foundation
 
 This library is free software; you can redistribute it and/or modify
 it under the terms of the Apache Licence 2.0: see the LICENSE file.
