@@ -213,6 +213,9 @@ sub _do_search {
     my $this = shift();
     my($session, $setname, $cql) = @_;
 
+    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
+    $session->{resultsets}->{$setname} = $rs;
+
     my $offset = 0;
     my $limit = 10;
     my $escapedQuery = uri_escape($cql);
@@ -223,10 +226,8 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
     $rs->totalRecords($obj->{totalRecords} + 0);
     $rs->insert_records(0, $obj->{instances});
-    $session->{resultsets}->{$setname} = $rs;
 
     return $rs;
 }
