@@ -13,6 +13,8 @@ use MARC::Record;
 use URI::Escape;
 use XML::Simple;
 
+use Net::Z3950::FOLIO::ResultSet;
+
 our $VERSION = '0.01';
 
 1;
@@ -180,8 +182,8 @@ sub _real_search_handler {
 	warn "search: translated '" . $args->{QUERY} . "' to '$cql'\n";
     }
 
-    my $search = $this->_do_search($session, $args->{SETNAME}, $cql);
-    $args->{HITS} = $search->{totalRecords};
+    my $rs = $this->_do_search($session, $args->{SETNAME}, $cql);
+    $args->{HITS} = $rs->totalRecords();
 }
 
 
@@ -221,17 +223,11 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    # This should probably be an object of some application-specific
-    # class such as Net::Z3950::FOLIO::ResultSet
-    my $search = {
-	setname => $setname,
-	cql => $cql, # Save for subsequent fetch and sort requests
-	totalRecords => $obj->{totalRecords} + 0,
-	instances => $obj->{instances},
-    };
+    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql, $obj->{totalRecords} + 0);
+    $rs->{instances} = $obj->{instances},
+    $session->{resultsets}->{$setname} = $rs;
 
-    $session->{resultsets}->{$setname} = $search;
-    return $search;
+    return $rs;
 }
 
 
