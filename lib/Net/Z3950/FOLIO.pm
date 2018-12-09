@@ -211,8 +211,6 @@ sub _do_search {
     my $this = shift();
     my($session, $setname, $cql) = @_;
 
-    # This should probably be an object of some application-specific
-    # class such as Net::Z3950::FOLIO::ResultSet
     my $escapedQuery = uri_escape($cql);
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?query=$escapedQuery";
     my $req = $this->_makeHTTPRequest(GET => $url);
@@ -221,6 +219,8 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
+    # This should probably be an object of some application-specific
+    # class such as Net::Z3950::FOLIO::ResultSet
     my $search = {
 	setname => $setname,
 	cql => $cql, # Save for subsequent fetch and sort requests
