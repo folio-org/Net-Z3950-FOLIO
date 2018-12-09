@@ -211,11 +211,13 @@ sub _do_search {
     my $this = shift();
     my($session, $setname, $cql) = @_;
 
+    my $offset = 0;
+    my $limit = 10;
     my $escapedQuery = uri_escape($cql);
-    my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?query=$escapedQuery";
+    my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
     my $req = $this->_makeHTTPRequest(GET => $url);
     my $res = $this->{ua}->request($req);
-    # warn "res=", $res->content();
+    warn "url=$url res=", $res->content();
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
