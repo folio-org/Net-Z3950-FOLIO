@@ -152,7 +152,7 @@ sub _real_init_handler {
 	if !defined $username || !defined $password;
 
     my $url = $cfg->{okapi}->{url} . '/bl-users/login';
-    my $req = $this->_makeHTTPRequest(POST => $url);
+    my $req = $this->_make_http_request(POST => $url);
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
     my $res = $this->{ua}->request($req);
@@ -220,7 +220,7 @@ sub _do_search {
 
     my $escapedQuery = uri_escape($cql);
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
-    my $req = $this->_makeHTTPRequest(GET => $url);
+    my $req = $this->_make_http_request(GET => $url);
     my $res = $this->{ua}->request($req);
     # warn "searching at $url";
     # warn "result: ", $res->content();
@@ -254,7 +254,7 @@ sub launch_server {
 }
 
 
-sub _makeHTTPRequest() {
+sub _make_http_request() {
     my $this = shift();
     my(%args) = @_;
 
