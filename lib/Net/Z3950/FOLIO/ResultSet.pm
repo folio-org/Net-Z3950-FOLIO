@@ -8,7 +8,7 @@ sub new {
 	setname => $setname,
 	cql => $cql,
 	totalRecords => $totalRecords,
-	instances => [],
+	records => [],
     }, $class;
 }
 
@@ -17,7 +17,7 @@ sub insert_records {
     my($offset, $records) = @_;
 
     for (my $i = 0; $i < @$records; $i++) {
-	$this->{instances}->[$offset + $i] = $records->[$i];
+	$this->{records}->[$offset + $i] = $records->[$i];
     }
 }
 
@@ -30,7 +30,7 @@ sub record {
     my $this = shift();
     my($index1) = @_;
 
-    return $this->{instances}->[$index1-0];
+    return $this->{records}->[$index1-0];
 }
 
 1;
