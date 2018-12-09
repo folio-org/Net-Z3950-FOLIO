@@ -219,7 +219,7 @@ sub _do_search {
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
     my $req = $this->_makeHTTPRequest(GET => $url);
     my $res = $this->{ua}->request($req);
-    warn "url=$url res=", $res->content();
+    # warn "url=$url res=", $res->content();
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
