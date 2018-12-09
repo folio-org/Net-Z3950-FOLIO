@@ -195,7 +195,7 @@ sub _real_fetch_handler {
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
     my $offset = $args->{OFFSET};
-    my $rec = $rs->{instances}->[$offset-1];
+    my $rec = $rs->record($offset);
     _throw(13, $offset) if !defined $rec;
 
     my $xml = XMLout($rec, NoAttr => 1);
@@ -224,7 +224,7 @@ sub _do_search {
 
     my $obj = decode_json($res->content());
     my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql, $obj->{totalRecords} + 0);
-    $rs->{instances} = $obj->{instances},
+    $rs->insert_records(0, $obj->{instances});
     $session->{resultsets}->{$setname} = $rs;
 
     return $rs;
