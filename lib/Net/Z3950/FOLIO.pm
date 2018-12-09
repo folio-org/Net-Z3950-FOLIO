@@ -182,7 +182,11 @@ sub _real_search_handler {
 	warn "search: translated '" . $args->{QUERY} . "' to '$cql'\n";
     }
 
-    my $rs = $this->_do_search($session, $args->{SETNAME}, $cql);
+    my $setname = $args->{SETNAME};
+    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
+    $session->{resultsets}->{$setname} = $rs;
+
+    $this->_do_search($rs, 0, 10); # Should be parameterisable
     $args->{HITS} = $rs->totalRecords();
 }
 
@@ -211,18 +215,15 @@ sub _real_fetch_handler {
 
 sub _do_search {
     my $this = shift();
-    my($session, $setname, $cql) = @_;
+    my($rs, $offset, $limit) = @_;
+    my $cql = $rs->{cql};
 
-    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
-    $session->{resultsets}->{$setname} = $rs;
-
-    my $offset = 0;
-    my $limit = 10;
     my $escapedQuery = uri_escape($cql);
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
     my $req = $this->_makeHTTPRequest(GET => $url);
     my $res = $this->{ua}->request($req);
-    # warn "url=$url res=", $res->content();
+    # warn "searching at $url";
+    # warn "result: ", $res->content();
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
