@@ -7,7 +7,7 @@ sub new {
     return bless {
 	setname => $setname,
 	cql => $cql,
-	totalRecords => undef,
+	total_count => undef,
 	records => [],
     }, $class;
 }
@@ -21,12 +21,12 @@ sub insert_records {
     }
 }
 
-sub totalRecords {
+sub total_count {
     my $this = shift();
     my($newVal) = @_;
 
-    my $old = $this->{totalRecords};
-    $this->{totalRecords} = $newVal if defined $newVal;
+    my $old = $this->{total_count};
+    $this->{total_count} = $newVal if defined $newVal;
     return $old;
 }
 

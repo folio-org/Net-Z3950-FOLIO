@@ -187,7 +187,7 @@ sub _real_search_handler {
     $session->{resultsets}->{$setname} = $rs;
 
     $this->_do_search($rs, 0, 10); # Should be parameterisable
-    $args->{HITS} = $rs->totalRecords();
+    $args->{HITS} = $rs->total_count();
 }
 
 
@@ -227,7 +227,7 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    $rs->totalRecords($obj->{totalRecords} + 0);
+    $rs->total_count($obj->{totalRecords} + 0);
     $rs->insert_records(0, $obj->{instances});
 
     return $rs;
