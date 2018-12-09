@@ -2,12 +2,12 @@ package Net::Z3950::FOLIO::ResultSet;
 
 sub new {
     my $class = shift();
-    my($setname, $cql, $totalRecords) = @_;
+    my($setname, $cql) = @_;
 
     return bless {
 	setname => $setname,
 	cql => $cql,
-	totalRecords => $totalRecords,
+	totalRecords => undef,
 	records => [],
     }, $class;
 }
@@ -23,7 +23,11 @@ sub insert_records {
 
 sub totalRecords {
     my $this = shift();
-    return $this->{totalRecords};
+    my($newVal) = @_;
+
+    my $old = $this->{totalRecords};
+    $this->{totalRecords} = $newVal if defined $newVal;
+    return $old;
 }
 
 sub record {
