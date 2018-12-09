@@ -223,7 +223,8 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql, $obj->{totalRecords} + 0);
+    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
+    $rs->totalRecords($obj->{totalRecords} + 0);
     $rs->insert_records(0, $obj->{instances});
     $session->{resultsets}->{$setname} = $rs;
 
