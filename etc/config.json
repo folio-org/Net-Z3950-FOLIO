@@ -12,7 +12,7 @@
     "4": "title",
     "21": "subject"
   },
-  "chunkSize": 20,
+  "chunkSize": 5,
   "fieldMap": {
     "title": "245$a",
     "author": "100$a"
