@@ -186,7 +186,8 @@ sub _real_search_handler {
     my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
     $session->{resultsets}->{$setname} = $rs;
 
-    $this->_do_search($rs, 0, $this->{cfg}->{chunkSize} || 10);
+    my $chunkSize = $this->{cfg}->{chunkSize} || 10;
+    $this->_do_search($rs, 0, $chunkSize);
     $args->{HITS} = $rs->total_count();
 }
 
@@ -194,15 +195,27 @@ sub _real_search_handler {
 sub _real_fetch_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
+    my $this = $args->{GHANDLE};
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
-    my $offset = $args->{OFFSET};
-    _throw(13, $offset) if $offset < 1 || $offset > $rs->total_count();
+    my $index1 = $args->{OFFSET};
+    _throw(13, $index1) if $index1 < 1 || $index1 > $rs->total_count();
 
-    my $rec = $rs->record($offset);
-    _throw(1, "missing record") if !defined $rec;
+    my $rec = $rs->record($index1);
+    if (!defined $rec) {
+	# We need to fetch a chunk of records that contains the
+	# requested one. We'll do this by splitting the whole set into
+	# chunks of the specified size, and fetching the one that
+	# contains the requested record.
+	my $index0 = $index1 - 1;
+	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
+	my $chunk = int($index0 / $chunkSize);
+	$this->_do_search($rs, $chunk * $chunkSize, $chunkSize);
+	$rec = $rs->record($index1);
+	_throw(1, "missing record") if !defined $rec;
+    }
 
     my $xml = XMLout($rec, NoAttr => 1); # XXX I have no idea why this generates an "uninitialized value" warning
     $xml =~ s/<@/<__/;
@@ -218,9 +231,9 @@ sub _real_fetch_handler {
 sub _do_search {
     my $this = shift();
     my($rs, $offset, $limit) = @_;
-    my $cql = $rs->{cql};
+    warn "_do_search($offset, $limit)";
 
-    my $escapedQuery = uri_escape($cql);
+    my $escapedQuery = uri_escape($rs->{cql});
     my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
     my $req = $this->_make_http_request(GET => $url);
     my $res = $this->{ua}->request($req);
