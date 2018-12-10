@@ -243,7 +243,7 @@ sub _do_search {
 
     my $obj = decode_json($res->content());
     $rs->total_count($obj->{totalRecords} + 0);
-    $rs->insert_records(0, $obj->{instances});
+    $rs->insert_records($offset, $obj->{instances});
 
     return $rs;
 }
