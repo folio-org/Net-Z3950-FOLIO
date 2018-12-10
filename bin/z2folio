@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # z2folio -- Z39.50 server for FOLIO bibliographic data.
-# Copyright (C) 2018 by The Open Library Foundation
+# Copyright (C) 2018 The Open Library Foundation
 #
 # Run like this:
 #	perl -I../lib ./z2folio -c ../etc/config.json @:9998
@@ -114,10 +114,10 @@ Mike Taylor, E<lt>mike@indexdata.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2018 by The Open Library Foundation
+Copyright (C) 2018 The Open Library Foundation
 
-This library is free software; you can redistribute it and/or modify
-it under the terms of the Apache Licence 2.0: see the LICENSE file.
+This software is distributed under the terms of the Apache License,
+Version 2.0. See the file "LICENSE" for more information.
 
 =cut
     
