@@ -217,7 +217,12 @@ sub _real_fetch_handler {
 	_throw(1, "missing record") if !defined $rec;
     }
 
-    my $xml = XMLout($rec, NoAttr => 1); # XXX I have no idea why this generates an "uninitialized value" warning
+    my $xml;
+    {
+	# I have no idea why this generates an "uninitialized value" warning
+	local $SIG{__WARN__} = sub {};
+	$xml = XMLout($rec, NoAttr => 1);
+    }
     $xml =~ s/<@/<__/;
     $xml =~ s/<\/@/<\/__/;
 
