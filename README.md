@@ -1,5 +1,12 @@
 # z2folio
 
+Copyright (C) 2018 The Open Library Foundation
+
+This software is distributed under the terms of the Apache License,
+Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
+
+## Introduction
+
 A Z39.50 server for FOLIO bibliographic data.
 
 ## Installation
@@ -15,10 +22,15 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
     C_INCLUDE_PATH=/usr/local/Cellar/libxml2/2.9.4_3/include/libxml2 cpan install Net::Z3950::SimpleServer
 
-## Copyright and licence
+## Additional information
 
-Copyright (C) 2018 by The Open Library Foundation
+### Other documentation
 
-This library is free software; you can redistribute it and/or modify
-it under the terms of the Apache Licence 2.0: see the LICENSE file.
+Other [modules](https://dev.folio.org/source-code/) are described,
+with further FOLIO Developer documentation at [dev.folio.org](https://dev.folio.org/)
+
+### Issue tracker
+
+See project [ZF](https://issues.folio.org/browse/ZF)
+at the [FOLIO issue tracker](https://dev.folio.org/guidelines/issue-tracker).
 
