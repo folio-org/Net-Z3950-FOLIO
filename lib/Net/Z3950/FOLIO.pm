@@ -167,7 +167,7 @@ sub _real_search_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
     my $this = $args->{GHANDLE};
-    
+
     # For now, we ignore the dbname. In the future we will use this as
     # the tenant ID, which will mean postponing the authentication
     # call from the Init handler to now, when we first discover the
@@ -204,7 +204,7 @@ sub _real_fetch_handler {
     my $rec = $rs->record($offset);
     _throw(1, "missing record") if !defined $rec;
 
-    my $xml = XMLout($rec, NoAttr => 1);
+    my $xml = XMLout($rec, NoAttr => 1); # XXX I have no idea why this generates an "uninitialized value" warning
     $xml =~ s/<@/<__/;
     $xml =~ s/<\/@/<\/__/;
 
@@ -283,7 +283,6 @@ sub _throw {
 }
 
 
-# 
 # The following code maps Z39.50 Type-1 queries to CQL by providing a
 # _toCQL() method on each query tree node type.
 
@@ -485,4 +484,4 @@ This library is free software; you can redistribute it and/or modify
 it under the terms of the Apache Licence 2.0: see the LICENSE file.
 
 =cut
-    
+
