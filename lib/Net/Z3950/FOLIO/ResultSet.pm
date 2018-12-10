@@ -1,5 +1,8 @@
 package Net::Z3950::FOLIO::ResultSet;
 
+use strict;
+use warnings;
+
 sub new {
     my $class = shift();
     my($setname, $cql) = @_;
@@ -34,7 +37,7 @@ sub record {
     my $this = shift();
     my($index1) = @_;
 
-    return $this->{records}->[$index1-0];
+    return $this->{records}->[$index1-1];
 }
 
 1;
