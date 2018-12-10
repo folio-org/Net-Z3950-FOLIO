@@ -199,8 +199,10 @@ sub _real_fetch_handler {
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
     my $offset = $args->{OFFSET};
+    _throw(13, $offset) if $offset < 1 || $offset > $rs->total_count();
+
     my $rec = $rs->record($offset);
-    _throw(13, $offset) if !defined $rec;
+    _throw(1, "missing record") if !defined $rec;
 
     my $xml = XMLout($rec, NoAttr => 1);
     $xml =~ s/<@/<__/;
