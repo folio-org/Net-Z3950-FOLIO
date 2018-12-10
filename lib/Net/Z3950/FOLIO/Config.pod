@@ -72,6 +72,14 @@ The corresponding password, unless overridden by authentication information in t
 
 =back
 
+=head2 C<"chunkSize">)
+
+An integer specifying how many records to fetch from FOLIO with each
+search. This can be tweaked to tune performance. Setting it too low
+will result in many requests with small numbers of records returned
+each time; setting it too high will result in fetching and decoding
+more records than are actually wanted.
+
 =head2 C<"indexMap">
 
 Contains any number of elements, all with string values. The keys are

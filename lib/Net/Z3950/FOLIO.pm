@@ -186,7 +186,7 @@ sub _real_search_handler {
     my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
     $session->{resultsets}->{$setname} = $rs;
 
-    $this->_do_search($rs, 0, 10); # Should be parameterisable
+    $this->_do_search($rs, 0, $this->{cfg}->{chunkSize} || 10);
     $args->{HITS} = $rs->total_count();
 }
 
