@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This YAZ GFS configuration file can be used by z2folio
+	using the "-f etc/yazgfs.xml" command-line option, to enable
+	support for XML record mapping and MARC conversion.
+-->
+<yazgfs>
+  <listen id="tcp9998">tcp:@:9998</listen>
+  <server id="main" listenref="tcp9998">
+    <retrievalinfo>
+      <!-- see https://software.indexdata.com/yaz/doc/tools.retrieval.html -->
+      <retrieval syntax="xml" name="folio"/>
+      <retrieval syntax="xml" name="marcxml">
+        <backend>
+          <xslt stylesheet="folio2marcxml.xsl"/>
+        </backend>
+      </retrieval>
+      <retrieval syntax="usmarc">
+        <backend>
+          <xslt stylesheet="folio2marcxml.xsl"/>
+          <marc inputformat="xml" outputformat="marc" outputcharset="marc-8"/>
+        </backend>
+      </retrieval>
+    </retrievalinfo>
+  </server>
+</yazgfs>
