@@ -3,6 +3,12 @@
 	This YAZ GFS configuration file can be used by z2folio
 	using the "-f etc/yazgfs.xml" command-line option, to enable
 	support for XML record mapping and MARC conversion.
+
+	Supports retrieving records in three formats:
+	  format xml, elementset folio: the raw inventory-storage record
+	  format xml, elementset marcxml: USMARC in MARCXML format
+	  format usmarc, any elementset: USMARC in ISO 2709 format
+
 -->
 <yazgfs>
   <listen id="tcp9998">tcp:@:9998</listen>
