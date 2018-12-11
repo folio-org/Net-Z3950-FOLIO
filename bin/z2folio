@@ -4,7 +4,7 @@
 # Copyright (C) 2018 The Open Library Foundation
 #
 # Run like this:
-#	perl -I../lib ./z2folio -c ../etc/config.json @:9998
+#	perl -I../lib ./z2folio -c ../etc/config.json -- -f ../etc/yazgfs.xml
 #
 # For a simple regression-test, use:
 #	perl -I../lib ./z2folio -c ../etc/config.json -- -1 -f ../etc/yazgfs.xml & (sleep 1; ( echo "find mineral"; echo "format sutrs"; echo "show 1") | yaz-client localhost:9998/gils )
