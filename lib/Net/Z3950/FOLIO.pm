@@ -75,8 +75,8 @@ sub new {
 	INIT =>    \&_init_handler,
 	SEARCH =>  \&_search_handler,
 	FETCH =>   \&_fetch_handler,
+	DELETE =>  \&_delete_handler,
 #	SCAN =>    \&_scan_handler,
-#	DELETE =>  \&_delete_handler,
 #	SORT   =>  \&_sort_handler,
     );
 
@@ -100,6 +100,7 @@ sub _reload_config_file {
 sub _init_handler { _eval_wrapper(\&_real_init_handler, @_) }
 sub _search_handler { _eval_wrapper(\&_real_search_handler, @_) }
 sub _fetch_handler { _eval_wrapper(\&_real_fetch_handler, @_) }
+sub _delete_handler { _eval_wrapper(\&_real_delete_handler, @_) }
 
 
 sub _eval_wrapper {
@@ -230,6 +231,22 @@ sub _real_fetch_handler {
     $args->{RECORD} = $xml;
     return;
 
+}
+
+
+sub _real_delete_handler {
+    my($args) = @_;
+    my $session = $args->{HANDLE};
+    my $this = $args->{GHANDLE};
+
+    my $setname = $args->{SETNAME};
+    my $rs = $session->{resultsets}->{$setname};
+
+    # XXX Delete errors are ignored by SimpleServer, but we do the right thing anyway
+    _throw(30, $args->{SETNAME}) if !$rs;
+
+    $session->{resultsets}->{$setname} = undef;
+    return;
 }
 
 
