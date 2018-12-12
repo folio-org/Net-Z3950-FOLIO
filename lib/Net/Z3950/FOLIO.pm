@@ -230,7 +230,6 @@ sub _real_fetch_handler {
     $args->{REP_FORM} = 'xml';
     $args->{RECORD} = $xml;
     return;
-
 }
 
 
