@@ -239,12 +239,12 @@ sub _real_delete_handler {
     my $this = $args->{GHANDLE};
 
     my $setname = $args->{SETNAME};
-    my $rs = $session->{resultsets}->{$setname};
+    if ($session->{resultsets}->{$setname}) {
+	$session->{resultsets}->{$setname} = undef;
+    } else {
+	$args->{STATUS} = 1; # failure-1: Result set did not exist
+    }
 
-    # XXX Delete errors are ignored by SimpleServer, but we do the right thing anyway
-    _throw(30, $args->{SETNAME}) if !$rs;
-
-    $session->{resultsets}->{$setname} = undef;
     return;
 }
 
