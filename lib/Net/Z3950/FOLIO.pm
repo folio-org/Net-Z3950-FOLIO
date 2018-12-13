@@ -236,7 +236,6 @@ sub _real_fetch_handler {
 sub _real_delete_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
-    my $this = $args->{GHANDLE};
 
     my $setname = $args->{SETNAME};
     if ($session->{resultsets}->{$setname}) {
