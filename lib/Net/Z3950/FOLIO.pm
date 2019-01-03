@@ -12,6 +12,7 @@ use LWP::UserAgent;
 use MARC::Record;
 use URI::Escape;
 use XML::Simple;
+use Data::Dumper; $Data::Dumper::Indent = 1;
 
 use Net::Z3950::FOLIO::ResultSet;
 
@@ -76,8 +77,8 @@ sub new {
 	SEARCH =>  \&_search_handler,
 	FETCH =>   \&_fetch_handler,
 	DELETE =>  \&_delete_handler,
+	SORT   =>  \&_sort_handler,
 #	SCAN =>    \&_scan_handler,
-#	SORT   =>  \&_sort_handler,
     );
 
     return $this;
@@ -101,6 +102,7 @@ sub _init_handler { _eval_wrapper(\&_real_init_handler, @_) }
 sub _search_handler { _eval_wrapper(\&_real_search_handler, @_) }
 sub _fetch_handler { _eval_wrapper(\&_real_fetch_handler, @_) }
 sub _delete_handler { _eval_wrapper(\&_real_delete_handler, @_) }
+sub _sort_handler { _eval_wrapper(\&_real_sort_handler, @_) }
 
 
 sub _eval_wrapper {
@@ -245,6 +247,36 @@ sub _real_delete_handler {
     }
 
     return;
+}
+
+
+sub _real_sort_handler {
+    my($args) = @_;
+    my $session = $args->{HANDLE};
+
+    my $setnames = $args->{INPUT};
+    _throw(230, '1') if @$setnames > 1; # Sort: too many input results
+    my $setname = $setnames->[0];
+    my $rs = $session->{resultsets}->{$setname};
+    _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
+
+    my $cqlSort = _sortspec2cql($args->{SEQUENCE});
+    _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
+
+    warn Dumper($args);
+    return;
+}
+
+
+sub _sortspec2cql {
+    my($sequence) = @_;
+
+    my @res = ();
+    foreach my $item (@$sequence) {
+	warn Dumper(ITEM => $item);
+    }
+
+    return undef;
 }
 
 
