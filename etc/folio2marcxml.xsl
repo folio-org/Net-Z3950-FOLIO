@@ -19,7 +19,7 @@
       <xsl:value-of select="'a'"/>      <!-- unicode -->
       <xsl:value-of select="'2'"/>      <!-- #ind -->
       <xsl:value-of select="'1'"/>      <!-- #subf chars -->
-      <xsl:value-of select="'     '"/>   <!-- base address -->
+      <xsl:value-of select="'     '"/>  <!-- base address -->
       <xsl:value-of select="'3'"/>      <!-- encoding level (3=minimal) -->
       <xsl:value-of select="'#'"/>      <!-- cataloging form, #=non-ISBD -->
       <xsl:value-of select="'#'"/>      <!-- multipart level #=N/A -->
