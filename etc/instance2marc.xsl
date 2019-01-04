@@ -5,15 +5,14 @@
 	<xsl:output indent="yes"/>
 	
 	<xsl:template match="/">
-	<collection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" >
+	<record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" >
 		<xsl:apply-templates select="opt"/>
-	</collection>
+	</record>
 	</xsl:template>
 
 	<xsl:template match="opt">
-		<record>
 			<leader>
-			    <xsl:value-of select="'    '"/> 		<!-- length -->
+			    <xsl:value-of select="'     '"/> 		<!-- length -->
 			    <xsl:value-of select="' '"/>    		<!-- status -->
 			    <xsl:value-of select="'a'"/>		<!-- decode type -->
 			    <xsl:value-of select="'m'"/>		<!-- decode type -->
@@ -33,7 +32,6 @@
 			</leader>
 			<xsl:apply-templates select="hrid"/>
 			<xsl:apply-templates select="title"/>
-		</record>
 	</xsl:template>
 
 	<xsl:template match="title">
