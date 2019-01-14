@@ -354,7 +354,9 @@ sub _throw {
     # HTTP body for errors is sometimes a plain string, sometimes a JSON structure
     if ($addinfo =~ /^{/) {
 	my $obj = decode_json($addinfo);
-	$addinfo = $obj->{errorMessage};
+	# my $coder = Cpanel::JSON::XS->new->ascii->pretty;
+	# print 'parsed JSON message:', $coder->encode($obj);
+	$addinfo = $obj->{errors} ? $obj->{errors}->[0]->{message} : $obj->{errorMessage};
     }
 
     die new ZOOM::Exception($code, undef, $addinfo, $diagset);
