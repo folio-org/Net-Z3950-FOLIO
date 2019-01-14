@@ -1,5 +1,5 @@
-query {
-  instance_storage_instances(query: "title=baby") {
+query($query: String) {
+  instance_storage_instances(query: $query) {
     totalRecords
     instances {
       alternativeTitles {
