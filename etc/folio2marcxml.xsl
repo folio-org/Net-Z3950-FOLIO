@@ -46,5 +46,13 @@
     </controlfield>
   </xsl:template>
 
+  <xsl:template match="id">
+    <datafield tag="024" ind1="8" ind2=" ">
+      <subfield code="a">
+        <xsl:value-of select="."/>
+      </subfield>
+    </datafield>
+  </xsl:template>
+
   <xsl:template match="node()"/>
 </xsl:stylesheet>
