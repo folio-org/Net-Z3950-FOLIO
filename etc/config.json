@@ -12,6 +12,7 @@
     "4": "title",
     "21": "subject"
   },
+  "graphqlQuery": "instances.graphql-query",
   "chunkSize": 5,
   "fieldMap": {
     "title": "245$a",
