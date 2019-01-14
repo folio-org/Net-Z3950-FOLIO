@@ -1,6 +1,6 @@
 {
   "okapi": {
-    "url": "http://folio-snapshot-521.aws.indexdata.com:9130",
+    "url": "http://folio-snapshot.aws.indexdata.com:9130",
     "tenant": "diku"
   },
   "login": {
