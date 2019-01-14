@@ -1,5 +1,5 @@
-query($query: String) {
-  instance_storage_instances(query: $query) {
+query($query: String, $offset: Int, $limit: Int) {
+  instance_storage_instances(query: $query, offset: $offset, limit:$limit) {
     totalRecords
     instances {
       alternativeTitles {
