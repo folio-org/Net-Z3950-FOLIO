@@ -95,6 +95,19 @@ sub _reload_config_file {
     $fh->close();
 
     $this->{cfg} = decode_json($json);
+
+    my $gqlfile = $this->{cfg}->{graphqlQuery}
+        or die "$0: no GraphQL query file defined";
+
+    my $path = $cfgfile;
+    if ($path =~ /\//) {
+	$path =~ s/(.*)?\/.*/$1/;
+	$gqlfile = "$path/$gqlfile";
+    }
+    $fh = new IO::File("<$gqlfile")
+	or die "$0: can't open GraphQL query file '$gqlfile': $!";
+    { local $/; $this->{cfg}->{graphql} = <$fh> };
+    $fh->close();
 }
 
 
