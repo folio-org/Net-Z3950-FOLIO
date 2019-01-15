@@ -1,5 +1,5 @@
 query($cql: String, $offset: Int, $limit: Int) {
-  instance_storage_instances(query: cql, offset: $offset, limit:$limit) {
+  instance_storage_instances(query: $cql, offset: $offset, limit: $limit) {
     totalRecords
     instances {
       alternativeTitles {
