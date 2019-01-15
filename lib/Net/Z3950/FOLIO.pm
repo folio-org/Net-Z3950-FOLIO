@@ -237,7 +237,7 @@ sub _real_fetch_handler {
     my $xml;
     {
 	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
-	json_tree_to_xml_tree($rec);
+	_sanitize_tree($rec);
 
 	# I have no idea why this generates an "uninitialized value" warning
 	local $SIG{__WARN__} = sub {};
@@ -253,35 +253,21 @@ sub _real_fetch_handler {
 
 
 # This code modified from https://www.perlmonks.org/?node_id=773738
-sub json_tree_to_xml_tree {
+sub _sanitize_tree {
     for my $node (@_) {
-        if (!defined($node)) {
-            next;
-	    die("Can't handle undef\n");
-        }
-
-	print "considering $node (" . ref($node) . ")\n";
-        if (ref($node) eq 'JSON::PP::Boolean') {
-            # true  => 1
-            # false => 0
+	if (!defined($node)) {
+	    next;
+	} elsif (ref($node) eq 'JSON::PP::Boolean') {
             $node += 0;
-        }
-
-        elsif (blessed($node)) {
-            die("Can't handle objects\n");
-        }
-
-        elsif (reftype($node)) {
+        } elsif (blessed($node)) {
+            die('_sanitize_tree: unexpected object');
+        } elsif (reftype($node)) {
             if (ref($node) eq 'ARRAY') {
-                json_tree_to_xml_tree( @$node );
-            }
-
-            elsif (ref($node) eq 'HASH') {
-                json_tree_to_xml_tree( values(%$node) );
-            }
-
-            else {
-                die("Unexpected reference type\n");
+                _sanitize_tree(@$node);
+            } elsif (ref($node) eq 'HASH') {
+                _sanitize_tree(values(%$node));
+            } else {
+                die('_sanitize_tree: unexpected reference type');
             }
         }
     }
