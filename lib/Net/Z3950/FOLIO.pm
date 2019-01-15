@@ -12,6 +12,7 @@ use LWP::UserAgent;
 use MARC::Record;
 use URI::Escape;
 use XML::Simple;
+use Scalar::Util qw(blessed reftype);
 use Data::Dumper; $Data::Dumper::Indent = 1;
 
 use Net::Z3950::FOLIO::ResultSet;
@@ -235,6 +236,9 @@ sub _real_fetch_handler {
 
     my $xml;
     {
+	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
+	json_tree_to_xml_tree($rec);
+
 	# I have no idea why this generates an "uninitialized value" warning
 	local $SIG{__WARN__} = sub {};
 	$xml = XMLout($rec, NoAttr => 1);
@@ -245,6 +249,42 @@ sub _real_fetch_handler {
     $args->{REP_FORM} = 'xml';
     $args->{RECORD} = $xml;
     return;
+}
+
+
+# This code modified from https://www.perlmonks.org/?node_id=773738
+sub json_tree_to_xml_tree {
+    for my $node (@_) {
+        if (!defined($node)) {
+            next;
+	    die("Can't handle undef\n");
+        }
+
+	print "considering $node (" . ref($node) . ")\n";
+        if (ref($node) eq 'JSON::PP::Boolean') {
+            # true  => 1
+            # false => 0
+            $node += 0;
+        }
+
+        elsif (blessed($node)) {
+            die("Can't handle objects\n");
+        }
+
+        elsif (reftype($node)) {
+            if (ref($node) eq 'ARRAY') {
+                json_tree_to_xml_tree( @$node );
+            }
+
+            elsif (ref($node) eq 'HASH') {
+                json_tree_to_xml_tree( values(%$node) );
+            }
+
+            else {
+                die("Unexpected reference type\n");
+            }
+        }
+    }
 }
 
 
@@ -299,16 +339,27 @@ sub _do_search {
     warn "_do_search($offset, $limit)";
 
     my $escapedQuery = uri_escape($rs->{cql});
-    my $url = $this->{cfg}->{okapi}->{url} . "/inventory/instances?offset=$offset&limit=$limit&query=$escapedQuery";
-    my $req = $this->_make_http_request(GET => $url);
+    my $url = $this->{cfg}->{okapi}->{url} . '/graphql';
+    my $req = $this->_make_http_request(POST => $url);
+    my %variables = ();
+    $variables{cql} = $rs->{cql} if $rs->{cql};
+    $variables{offset} = $offset if $offset;
+    $variables{limit} = $limit if $limit;
+    my %body = (
+	query => $this->{cfg}->{graphql},
+	variables => \%variables,
+    );
+    $req->content(encode_json(\%body));
     my $res = $this->{ua}->request($req);
-    # warn "searching at $url";
-    # warn "result: ", $res->content();
+    warn "searching at $url";
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    $rs->total_count($obj->{totalRecords} + 0);
-    $rs->insert_records($offset, $obj->{instances});
+    # warn "result: ", _pretty_json($obj);
+    my $data = $obj->{data} or _throw(1, "no data in response");
+    my $isi = $data->{instance_storage_instances} or _throw(1, "no instance_storage_instances in response data");
+    $rs->total_count($isi->{totalRecords} + 0);
+    $rs->insert_records($offset, $isi->{instances});
 
     return $rs;
 }
@@ -354,12 +405,18 @@ sub _throw {
     # HTTP body for errors is sometimes a plain string, sometimes a JSON structure
     if ($addinfo =~ /^{/) {
 	my $obj = decode_json($addinfo);
-	# my $coder = Cpanel::JSON::XS->new->ascii->pretty;
-	# print 'parsed JSON message:', $coder->encode($obj);
 	$addinfo = $obj->{errors} ? $obj->{errors}->[0]->{message} : $obj->{errorMessage};
     }
 
     die new ZOOM::Exception($code, undef, $addinfo, $diagset);
+}
+
+
+sub _pretty_json {
+    my($obj) = @_;
+
+    my $coder = Cpanel::JSON::XS->new->ascii->pretty;
+    return $coder->encode($obj);
 }
 
 
