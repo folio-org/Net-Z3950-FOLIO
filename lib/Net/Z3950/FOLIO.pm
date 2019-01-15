@@ -322,7 +322,6 @@ sub _sortspec2cql {
 sub _do_search {
     my $this = shift();
     my($rs, $offset, $limit) = @_;
-    warn "_do_search($offset, $limit)";
 
     my $escapedQuery = uri_escape($rs->{cql});
     my $url = $this->{cfg}->{okapi}->{url} . '/graphql';
@@ -337,7 +336,6 @@ sub _do_search {
     );
     $req->content(encode_json(\%body));
     my $res = $this->{ua}->request($req);
-    warn "searching at $url";
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
