@@ -16,6 +16,7 @@
     <retrievalinfo>
       <!-- see https://software.indexdata.com/yaz/doc/tools.retrieval.html -->
       <retrieval syntax="xml" name="folio"/>
+
       <retrieval syntax="xml" name="marcxml">
         <backend>
           <xslt stylesheet="folio2marcxml.xsl"/>
