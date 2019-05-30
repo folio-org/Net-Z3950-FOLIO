@@ -1,4 +1,4 @@
-# z2folio
+# z2folio - the Z39.50-to-FOLIO gateway
 
 Copyright (C) 2018 The Open Library Foundation
 
