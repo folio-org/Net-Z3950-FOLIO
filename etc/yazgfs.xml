@@ -28,6 +28,18 @@
           <marc inputformat="xml" outputformat="marc" outputcharset="marc-8"/>
         </backend>
       </retrieval>
+
+      <retrieval syntax="xml" name="opac">
+        <backend>
+          <xslt stylesheet="folio2opac.xsl"/>
+        </backend>
+      </retrieval>
+      <retrieval syntax="opac">
+        <backend name="F" syntax="opac">
+          <xslt stylesheet="folio2opac.xsl"/>
+          <marc inputformat="marc" outputformat="marc" outputcharset="marc-8"/>
+        </backend>
+      </retrieval>
     </retrievalinfo>
   </server>
 </yazgfs>
