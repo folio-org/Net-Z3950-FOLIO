@@ -232,3 +232,5 @@ At this stage, I was seriously considering whether it would be easier to add sam
 
 On more mature consideration, it must be the case that many of the steps in this ten-step process do not pertain to the upload, but just to updating the UI -- so will not be needed in a batch-upload process.
 
+Having now chatted with Kateryna Senchenko it's apparent that this is correct: only the three POST steps are necessary to upload and process a file of MARC records. I will create a script that does this.
+
