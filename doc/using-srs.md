@@ -2,9 +2,10 @@
 
 <!-- md2toc -l 2 using-srs.md -->
 * [Introduction](#introduction)
-* [Find example SRS records](#find-example-srs-records)
-* [Creating example SRS records](#creating-example-srs-records)
-* [Understanding the SRS WSAPI](#understanding-the-srs-wsapi)
+* [Finding example SRS records](#finding-example-srs-records)
+* [Understanding the data import APIs](#understanding-the-data-import-apis)
+* [Uploading example SRS records from the UI](#uploading-example-srs-records-from-the-ui)
+* [What next?](#what-next)
 
 
 ## Introduction
@@ -57,7 +58,7 @@ and/or
 Documentation of these modules is variable in quality, and I have not been able to find any high-level documentation explaining how they all fit together (though that does not mean that no such document exists).
 
 
-## Creating example SRS records
+## Uploading example SRS records from the UI
 
 So instead of trying to make sense of the APIs, perhaps the most pragmatic approach is just to exercise the data-import facility provided by the FOLIO UI, and use the browser's network-tracing tools to see what requests are sent.
 
@@ -223,4 +224,10 @@ This makes no sense to me. Why would a new POST repeat something we'd been given
 10. Another repeat of #1 and #3, this time once more returning an empty list.
 
 Wow. This is one of the most bizarrely over-engineered APIs I have ever seen. _Clearly_ what is actually needed is a single endpoint, `/data-import/marcbatch`, where you POST of file of MARC records, end of.
+
+
+## What next?
+
+At this stage, I am seriously considering whether it would be easier to add sample batches of record to a test server by automating the UI with [Cypress](https://www.cypress.io/) than by trying to drive this complex and largely undocumented API.
+
 
