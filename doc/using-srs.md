@@ -38,21 +38,7 @@ As a result, it seems we have little option but to obtain a set of MARC records 
 [`mod-source-record-storage`](https://github.com/folio-org/mod-source-record-storage)
 -- but that is for another day.)
 
-
-XXX
-
-My understanding is that when you insert a record into SRS, the corresponding inventory record is also automatically mapped and inserted.
-New
-
-Wayne Schneider  16:57
-Well, not exactly. That is true if you use mod-data-import...but mod-source-record-storage is just a dumb store with its own API.
-
-
-
-
-## Creating example SRS records
-
-XXX
+For now, we need to understand the APIs that will let us add records.
 
 
 ## Understanding the data import APIs
@@ -69,4 +55,172 @@ which may or may not also use
 and/or
 [`mod-data-loader`](https://github.com/folio-org/mod-data-loader/).
 Documentation of these modules is variable in quality, and I have not been able to find any high-level documentation explaining how they all fit together (though that does not mean that no such document exists).
+
+
+## Creating example SRS records
+
+So instead of trying to make sense of the APIs, perhaps the most pragmatic approach is just to exercise the data-import facility provided by the FOLIO UI, and use the browser's network-tracing tools to see what requests are sent.
+
+Tracking the network requests is made trickier because [the Data Import app](https://folio-snapshot.dev.folio.org/data-import/) re-fetches its list every five seconds, making two additional requests. But as far as I can make out, the sequence is as follows:
+
+1. GET `/data-import/uploadDefinitions` with two parameters: `limit` set to 1, and `query` to `(status==("NEW" OR "IN_PROGRESS" OR "LOADED")) sortBy createdDate/sort.descending` -- returning no records.
+
+2. POST to `/data-import/uploadDefinitions` with data:
+```
+	{
+	  "fileDefinitions": [
+	    {
+	      "uiKey": "100 Sample MARC Records.mrc1597335464878",
+	      "size": 145,
+	      "name": "100 Sample MARC Records.mrc"
+	    }
+	  ]
+	}
+```
+
+3. The same query as #1, but this time returning one record, corresponding to the one we just POSTed.
+```
+	{
+	  "uploadDefinitions": [
+	    {
+	      "id": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	      "metaJobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	      "status": "NEW",
+	      "createDate": "2020-08-17T10:46:35.105+0000",
+	      "fileDefinitions": [
+	        {
+	          "id": "a909e806-2804-45d1-88e6-1d30719d211d",
+	          "name": "100 Sample MARC Records.mrc",
+	          "status": "NEW",
+	          "jobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	          "uploadDefinitionId": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	          "createDate": "2020-08-17T10:46:35.105+0000",
+	          "size": 145,
+	          "uiKey": "100 Sample MARC Records.mrc1597335464878"
+	        }
+	      ],
+	      "metadata": {
+	        "createdDate": "2020-08-17T10:46:35.102+0000",
+	        "createdByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0",
+	        "updatedDate": "2020-08-17T10:46:35.102+0000",
+	        "updatedByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0"
+	      }
+	    }
+	  ],
+	  "totalRecords": 1
+	}
+```
+
+4. POST to `/data-import/uploadDefinitions/83447cac-8dfc-45fa-8c70-a34f7082c57d/files/a909e806-2804-45d1-88e6-1d30719d211d` -- but, infuriatingly, The "Copy POST data" option in Firefox's developer tools doesn't copy anything. I would _guess_ that this is where the actual MARC data is POSTed.
+
+5. GET `/data-import/fileExtensions?query=extension==".mrc"`, yielding this structure:
+```
+	{
+	  "fileExtensions": [
+	    {
+	      "id": "f445092c-94b8-408a-a9f1-5edd8b5919c9",
+	      "description": "",
+	      "extension": ".mrc",
+	      "dataTypes": [
+	        "MARC"
+	      ],
+	      "importBlocked": false,
+	      "userInfo": {
+	        "firstName": "",
+	        "lastName": "",
+	        "userName": "System"
+	      },
+	      "metadata": {
+	        "createdDate": "2019-01-01T11:22:07.000+0000",
+	        "createdByUserId": "00000000-0000-0000-0000-000000000000",
+	        "createdByUsername": "System",
+	        "updatedDate": "2019-01-01T11:22:07.000+0000",
+	        "updatedByUserId": "00000000-0000-0000-0000-000000000000",
+	        "updatedByUsername": "System"
+	      }
+	    }
+	  ],
+	  "totalRecords": 1
+	}
+```
+I have no idea why the front-end would care about any of this.
+
+6. GET `/data-import-profiles/jobProfiles` with `limit` 5000, yielding an empty list.
+
+7. GET `/data-import-profiles/jobProfiles` with `limit` 5000 and query `(dataType==("MARC")) sortby name`, also yielding an empty list.
+
+At this point, network request cease until you choose **Load MARC bibliographic records** from the **Actions** button to top left. Then the following further operations happen:
+
+8. GET `https://folio-snapshot-okapi.dev.folio.org/data-import/uploadDefinitions/83447cac-8dfc-45fa-8c70-a34f7082c57d`
+```
+	{
+	  "id": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	  "metaJobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	  "status": "LOADED",
+	  "createDate": "2020-08-17T10:46:35.105+0000",
+	  "fileDefinitions": [
+	    {
+	      "id": "a909e806-2804-45d1-88e6-1d30719d211d",
+	      "sourcePath": "./storage/upload/83447cac-8dfc-45fa-8c70-a34f7082c57d/a909e806-2804-45d1-88e6-1d30719d211d/100 Sample MARC Records.mrc",
+	      "name": "100 Sample MARC Records.mrc",
+	      "status": "UPLOADED",
+	      "jobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	      "uploadDefinitionId": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	      "createDate": "2020-08-17T10:46:35.105+0000",
+	      "uploadedDate": "2020-08-17T10:46:35.855+0000",
+	      "size": 145,
+	      "uiKey": "100 Sample MARC Records.mrc1597335464878"
+	    }
+	  ],
+	  "metadata": {
+	    "createdDate": "2020-08-17T10:46:35.102+0000",
+	    "createdByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0",
+	    "updatedDate": "2020-08-17T10:46:35.102+0000",
+	    "updatedByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0"
+	  }
+	}
+```
+(This is very similar to a subrecord of the earlier response #3.)
+
+9. POST to `/data-import/uploadDefinitions/83447cac-8dfc-45fa-8c70-a34f7082c57d/processFiles` with `defaultMapping` set true. The POSTed data is:
+```
+	{
+	  "uploadDefinition": {
+	    "id": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	    "metaJobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	    "status": "LOADED",
+	    "createDate": "2020-08-17T10:46:35.105+0000",
+	    "fileDefinitions": [
+	      {
+	        "id": "a909e806-2804-45d1-88e6-1d30719d211d",
+	        "sourcePath": "./storage/upload/83447cac-8dfc-45fa-8c70-a34f7082c57d/a909e806-2804-45d1-88e6-1d30719d211d/100 Sample MARC Records.mrc",
+	        "name": "100 Sample MARC Records.mrc",
+	        "status": "UPLOADED",
+	        "jobExecutionId": "572bbcda-008a-4719-87ca-6433fbb218aa",
+	        "uploadDefinitionId": "83447cac-8dfc-45fa-8c70-a34f7082c57d",
+	        "createDate": "2020-08-17T10:46:35.105+0000",
+	        "uploadedDate": "2020-08-17T10:46:35.855+0000",
+	        "size": 145,
+	        "uiKey": "100 Sample MARC Records.mrc1597335464878"
+	      }
+	    ],
+	    "metadata": {
+	      "createdDate": "2020-08-17T10:46:35.102+0000",
+	      "createdByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0",
+	      "updatedDate": "2020-08-17T10:46:35.102+0000",
+	      "updatedByUserId": "d50e80fd-6d59-5485-adf2-809672645cb0"
+	    }
+	  },
+	  "jobProfileInfo": {
+	    "id": "22fafcc3-f582-493d-88b0-3c538480cd83",
+	    "name": "Create MARC Bibs",
+	    "dataType": "MARC"
+	  }
+	}
+```
+This makes no sense to me. Why would a new POST repeat something we'd been given from the back-end?
+
+10. Another repeat of #1 and #3, this time once more returning an empty list.
+
+Wow. This is one of the most bizarrely over-engineered APIs I have ever seen. _Clearly_ what is actually needed is a single endpoint, `/data-import/marcbatch`, where you POST of file of MARC records, end of.
 
