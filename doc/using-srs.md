@@ -26,7 +26,7 @@ the records are automatically converted into instance records which are inked to
 
 The MARC format also remains important as the principal form in which [Z39.50](https://en.wikipedia.org/wiki/Z39.50) servers provide records to clients. [The FOLIO Z39.50 server](https://github.com/folio-org/Net-Z3950-FOLIO) can return XML records that are a transliteration of the JSON format for instances, but it is also required to serve MARC records -- for example, so it can provide relevant information to ILL systems.
 
-[Issue ZF-05]https://issues.folio.org/browse/ZF-5) is to extend the Z93.50 server so that, when MARC records are requested, the server fetches the relevant records from SRS and returns them. To do this, it's necessary to locate a back-end service with sample SRS records, or create some; and to have the Z39.50 server issue requests to the SRS WSAPI. Both these steps are non-trivial.
+[Issue ZF-05](https://issues.folio.org/browse/ZF-5) is to extend the Z93.50 server so that, when MARC records are requested, the server fetches the relevant records from SRS and returns them. To do this, it's necessary to locate a back-end service with sample SRS records, or create some; and to have the Z39.50 server issue requests to the SRS WSAPI. Both these steps are non-trivial.
 
 
 ## Finding example SRS records
@@ -228,6 +228,7 @@ Wow. This is one of the most bizarrely over-engineered APIs I have ever seen. _C
 
 ## What next?
 
-At this stage, I am seriously considering whether it would be easier to add sample batches of record to a test server by automating the UI with [Cypress](https://www.cypress.io/) than by trying to drive this complex and largely undocumented API.
+At this stage, I was seriously considering whether it would be easier to add sample batches of record to a test server by automating the UI with [Cypress](https://www.cypress.io/) than by trying to drive this complex and largely undocumented API.
 
+On more mature consideration, it must be the case that many of the steps in this ten-step process do not pertain to the upload, but just to updating the UI -- so will not be needed in a batch-upload process.
 
