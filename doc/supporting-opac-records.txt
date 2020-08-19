@@ -1,0 +1,22 @@
+I know how to configure the YAZ GFS so that when my server delivers a MARCXML record, it gets translated into actual MARC (i.e. ISO2709). I believe there is a similar facility for converting some kind of XML into OPAC records, but I can't find the documentation for that. Does it exist?
+
+Adam Dickmeiss [12:42 PM]
+<retrieval syntax="opac"/>
+       <retrieval name="opac" syntax="xml">
+         <backend name="F" syntax="opac">
+           <marc inputcharset="marc-8" inputformat="marc" outputformat="marcxml"/>
+         </backend>
+       </retrieval>
+Your inputcharset is probably "utf-8" for Perl
+YAZ GFS will convert OPAC XML to OPAC. with this.
+Bad paste.. I'll try again
+Adam Dickmeiss [12:49 PM]
+<retrieval syntax="opac">
+ <backend name="opac" syntax="xml"/>
+</retrieval>
+So you see it asks for element-set=opac and syntax=XML.. So you're supposed to return XML. (edited) 
+Mike Taylor [12:53 PM]
+OK. And what is the XML format that I must return?
+Adam Dickmeiss [12:53 PM]
+opacxml.xsd in yaz/etc
+See example in test/test_record_conv.c  - function tst_convert3 (edited) 
