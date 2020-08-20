@@ -75,7 +75,7 @@ query($cql: String, $offset: Int, $limit: Int) {
           accessionNumber
           barcode
           chronology
-          copyNumbers
+          copyNumber
           descriptionOfPieces
           discoverySuppress
           electronicAccess {
@@ -237,7 +237,7 @@ query($cql: String, $offset: Int, $limit: Int) {
       id
       identifiers {
         identifierTypeId
-        identifierType {
+        identifierTypeObject {
           id
           name
           metadata {
@@ -278,7 +278,10 @@ query($cql: String, $offset: Int, $limit: Int) {
         updatedDate
       }
       modeOfIssuanceId
-      notes
+      notes {
+        note
+        staffOnly
+      }
       physicalDescriptions
       previouslyHeld
       publication {
