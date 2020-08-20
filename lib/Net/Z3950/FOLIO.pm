@@ -341,7 +341,12 @@ sub _do_search {
     my $obj = decode_json($res->content());
     # warn "result: ", _pretty_json($obj);
     my $data = $obj->{data} or _throw(1, "no data in response");
-    my $isi = $data->{instance_storage_instances} or _throw(1, "no instance_storage_instances in response data");
+    my $isi = $data->{instance_storage_instances};
+    if (!$isi) {
+	my $errors = $obj->{errors};
+	_throw(1, join(', ', map { $_->{message} } @$errors)) if $errors;
+	_throw(1, "no instance_storage_instances in response data");
+    }
     $rs->total_count($isi->{totalRecords} + 0);
     $rs->insert_records($offset, $isi->{instances});
 
