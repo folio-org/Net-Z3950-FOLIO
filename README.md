@@ -22,6 +22,12 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
     C_INCLUDE_PATH=/usr/local/Cellar/libxml2/2.9.4_3/include/libxml2 cpan install Net::Z3950::SimpleServer
 
+## Running
+
+If you don't want to install, you can run from the development checkout as:
+
+    perl -I lib bin/z2folio -c etc/config.json
+
 ## Additional information
 
 ### Other documentation
