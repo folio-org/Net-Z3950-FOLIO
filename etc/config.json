@@ -5,7 +5,7 @@
   },
   "login": {
     "username": "diku_admin",
-    "password": "************"
+    "password": "admin"
   },
   "indexMap": {
     "1": "author",
