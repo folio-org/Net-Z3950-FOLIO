@@ -31,7 +31,7 @@ The MARC format also remains important as the principal form in which [Z39.50](h
 
 ## Finding example SRS records
 
-It turns out that there are no SRS reference records, analogous to the reference records that are provided by `mod-inventory-storage` and which therefore turn up on each new build of reference environments such as [folio-snapshot](https://folio-snapshot.aws.indexdata.com/). That is unfortunate: such records would have been easy to work with, and to write test suites around.
+It turns out that there are no SRS reference records, analogous to the reference records that are provided by `mod-inventory-storage` and which therefore turn up on each new build of reference environments such as [folio-snapshot](https://folio-snapshot.dev.folio.org/). That is unfortunate: such records would have been easy to work with, and to write test suites around.
 
 There are specific servers, mostly beonging to customers, that do contain SRS records, but we cannot depend on these to remain in any given state such that tests can be reliably run against them. Similarly, bugfest environments like [bugfest-goldenrod](https://bugfest-goldenrod.folio.ebsco.com/) may contain SRS records, but their content cannot be relied upon to stay constant for tests.
 
