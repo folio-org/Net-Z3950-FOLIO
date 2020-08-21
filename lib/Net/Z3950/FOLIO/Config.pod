@@ -40,7 +40,7 @@ of them an object with several keys that can exist in it.
 
 =head2 C<"okapi">
 
-Contains two elements, both with string values:
+Contains three elements (two mandatory, one optional), all with string values:
 
 =over 4
 
@@ -48,6 +48,17 @@ Contains two elements, both with string values:
 
 The full URL to the Okapi server that provides the gateway to the
 FOLIO installation.
+
+=item C<"graphqlUrl"> (optional)
+
+Usually, the main Okapi URL is used for all interaction with FOLIO:
+logging in, searching, retrieving records, etc. When the optional
+=C<graphqlUrl> configuration entry is provided, it is used for GraphQL
+queries only. This provides a way of "side-loading" mod-graphql, which
+is useful in at least two situations: when the FOLIO snapshot services
+are unavailable (since the production services do not presently
+=included mod-graphql); and when you need to run against a development
+=version of mod-graphql so you can make changes to its behaviour.
 
 =item C<"tenant">
 
@@ -72,7 +83,7 @@ The corresponding password, unless overridden by authentication information in t
 
 =back
 
-=head2 C<"chunkSize">)
+=head2 C<"chunkSize">
 
 An integer specifying how many records to fetch from FOLIO with each
 search. This can be tweaked to tune performance. Setting it too low

@@ -324,8 +324,13 @@ sub _do_search {
     my($rs, $offset, $limit) = @_;
 
     my $escapedQuery = uri_escape($rs->{cql});
-    my $url = $this->{cfg}->{okapi}->{url} . '/graphql';
-    my $req = $this->_make_http_request(POST => $url);
+    my $okapiCfg = $this->{cfg}->{okapi};
+
+    my $url = $okapiCfg->{url};
+    my $graphqlUrl = $okapiCfg->{graphqlUrl};
+    my $req = $this->_make_http_request(POST => ($graphqlUrl || $url) . '/graphql');
+    $req->header('X-Okapi-Url' => $url) if $graphqlUrl;
+
     my %variables = ();
     $variables{cql} = $rs->{cql} if $rs->{cql};
     $variables{offset} = $offset if $offset;

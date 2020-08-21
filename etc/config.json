@@ -1,6 +1,7 @@
 {
   "okapi": {
     "url": "https://folio-snapshot-okapi.dev.folio.org",
+    "UNUSED-graphqlUrl": "http://localhost:3001",
     "tenant": "diku"
   },
   "login": {
