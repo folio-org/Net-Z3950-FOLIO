@@ -2,12 +2,13 @@
 
 # Demonstration of invoking GraphQL directly
 
+. ~/.okapi
 curl \
 	-i \
 	-X POST \
 	-H "Content-Type: application/json" \
-	-H "X-Okapi-Url: https://folio-snapshot-okapi.dev.folio.org" \
-	-H "X-Okapi-Tenant: diku" \
-	-H "X-Okapi-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWt1X2FkbWluIiwidXNlcl9pZCI6IjExODFhMTk0LWRiY2YtNWVkYS1hODRlLTRhYzcxYmZhZjdlMiIsImlhdCI6MTU5NzkyODE3NCwidGVuYW50IjoiZGlrdSJ9.F5XDQY9NHKh-HE66B_j0MMs0yPw3BvGO0UR90TFTLtY" \
+	-H "X-Okapi-Url: ${OKAPI_URL}" \
+	-H "X-Okapi-Tenant: ${OKAPI_TENANT}" \
+	-H "X-Okapi-Token: ${OKAPI_TOKEN}" \
 	-d '{ "query": "query { instance_storage_instances { instances { title contributors { name } } } }" }' \
 	http://localhost:3001/graphql
