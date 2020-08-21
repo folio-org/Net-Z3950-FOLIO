@@ -26,7 +26,7 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
 If you don't want to install, you can run from the development checkout as:
 
-    perl -I lib bin/z2folio -c etc/config.json
+    perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml
 
 ## Additional information
 
