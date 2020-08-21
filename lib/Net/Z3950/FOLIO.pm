@@ -323,8 +323,12 @@ sub _do_search {
     my $this = shift();
     my($rs, $offset, $limit) = @_;
 
-    my $escapedQuery = uri_escape($rs->{cql});
     my $okapiCfg = $this->{cfg}->{okapi};
+    my $qf = $this->{cfg}->{queryFilter};
+    my $cql = $rs->{cql};
+    if ($qf) {
+	$cql = $cql ? "($cql) and ($qf)" : $qf;
+    }
 
     my $url = $okapiCfg->{url};
     my $graphqlUrl = $okapiCfg->{graphqlUrl};
@@ -332,7 +336,8 @@ sub _do_search {
     $req->header('X-Okapi-Url' => $url) if $graphqlUrl;
 
     my %variables = ();
-    $variables{cql} = $rs->{cql} if $rs->{cql};
+    # warn "searching for $cql";
+    $variables{cql} = $cql if $cql;
     $variables{offset} = $offset if $offset;
     $variables{limit} = $limit if $limit;
     my %body = (

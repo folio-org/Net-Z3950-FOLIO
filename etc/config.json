@@ -11,9 +11,13 @@
   "indexMap": {
     "1": "author",
     "4": "title",
-    "21": "subject"
+    "21": "subject",
+    "1019": "source",
+    "1108": "source",
+    "1155": "source"
   },
   "graphqlQuery": "instances.graphql-query",
+  "queryFilter": "source=marc",
   "chunkSize": 5,
   "fieldMap": {
     "title": "245$a",
