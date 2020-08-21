@@ -41,18 +41,18 @@ The structure of the file is pretty simple. There are several
 top-level section, each described in its own section below, and each
 of them an object with several keys that can exist in it.
 
-=head2 C<"okapi">
+=head2 C<okapi>
 
 Contains three elements (two mandatory, one optional), all with string values:
 
 =over 4
 
-=item C<"url">
+=item C<url>
 
 The full URL to the Okapi server that provides the gateway to the
 FOLIO installation.
 
-=item C<"graphqlUrl"> (optional)
+=item C<graphqlUrl> (optional)
 
 Usually, the main Okapi URL is used for all interaction with FOLIO:
 logging in, searching, retrieving records, etc. When the optional
@@ -63,30 +63,30 @@ are unavailable (since the production services do not presently
 =included mod-graphql); and when you need to run against a development
 =version of mod-graphql so you can make changes to its behaviour.
 
-=item C<"tenant">
+=item C<tenant>
 
 The name of the tenant within that FOLIO installation whose inventory
 model should be queried.
 
 =back
 
-=head2 C<"login">
+=head2 C<login>
 
 Contains two elements, both with string values:
 
 =over 4
 
-=item C<"username">
+=item C<username>
 
 The name of the user to log in as, unless overridden by authentication information in the Z39.50 init request.
 
-=item C<"password">
+=item C<password>
 
 The corresponding password, unless overridden by authentication information in the Z39.50 init request.
 
 =back
 
-=head2 C<"chunkSize">
+=head2 C<chunkSize>
 
 An integer specifying how many records to fetch from FOLIO with each
 search. This can be tweaked to tune performance. Setting it too low
@@ -94,21 +94,21 @@ will result in many requests with small numbers of records returned
 each time; setting it too high will result in fetching and decoding
 more records than are actually wanted.
 
-=head2 C<"indexMap">
+=head2 C<indexMap>
 
 Contains any number of elements, all with string values. The keys are
 the numbers of BIB-1 use attributes, and the corresponding values are
 those of fields in the FOLIO instance revord to map those
 access-points to.
 
-=head2 C<"graphqlQuery">
+=head2 C<graphqlQuery>
 
 The name of a file, in the same directory as the main configuration
 file, which contains the text of the GraphQL query to be used to
 obtain the instance, holdings and item data pertaining to the records
 identified by the CQL query.
 
-=head2 C<"queryFilter">
+=head2 C<queryFilter>
 
 If specified, this is a CQL query which is automatically C<and>ed with
 every query submitted by the client, so it acts as a filter allowing
@@ -116,7 +116,7 @@ through only records that satisfy it. This might be used, for example,
 to specify C<source=marc> to limit search result to only to those
 FOLIO instance records that were translated from MARC imports.
 
-=head2 C<"fieldMap">
+=head2 C<fieldMap>
 
 Contains any number of elements, all with string values. The keys are
 the names of fields in the FOLIO instance record, and the
