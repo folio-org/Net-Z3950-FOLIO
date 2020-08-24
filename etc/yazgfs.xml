@@ -25,7 +25,7 @@
       <retrieval syntax="usmarc">
         <backend>
           <xslt stylesheet="folio2marcxml.xsl"/>
-          <marc inputformat="xml" outputformat="marc" outputcharset="marc-8"/>
+          <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
         </backend>
       </retrieval>
 
@@ -37,7 +37,7 @@
       <retrieval syntax="opac">
         <backend name="F" syntax="opac">
           <xslt stylesheet="folio2opac.xsl"/>
-          <marc inputformat="marc" outputformat="marc" outputcharset="marc-8"/>
+          <marc inputformat="marc" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
         </backend>
       </retrieval>
     </retrievalinfo>
