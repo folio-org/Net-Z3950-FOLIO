@@ -22,10 +22,14 @@
           <xslt stylesheet="folio2marcxml.xsl"/>
         </backend>
       </retrieval>
-      <retrieval syntax="usmarc">
+      <retrieval syntax="usmarc" name="d">
         <backend>
           <xslt stylesheet="folio2marcxml.xsl"/>
           <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
+        </backend>
+      </retrieval>
+      <retrieval syntax="usmarc">
+        <backend>
         </backend>
       </retrieval>
 
