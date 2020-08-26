@@ -74,12 +74,12 @@ sub new {
 
     $this->{server} = Net::Z3950::SimpleServer->new(
 	GHANDLE => $this,
-	INIT =>    \&_init_handler,
-	SEARCH =>  \&_search_handler,
-	FETCH =>   \&_fetch_handler,
-	DELETE =>  \&_delete_handler,
-	SORT   =>  \&_sort_handler,
-#	SCAN =>    \&_scan_handler,
+	INIT =>    \&_init_handler_wrapper,
+	SEARCH =>  \&_search_handler_wrapper,
+	FETCH =>   \&_fetch_handler_wrapper,
+	DELETE =>  \&_delete_handler_wrapper,
+	SORT   =>  \&_sort_handler_wrapper,
+#	SCAN =>    \&_scan_handler_wrapper,
     );
 
     return $this;
@@ -112,11 +112,11 @@ sub _reload_config_file {
 }
 
 
-sub _init_handler { _eval_wrapper(\&_real_init_handler, @_) }
-sub _search_handler { _eval_wrapper(\&_real_search_handler, @_) }
-sub _fetch_handler { _eval_wrapper(\&_real_fetch_handler, @_) }
-sub _delete_handler { _eval_wrapper(\&_real_delete_handler, @_) }
-sub _sort_handler { _eval_wrapper(\&_real_sort_handler, @_) }
+sub _init_handler_wrapper { _eval_wrapper(\&_init_handler, @_) }
+sub _search_handler_wrapper { _eval_wrapper(\&_search_handler, @_) }
+sub _fetch_handler_wrapper { _eval_wrapper(\&_fetch_handler, @_) }
+sub _delete_handler_wrapper { _eval_wrapper(\&_delete_handler, @_) }
+sub _sort_handler_wrapper { _eval_wrapper(\&_sort_handler, @_) }
 
 
 sub _eval_wrapper {
@@ -143,7 +143,7 @@ sub _eval_wrapper {
 }
 
 
-sub _real_init_handler {
+sub _init_handler {
     my($args) = @_;
     my $this = $args->{GHANDLE};
 
@@ -180,7 +180,7 @@ sub _real_init_handler {
 }
 
 
-sub _real_search_handler {
+sub _search_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
     my $this = $args->{GHANDLE};
@@ -209,7 +209,7 @@ sub _real_search_handler {
 }
 
 
-sub _real_fetch_handler {
+sub _fetch_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
     my $this = $args->{GHANDLE};
@@ -274,7 +274,7 @@ sub _sanitize_tree {
 }
 
 
-sub _real_delete_handler {
+sub _delete_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
 
@@ -289,7 +289,7 @@ sub _real_delete_handler {
 }
 
 
-sub _real_sort_handler {
+sub _sort_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
 
