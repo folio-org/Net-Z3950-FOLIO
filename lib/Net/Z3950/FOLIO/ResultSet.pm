@@ -20,6 +20,7 @@ sub insert_records {
     my($offset, $records) = @_;
 
     for (my $i = 0; $i < @$records; $i++) {
+	# The records are data structures obtained by decoding the JSON
 	$this->{records}->[$offset + $i] = $records->[$i];
     }
 }
