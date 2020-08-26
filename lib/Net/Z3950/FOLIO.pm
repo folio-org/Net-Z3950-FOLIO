@@ -220,7 +220,7 @@ sub _fetch_handler {
     my $index1 = $args->{OFFSET};
     _throw(13, $index1) if $index1 < 1 || $index1 > $rs->total_count();
 
-    my $rec = $rs->record($index1);
+    my $rec = $rs->record($index1-1);
     if (!defined $rec) {
 	# We need to fetch a chunk of records that contains the
 	# requested one. We'll do this by splitting the whole set into
@@ -230,9 +230,60 @@ sub _fetch_handler {
 	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
 	$this->_do_search($rs, $chunk * $chunkSize, $chunkSize);
-	$rec = $rs->record($index1);
+	$rec = $rs->record($index1-1);
 	_throw(1, "missing record") if !defined $rec;
     }
+
+    # warn "REQ_FORM=", $args->{REQ_FORM}, "\n";
+    # warn "REP_FORM=", $args->{REP_FORM}, "\n";
+    # warn "COMP=", $args->{COMP}, "\n";
+    # warn "SCHEMA=", $args->{SCHEMA}, "\n";
+    # warn _pretty_json($args);
+
+    # Special case: when asking for MARC with element-set "dynamic", we generate it by XSLT
+    #
+    # XXX There seems to be a GFS bug in which if this code is invoked
+    # with format USMARC but no element-set specified, the first
+    # branch (correctly) runs, but the GFS tries to convert the MARC
+    # record from MARCXML to MARC. I will raise this with Adam later.
+    my $res;
+    my $comp = $args->{COMP};
+    if ($args->{REQ_FORM} eq '1.2.840.10003.5.10' && (!$comp || $comp ne 'dynamic')) {
+	$res = $this->_marc_record($rs, $index1);
+    } else {
+	$res = _xml_record($rec);
+	$args->{REP_FORM} = 'xml';
+    }
+
+    $args->{RECORD} = $res;
+    return;
+}
+
+
+sub _marc_record {
+    my $this = shift();
+    my($rs, $index1) = @_;
+
+    my $rec = $rs->record($index1-1);
+    my $instanceId = $rec->{id};
+
+    my $marc = $rs->marcRecord($instanceId);
+    if (!defined $marc) {
+	# Fetch a chunk of records that contains the requested one.
+	# contains the requested record.
+	my $index0 = $index1 - 1;
+	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
+	my $chunk = int($index0 / $chunkSize);
+	$this->insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
+	$marc = $rs->marcRecord($instanceId);
+	_throw(1, "missing MARC record") if !defined $marc;
+    }
+
+    return $marc;
+}
+
+sub _xml_record {
+    my($rec) = @_;
 
     my $xml;
     {
@@ -245,10 +296,7 @@ sub _fetch_handler {
     }
     $xml =~ s/<@/<__/;
     $xml =~ s/<\/@/<\/__/;
-
-    $args->{REP_FORM} = 'xml';
-    $args->{RECORD} = $xml;
-    return;
+    return $xml;
 }
 
 
@@ -364,6 +412,74 @@ sub _do_search {
 }
 
 
+sub insert_records_from_SRS {
+    my $this = shift();
+    my($rs, $offset, $limit) = @_;
+
+    my $okapiCfg = $this->{cfg}->{okapi};
+    my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
+    my @ids = ();
+    for (my $i = 0; $i < $limit; $i++) {
+	my $rec = $rs->record($offset + $i);
+	push @ids, $rec->{id};
+    }
+
+    $req->content(encode_json(\@ids));
+    my $res = $this->{ua}->request($req);
+    my $content = $res->content();
+    _throw(3, $content) if !$res->is_success();
+
+    # warn "got content ", $content;
+    my $json = decode_json($content);
+    my $srs = $json->{sourceRecords};
+    my $n = @$srs;
+
+    my %id2rec;
+    for (my $i = 0; $i < $n; $i++) {
+	my $sr = $srs->[$i];
+	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
+	$id2rec{$instanceId} = _JSON_to_MARC($sr);
+    }
+
+    $rs->insert_marcRecords(\%id2rec);
+}
+
+
+sub _JSON_to_MARC {
+    my($jsonObject) = shift();
+
+    my $content = $jsonObject->{parsedRecord}->{content};
+    # warn "content=", _pretty_json($content);
+
+    my $marc = new MARC::Record();
+    $marc->leader($content->{leader});
+    my $fields = $content->{fields};
+    my $n = @$fields;
+    for (my $i = 0; $i < $n; $i++) {
+	my $field = $fields->[$i];
+	my @keys = keys %$field;
+	warn "field #", ($i+1), " of $n has ", scalar(@keys), " fields" if @keys != 1;
+	foreach my $key (@keys) {
+	    my $value = $field->{$key};
+	    if ($key =~ /^00/) {
+		$marc->append_fields(new MARC::Field($key, $value));
+	    } else {
+		# *sigh* I have to gather an array of single-key hashes into one hash
+		my @subfields;
+		for (my $j = 0; $j < @{$value->{subfields}}; $j++) {
+		    foreach my $k2 (keys $value->{subfields}->[$j]) {
+			push @subfields, $k2, $value->{subfields}->[$j]->{$k2};
+		    }
+		}
+		$marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
+	    }
+	}
+    }
+
+    return $marc->as_usmarc();
+}
+
+
 =head2 launch_server($label, @ARGV)
 
  $s2z->launch_server("someServer", @ARGV);
@@ -414,7 +530,7 @@ sub _throw {
 sub _pretty_json {
     my($obj) = @_;
 
-    my $coder = Cpanel::JSON::XS->new->ascii->pretty;
+    my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->sort_by;
     return $coder->encode($obj);
 }
 
