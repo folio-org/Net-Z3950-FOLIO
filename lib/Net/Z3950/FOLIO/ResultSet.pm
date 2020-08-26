@@ -47,9 +47,9 @@ sub total_count {
 
 sub record {
     my $this = shift();
-    my($index1) = @_;
+    my($index0) = @_;
 
-    return $this->{records}->[$index1-1];
+    return $this->{records}->[$index0];
 }
 
 sub marcRecord {
