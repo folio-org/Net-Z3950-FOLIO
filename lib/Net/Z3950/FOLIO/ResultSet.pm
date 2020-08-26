@@ -12,6 +12,7 @@ sub new {
 	cql => $cql,
 	total_count => undef,
 	records => [],
+	marcRecords => {},
     }, $class;
 }
 
@@ -22,6 +23,16 @@ sub insert_records {
     for (my $i = 0; $i < @$records; $i++) {
 	# The records are data structures obtained by decoding the JSON
 	$this->{records}->[$offset + $i] = $records->[$i];
+    }
+}
+
+sub insert_marcRecords {
+    my $this = shift();
+    my($marcRecords) = @_;
+
+    foreach my $instanceId (keys %$marcRecords)  {
+	# The records are encoded ISO2709 MARC records
+	$this->{marcRecords}->{$instanceId} = $marcRecords->{$instanceId};
     }
 }
 
@@ -39,6 +50,14 @@ sub record {
     my($index1) = @_;
 
     return $this->{records}->[$index1-1];
+}
+
+sub marcRecord {
+    my $this = shift();
+    my($instanceId) = @_;
+
+    my $mr = $this->{marcRecords};
+    return $mr->{$instanceId};
 }
 
 1;
