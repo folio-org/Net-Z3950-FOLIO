@@ -1,6 +1,16 @@
 #!/bin/sh
 
-# Invoke as: ./load-marc-data-into-folio.sh sample100.marc
+# First log into a back-end FOLIO system. storing the Okapi URL,
+# tenant and token in the file `.okapi` in the home directory:
+#
+#	OKAPI_URL=https://folio-snapshot-stable-okapi.dev.folio.org
+#	OKAPI_TENANT=diku
+#	OKAPI_TOKEN=123abc
+#
+# You can conveniently do this using `okapi login` with this CLI:
+# https://github.com/thefrontside/okapi.rb
+#
+# Then invoke as: ./load-marc-data-into-folio.sh sample100.marc
 
 if [ $# -ne 1 ]; then
    echo "Usage: $0 <MARCfile>" >&2
