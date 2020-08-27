@@ -36,7 +36,7 @@ curl --silent --location --request POST "$OKAPI_URL/data-import/uploadDefinition
 	--header "Content-Type: application/octet-stream" \
 	--header "X-Okapi-Tenant: $OKAPI_TENANT" \
 	--header "X-Okapi-Token: $OKAPI_TOKEN" \
-	--data-binary "$filename" \
+	--data-binary "@$filename" \
 		> $tmpfile2
 
 echo "=== Stage 3 ==="
