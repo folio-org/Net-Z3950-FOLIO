@@ -234,25 +234,38 @@ sub _fetch_handler {
 	_throw(1, "missing record") if !defined $rec;
     }
 
-    # warn "REQ_FORM=", $args->{REQ_FORM}, "\n";
-    # warn "REP_FORM=", $args->{REP_FORM}, "\n";
-    # warn "COMP=", $args->{COMP}, "\n";
-    # warn "SCHEMA=", $args->{SCHEMA}, "\n";
-    # warn _pretty_json($args);
-
     # Special case: when asking for MARC with element-set "dynamic", we generate it by XSLT
     #
     # XXX There seems to be a GFS bug in which if this code is invoked
     # with format USMARC but no element-set specified, the first
     # branch (correctly) runs, but the GFS tries to convert the MARC
     # record from MARCXML to MARC. I will raise this with Adam later.
+
+    my $comp = $args->{COMP} || '';
+    my $format = $args->{REQ_FORM};
+    warn "REQ_FORM=$format\n";
+    warn "COMP=$comp\n";
+    # warn "SCHEMA=", $args->{SCHEMA}, "\n";
+    # warn "REP_FORM=", $args->{REP_FORM}, "\n";
+    # warn _pretty_json($args);
+
     my $res;
-    my $comp = $args->{COMP};
-    if ($args->{REQ_FORM} eq '1.2.840.10003.5.10' && (!$comp || $comp ne 'dynamic')) {
-	$res = $this->_marc_record($rs, $index1);
-    } else {
+    if ($format eq '1.2.840.10003.5.10' && $comp eq 'd') {
+	# Dynamically generated USMARC from the FOLIO inventory records
+	warn "Dynamically generated USMARC from the FOLIO inventory records";
 	$res = _xml_record($rec);
 	$args->{REP_FORM} = 'xml';
+    } elsif ($format eq '1.2.840.10003.5.10') {
+	# Static USMARC from SRS
+	warn "Static USMARC from SRS";
+	$res = $this->_marc_record($rs, $index1);
+	$args->{COMP} = 'f'; # XXX
+    } elsif ($format eq '1.2.840.10003.5.109.10') {
+	# XML
+	warn "XML";
+	$res = _xml_record($rec);
+    } else {
+	_throw(239, $format); # 239 = Record syntax not supported
     }
 
     $args->{RECORD} = $res;
