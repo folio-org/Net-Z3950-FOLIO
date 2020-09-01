@@ -31,7 +31,7 @@ sub insert_marcRecords {
     my($marcRecords) = @_;
 
     foreach my $instanceId (keys %$marcRecords)  {
-	# The records are encoded ISO2709 MARC records
+	# The records are passed in and stored as MARC::Record objects
 	$this->{marcRecords}->{$instanceId} = $marcRecords->{$instanceId};
     }
 }
