@@ -570,6 +570,8 @@ sub _pretty_json {
 
 package Net::Z3950::RPN::Term;
 
+sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
+
 sub _toCQL {
     my $self = shift;
     my($args, $defaultSet) = @_;
