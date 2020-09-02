@@ -1,12 +1,12 @@
 {
   "okapi": {
-    "url": "https://folio-snapshot-okapi.dev.folio.org",
-    "UNUSED-graphqlUrl": "http://localhost:3001",
-    "tenant": "diku"
+    "url": "https://indexdata-test-okapi.folio.indexdata.com",
+    "graphqlUrl": "http://localhost:3001",
+    "tenant": "indexdata"
   },
   "login": {
-    "username": "diku_admin",
-    "password": "admin"
+    "username": "id_admin",
+    "password": "fameflowerID052020"
   },
   "indexMap": {
     "1": "author",
