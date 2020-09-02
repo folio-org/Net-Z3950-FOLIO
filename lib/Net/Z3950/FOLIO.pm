@@ -17,6 +17,7 @@ use Scalar::Util qw(blessed reftype);
 use Data::Dumper; $Data::Dumper::Indent = 1;
 
 use Net::Z3950::FOLIO::ResultSet;
+use Net::Z3950::FOLIO::OPACXMLRecord qw(makeOPACXMLRecord);
 
 our $VERSION = '0.01';
 
@@ -267,7 +268,7 @@ sub _fetch_handler {
 	warn "OPAC-format XML";
 	my $marc = $this->_marc_record($rs, $index1);
 	my $xml = $marc->as_xml();
-	$res = $xml; # XXX for now
+	$res = makeOPACXMLRecord($rec, $xml);
     } elsif ($format eq '1.2.840.10003.5.102') {
 	# OPAC
 	_throw(1, "OPAC format not yet supported");
