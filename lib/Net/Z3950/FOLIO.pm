@@ -263,6 +263,10 @@ sub _fetch_handler {
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
 	$args->{COMP} = 'f'; # XXX
+    } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'usmarc') {
+	# MARCXML made from SRS Marc record
+	my $marc = $this->_marc_record($rs, $index1);
+	$res = $marc->as_xml_record();
     } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'opac') {
 	# OPAC-format XML made from SRS Marc record and inventory availability data
 	warn "OPAC-format XML";
