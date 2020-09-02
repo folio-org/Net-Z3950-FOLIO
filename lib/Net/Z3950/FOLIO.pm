@@ -10,6 +10,7 @@ use Net::Z3950::SimpleServer;
 use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
+use MARC::File::XML (BinaryEncoding => 'utf8', RecordFormat => 'USMARC');
 use URI::Escape;
 use XML::Simple;
 use Scalar::Util qw(blessed reftype);
@@ -258,8 +259,18 @@ sub _fetch_handler {
     } elsif ($format eq '1.2.840.10003.5.10') {
 	# Static USMARC from SRS
 	warn "Static USMARC from SRS";
-	$res = $this->_marc_record($rs, $index1);
+	my $marc = $this->_marc_record($rs, $index1);
+	$res = $marc->as_usmarc();
 	$args->{COMP} = 'f'; # XXX
+    } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'opac') {
+	# OPAC-format XML made from SRS Marc record and inventory availability data
+	warn "OPAC-format XML";
+	my $marc = $this->_marc_record($rs, $index1);
+	my $xml = $marc->as_xml();
+	$res = $xml; # XXX for now
+    } elsif ($format eq '1.2.840.10003.5.102') {
+	# OPAC
+	_throw(1, "OPAC format not yet supported");
     } elsif ($format eq '1.2.840.10003.5.109.10') {
 	# XML
 	warn "XML";
@@ -451,18 +462,19 @@ sub insert_records_from_SRS {
     for (my $i = 0; $i < $n; $i++) {
 	my $sr = $srs->[$i];
 	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
-	$id2rec{$instanceId} = _JSON_to_MARC($sr);
+	$id2rec{$instanceId} = _JSON_to_MARC($sr->{parsedRecord}->{content});
     }
 
     $rs->insert_marcRecords(\%id2rec);
 }
 
 
+# We would like to use MARC::Record->new_from_json() for this (from
+# MARC::File::JSON), but that uses a different JSON encoding from the
+# one used for FOLIO's SRS records, so we have to do it by hand.
+#
 sub _JSON_to_MARC {
-    my($jsonObject) = shift();
-
-    my $content = $jsonObject->{parsedRecord}->{content};
-    # warn "content=", _pretty_json($content);
+    my($content) = shift();
 
     my $marc = new MARC::Record();
     $marc->leader($content->{leader});
@@ -489,7 +501,7 @@ sub _JSON_to_MARC {
 	}
     }
 
-    return $marc->as_usmarc();
+    return $marc;
 }
 
 
