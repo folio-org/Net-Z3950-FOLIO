@@ -11,6 +11,7 @@
   "indexMap": {
     "1": "author",
     "4": "title",
+    "12": "hrid",
     "21": "subject",
     "1019": "source",
     "1108": "source",
