@@ -448,7 +448,7 @@ sub insert_records_from_SRS {
     my $okapiCfg = $this->{cfg}->{okapi};
     my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
     my @ids = ();
-    for (my $i = 0; $i < $limit; $i++) {
+    for (my $i = 0; $i < $limit && $offset + $i < $rs->total_count(); $i++) {
 	my $rec = $rs->record($offset + $i);
 	push @ids, $rec->{id};
     }
