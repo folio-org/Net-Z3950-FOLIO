@@ -11,8 +11,8 @@ sub makeOPACXMLRecord {
     # snip it off.
     $marcXML =~ s/.*?\n//m;
 
-    my @holdings = _makeHoldingsRecords($ihi->{holdingsRecords2});
-    my $holdingsRecords = join('\n', @holdings);
+    my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2});
+    my $holdingsRecords = join('\n', @$holdings);
 
     return "
 <opacRecord>
@@ -28,9 +28,47 @@ sub makeOPACXMLRecord {
 
 sub _makeHoldingsRecords {
     my($holdings) = @_;
+    return [ map { _makeSingleHoldingsRecord($_) } @$holdings ];
+}
 
-    warn "holdings=", _pretty_json($holdings);
-    return ();
+# 
+# The YAZ XML format for OPAC records is a fairly close representation
+# of the Z39.50 OPAC record, which is specified by the ASN.1 at
+# https://www.loc.gov/z3950/agency/asn1.html#RecordSyntax-opac
+#
+# But this is only very lightly documented. Some of the fields are
+# commented with what seem to be references to the MARC format,
+# e.g. `typeOfRecord` is commented "LDR 06", which is indeed "Type of
+# record" is the MARC specification: see
+# https://www.loc.gov/marc/bibliographic/bdleader.html
+# But why would we include information from the MARC record describing
+# the bibliographic data related to the holding when we already have
+# the actual MARC record in <bibliographicRecord>?
+
+sub _makeSingleHoldingsRecord {
+    my($holding) = @_;
+
+    return "
+<holding>
+  <typeOfRecord>u</typeOfRecord>
+  <encodingLevel>u</encodingLevel>
+  <format>zz</format>
+  <receiptAcqStatus>xxx</receiptAcqStatus>
+  <generalRetention>xxx</generalRetention>
+  <completeness>xxx</completeness>
+  <dateOfReport>xxx</dateOfReport>
+  <nucCode>xxx</nucCode>
+  <localLocation>xxx</localLocation>
+  <shelvingLocation>xxx</shelvingLocation>
+  <callNumber>xxx</callNumber>
+  <shelvingData>xxx</shelvingData>
+  <copyNumber>xxx</copyNumber>
+  <publicNote>xxx</publicNote>
+  <reproductionNote>xxx</reproductionNote>
+  <termsUseRepro>xxx</termsUseRepro>
+  <enumAndChron>xxx</enumAndChron>
+</holding>
+";
 }
 
 
