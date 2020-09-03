@@ -98,7 +98,6 @@ query($cql: String, $offset: Int, $limit: Int) {
           itemLevelCallNumberPrefix
           itemLevelCallNumberSuffix
           itemLevelCallNumberTypeId
-          materialTypeId
           metadata {
             createdByUserId
             createdByUsername
@@ -121,7 +120,6 @@ query($cql: String, $offset: Int, $limit: Int) {
           }
           numberOfMissingPieces
           numberOfPieces
-          permanentLoanTypeId
           permanentLocationId
           statisticalCodeIds
           status {
