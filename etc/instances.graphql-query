@@ -146,6 +146,7 @@ query($cql: String, $offset: Int, $limit: Int) {
         }
         holdingsTypeId
         hrid
+        id
         illPolicyId
         instanceId
         metadata {
