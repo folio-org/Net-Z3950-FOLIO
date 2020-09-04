@@ -245,11 +245,7 @@ sub _fetch_handler {
 
     my $comp = $args->{COMP} || '';
     my $format = $args->{REQ_FORM};
-    warn "REQ_FORM=$format\n";
-    warn "COMP=$comp\n";
-    # warn "SCHEMA=", $args->{SCHEMA}, "\n";
-    # warn "REP_FORM=", $args->{REP_FORM}, "\n";
-    # warn _pretty_json($args);
+    warn "REQ_FORM=$format, COMP=$comp\n";
 
     my $res;
     if ($format eq '1.2.840.10003.5.10' && $comp eq 'd') {
