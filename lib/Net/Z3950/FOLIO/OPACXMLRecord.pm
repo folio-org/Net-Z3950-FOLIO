@@ -44,15 +44,29 @@ sub _makeHoldingsRecords {
 # But why would we include information from the MARC record describing
 # the bibliographic data related to the holding when we already have
 # the actual MARC record in <bibliographicRecord>?
+#
+# Based on the document "z39.50 OPAC response examples for Cornell"
+# attached to UXPROD-560, it seems like the key elements to fill in
+# are:
+#	format (which is difficult to figure out)
+#	localLocation
+#	shelvingLocation
+#	callNumber
+#	enumAndChron
+#	availableNow
+#	availabilityDate
+#	availableThru
+#	itemId
+#	temporaryLocation (overrides shelvingLocation)
 
 sub _makeSingleHoldingsRecord {
     my($holding) = @_;
 
-    return "
+    return qq[
 <holding>
-  <typeOfRecord>u</typeOfRecord>
-  <encodingLevel>u</encodingLevel>
-  <format>zz</format>
+  <typeOfRecord>xxx</typeOfRecord>
+  <encodingLevel>xxx</encodingLevel>
+  <format>xxx</format>
   <receiptAcqStatus>xxx</receiptAcqStatus>
   <generalRetention>xxx</generalRetention>
   <completeness>xxx</completeness>
@@ -67,8 +81,29 @@ sub _makeSingleHoldingsRecord {
   <reproductionNote>xxx</reproductionNote>
   <termsUseRepro>xxx</termsUseRepro>
   <enumAndChron>xxx</enumAndChron>
+  <volumes>
+    <volume>
+      <enumeration>xxx</enumeration>
+      <chronology>xxx</chronology>
+      <enumAndChron>xxx</enumAndChron>
+    </volume>
+  </volumes>
+  <circulations>
+    <circulation>
+      <availableNow value="xxx" />
+      <availabilityDate>xxx</availabilityDate>
+      <availableThru>xxx</availableThru>
+      <restrictions>xxx</restrictions>
+      <itemId>xxx</itemId>
+      <renewable value="xxx" />
+      <onHold value="xxx" />
+      <enumAndChron>xxx</enumAndChron>
+      <midspine>xxx</midspine>
+      <temporaryLocation>xxx</temporaryLocation>
+    </circulation>
+  </circulations>
 </holding>
-";
+];
 }
 
 
