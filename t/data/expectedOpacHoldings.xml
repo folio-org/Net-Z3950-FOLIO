@@ -1,0 +1,41 @@
+    <holding>
+      <typeOfRecord>xxx</typeOfRecord>
+      <encodingLevel>xxx</encodingLevel>
+      <format>xxxx format</format>
+      <receiptAcqStatus>xxx</receiptAcqStatus>
+      <generalRetention>xxx</generalRetention>
+      <completeness>xxx</completeness>
+      <dateOfReport>xxx</dateOfReport>
+      <nucCode>xxx</nucCode>
+      <localLocation>xxxx</localLocation>
+      <shelvingLocation>xxxx</shelvingLocation>
+      <callNumber>xxxx</callNumber>
+      <shelvingData>xxx</shelvingData>
+      <copyNumber>xxx</copyNumber>
+      <publicNote>xxx</publicNote>
+      <reproductionNote>xxx</reproductionNote>
+      <termsUseRepro>xxx</termsUseRepro>
+      <enumAndChron>xxxx</enumAndChron>
+      <volumes>
+        <volume>
+          <enumeration>xxx</enumeration>
+          <chronology>xxx</chronology>
+          <enumAndChron>xxxx</enumAndChron>
+        </volume>
+      </volumes>
+      <circulations>
+            
+        <circulation>
+          <availableNow value="1" />
+          <availabilityDate></availabilityDate>
+          <availableThru></availableThru>
+          <restrictions>xxx</restrictions>
+          <itemId>i2036897</itemId>
+          <renewable value="xxx" />
+          <onHold value="xxx" />
+          <enumAndChron> </enumAndChron>
+          <midspine>xxx</midspine>
+          <temporaryLocation></temporaryLocation>
+        </circulation>
+      </circulations>
+    </holding>
