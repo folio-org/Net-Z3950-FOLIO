@@ -11,19 +11,21 @@ sub makeOPACXMLRecord {
     # snip it off.
     $marcXML =~ s/.*?\n//m;
 
+    # Indent to fit into the record nicely
+    $marcXML =~ s/^/    /gm;
+
     my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2});
     my $holdingsRecords = join('\n', @$holdings);
 
-    return "
-<opacRecord>
+    return qq[<opacRecord>
   <bibliographicRecord>
-    $marcXML
+$marcXML
   </bibliographicRecord>
   <holdings>
     $holdingsRecords
   </holdings>
 </opacRecord>
-";
+];
 }
 
 sub _makeHoldingsRecords {
@@ -62,48 +64,104 @@ sub _makeHoldingsRecords {
 sub _makeSingleHoldingsRecord {
     my($holding) = @_;
 
-    return qq[
-<holding>
-  <typeOfRecord>xxx</typeOfRecord>
-  <encodingLevel>xxx</encodingLevel>
-  <format>xxx</format>
-  <receiptAcqStatus>xxx</receiptAcqStatus>
-  <generalRetention>xxx</generalRetention>
-  <completeness>xxx</completeness>
-  <dateOfReport>xxx</dateOfReport>
-  <nucCode>xxx</nucCode>
-  <localLocation>xxx</localLocation>
-  <shelvingLocation>xxx</shelvingLocation>
-  <callNumber>xxx</callNumber>
-  <shelvingData>xxx</shelvingData>
-  <copyNumber>xxx</copyNumber>
-  <publicNote>xxx</publicNote>
-  <reproductionNote>xxx</reproductionNote>
-  <termsUseRepro>xxx</termsUseRepro>
-  <enumAndChron>xxx</enumAndChron>
-  <volumes>
-    <volume>
-      <enumeration>xxx</enumeration>
-      <chronology>xxx</chronology>
-      <enumAndChron>xxx</enumAndChron>
-    </volume>
-  </volumes>
-  <circulations>
-    <circulation>
-      <availableNow value="xxx" />
-      <availabilityDate>xxx</availabilityDate>
-      <availableThru>xxx</availableThru>
-      <restrictions>xxx</restrictions>
-      <itemId>xxx</itemId>
-      <renewable value="xxx" />
-      <onHold value="xxx" />
-      <enumAndChron>xxx</enumAndChron>
-      <midspine>xxx</midspine>
-      <temporaryLocation>xxx</temporaryLocation>
-    </circulation>
-  </circulations>
-</holding>
+    my $effectiveLocation = $holding->{permanentLocation};
+
+    my $format = _format($holding);
+    my $localLocation = 'xxxx';
+    my $shelvingLocation = 'xxxx';
+    my $callNumber = 'xxxx';
+    my $enumAndChron = 'xxxx';
+    my $enumAndChronForVolume = 'xxxx';
+
+    my $items = _makeItemRecords($holding->{holdingsItems});
+    my $itemRecords = join('\n', @$items);
+
+    my $xml = qq[
+      <holding>
+        <typeOfRecord>xxx</typeOfRecord>
+        <encodingLevel>xxx</encodingLevel>
+        <format>$format</format>
+        <receiptAcqStatus>xxx</receiptAcqStatus>
+        <generalRetention>xxx</generalRetention>
+        <completeness>xxx</completeness>
+        <dateOfReport>xxx</dateOfReport>
+        <nucCode>xxx</nucCode>
+        <localLocation>$localLocation</localLocation>
+        <shelvingLocation>$shelvingLocation</shelvingLocation>
+        <callNumber>$callNumber</callNumber>
+        <shelvingData>xxx</shelvingData>
+        <copyNumber>xxx</copyNumber>
+        <publicNote>xxx</publicNote>
+        <reproductionNote>xxx</reproductionNote>
+        <termsUseRepro>xxx</termsUseRepro>
+        <enumAndChron>$enumAndChron</enumAndChron>
+        <volumes>
+          <volume>
+            <enumeration>xxx</enumeration>
+            <chronology>xxx</chronology>
+            <enumAndChron>$enumAndChronForVolume</enumAndChron>
+          </volume>
+        </volumes>
+        <circulations>
+          $itemRecords
+        </circulations>
+      </holding>
 ];
+    $xml =~ s/^\n//s; // trim leading newline
+    $xml =~ s/^  //gm;
+    return $xml;
+}
+
+
+sub _makeItemRecords {
+    my($items) = @_;
+    return [ map { _makeSingleItemRecord($_) } @$items ];
+}
+
+
+sub _makeSingleItemRecord {
+    my($item) = @_;
+
+    my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
+    my $availabilityDate = ''; # XXX This information is not in the FOLIO inventory data
+    my $availableThru = ''; # XXX This information is not in the FOLIO inventory data
+    my $itemId = $item->{hrid};
+    my $enumAndChronForItem = ($item->{enumeration} || '') . ' ' . ($item->{chronology} || '');
+    my $tl = $item->{temporaryLocation};
+    my $temporaryLocation = $tl ? _makeLocation($tl) : '';
+
+    my $xml = qq[
+      <circulation>
+        <availableNow value="$availableNow" />
+        <availabilityDate>$availabilityDate</availabilityDate>
+        <availableThru>$availableThru</availableThru>
+        <restrictions>xxx</restrictions>
+        <itemId>$itemId</itemId>
+        <renewable value="xxx" />
+        <onHold value="xxx" />
+        <enumAndChron>$enumAndChronForItem</enumAndChron>
+        <midspine>xxx</midspine>
+        <temporaryLocation>$temporaryLocation</temporaryLocation>
+      </circulation>];
+    $xml =~ s/^/    /gm;
+    return $xml;
+}
+
+
+sub _format {
+    my($holding) = @_;
+    return 'xxxx format';
+}
+
+
+sub _location {
+    my($data) = @_;
+
+    my $s = '';
+    foreach my $key (qw(institution campus library primaryServicePointObject)) {
+	warn 'checking key $key';
+    }
+    return $s;
 }
 
 
