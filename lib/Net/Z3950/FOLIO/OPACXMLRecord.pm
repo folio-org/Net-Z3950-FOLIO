@@ -69,7 +69,7 @@ sub _makeSingleHoldingsRecord {
     my $format = _format($holding);
     my $localLocation = 'xxxx';
     my $shelvingLocation = 'xxxx';
-    my $callNumber = $holding->{callNumber};
+    my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
     # In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
 
     my $items = _makeItemRecords($holding->{holdingsItems});
