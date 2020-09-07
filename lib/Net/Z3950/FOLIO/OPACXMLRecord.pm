@@ -15,7 +15,7 @@ sub makeOPACXMLRecord {
     # Indent to fit into the record nicely
     $marcXML =~ s/^/    /gm;
 
-    my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2});
+    my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
     my $holdingsRecords = join('\n', @$holdings);
 
     return qq[<opacRecord>
@@ -30,8 +30,8 @@ $marcXML
 }
 
 sub _makeHoldingsRecords {
-    my($holdings) = @_;
-    return [ map { _makeSingleHoldingsRecord($_) } @$holdings ];
+    my($holdings, $marc) = @_;
+    return [ map { _makeSingleHoldingsRecord($_, $marc) } @$holdings ];
 }
 
 # 
@@ -63,11 +63,11 @@ sub _makeHoldingsRecords {
 #	temporaryLocation (overrides shelvingLocation)
 
 sub _makeSingleHoldingsRecord {
-    my($holding) = @_;
+    my($holding, $marc) = @_;
 
     my $effectiveLocation = $holding->{permanentLocation};
 
-    my $format = _format($holding);
+    my $format = _format($holding, $marc);
     my $nucCode = '';
     my $localLocation = '';
     my $shelvingLocation = '';
@@ -150,9 +150,18 @@ sub _makeSingleItemRecord {
 }
 
 
+# We _could_ make an attempt to get a holdings-level format, but to do
+# that we would need to have mod-graphql expand the the
+# `holdingsTypeId` field into a holdings-type object, and somehow
+# interpret a field from within that structure into the MARC 007/0-1
+# controlled vocabulary. That's a lot of work for little gain, so we
+# just use the information from the MARC record.
+
 sub _format {
-    my($holding) = @_;
-    return 'xxxx format';
+    my($holding, $marc) = @_;
+
+    my $field007 = $marc->field('007')->data();
+    return substr($field007, 0, 2);
 }
 
 

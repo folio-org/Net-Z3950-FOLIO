@@ -18,16 +18,22 @@
 use strict;
 use warnings;
 use IO::File;
+use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
 use Test::More tests => 3;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
 
+# Values taken from some random USMARC record
+my $dummyMarc = new MARC::Record();
+$dummyMarc->leader('03101cam a2200505Ii 4500');
+$dummyMarc->append_fields(new MARC::Field('007', 'cr cnu---unuuu'));
+
 for (my $i = 1; $i <= 2; $i++) {
     my $expected = readFile("t/data/expectedOutput$i.xml");
     my $folioJson = readFile("t/data/input$i.json");
     my $folioHoldings = decode_json($folioJson);
-    my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::_makeSingleHoldingsRecord($folioHoldings);
+    my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::_makeSingleHoldingsRecord($folioHoldings, $dummyMarc);
     is($holdingsXml, $expected, "generated holdings $i match expected XML");
 }
 
