@@ -22,7 +22,7 @@
     {
       "accessionNumber": null,
       "barcode": "",
-      "chronology": null,
+      "chronology": "March",
       "copyNumber": "1",
       "descriptionOfPieces": null,
       "discoverySuppress": null,
@@ -35,9 +35,9 @@
           "uri": "https://ezproxy.simmons.edu/login?url=http://www.jstor.org/stable/10.2307/j.ctt24hc08"
         }
       ],
-      "enumeration": "42",
+      "enumeration": "3",
       "formerIds": [],
-      "hrid": "item12345",
+      "hrid": "i2036897",
       "id": "69746298-a428-11ea-b7fc-94e55e224816",
       "inTransitDestinationServicePointId": null,
       "itemDamagedStatusDate": null,
@@ -67,69 +67,10 @@
       "permanentLocationId": null,
       "statisticalCodeIds": [],
       "status": {
-        "name": "Missing"
+        "name": "Available"
       },
       "temporaryLoanTypeId": null,
-      "temporaryLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
-      "temporaryLocation": {
-        "campus": {
-          "code": "SIMC",
-          "id": "ad802880-d3c1-47ea-84d9-5f6574ec72a2",
-          "institutionId": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
-          "name": "Main Campus"
-        },
-        "campusId": "ad802880-d3c1-47ea-84d9-5f6574ec72a2",
-        "code": "elere",
-        "description": null,
-        "discoveryDisplayName": "Online Library Resources",
-        "id": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
-        "institution": {
-          "code": "SIM",
-          "id": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
-          "name": "Simmons University"
-        },
-        "institutionId": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
-        "isActive": true,
-        "library": {
-          "code": "SIM",
-          "id": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
-          "name": "Simmons University Library"
-        },
-        "libraryId": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
-        "metadata": {
-          "createdByUserId": "7a16958e-af23-5002-8191-d7a96f5f8070",
-          "createdByUsername": null,
-          "createdDate": "2020-06-01T16:29:19.798+0000",
-          "updatedByUserId": "7a16958e-af23-5002-8191-d7a96f5f8070",
-          "updatedByUsername": null,
-          "updatedDate": "2020-06-01T16:29:19.798+0000"
-        },
-        "name": "Online Library Resources",
-        "primaryServicePoint": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
-        "primaryServicePointObject": {
-          "code": "Online",
-          "description": null,
-          "discoveryDisplayName": "Online",
-          "id": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
-          "name": "Online",
-          "pickupLocation": false,
-          "shelvingLagTime": 0
-        },
-        "servicePointIds": [
-          "7c5abc9f-f3d7-4856-b8d7-6712462ca007"
-        ],
-        "servicePoints": [
-          {
-            "code": "Online",
-            "description": null,
-            "discoveryDisplayName": "Online",
-            "id": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
-            "name": "Online",
-            "pickupLocation": false,
-            "shelvingLagTime": 0
-          }
-        ]
-      },
+      "temporaryLocationId": null,
       "volume": "",
       "yearCaption": []
     }
@@ -145,7 +86,65 @@
   "metadata": null,
   "notes": [],
   "numberOfItems": null,
-  "permanentLocation": null,
+  "permanentLocation": {
+    "campus": {
+      "code": "SIMC",
+      "id": "ad802880-d3c1-47ea-84d9-5f6574ec72a2",
+      "institutionId": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
+      "name": "Main Campus"
+    },
+    "campusId": "ad802880-d3c1-47ea-84d9-5f6574ec72a2",
+    "code": "elere",
+    "description": null,
+    "discoveryDisplayName": "Online Library Resources",
+    "id": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
+    "institution": {
+      "code": "SIM",
+      "id": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
+      "name": "Simmons University"
+    },
+    "institutionId": "abc7866d-e53f-4da1-bcc0-84535a9a832e",
+    "isActive": true,
+    "library": {
+      "code": "SIM",
+      "id": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
+      "name": "Simmons University Library"
+    },
+    "libraryId": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
+    "metadata": {
+      "createdByUserId": "7a16958e-af23-5002-8191-d7a96f5f8070",
+      "createdByUsername": null,
+      "createdDate": "2020-06-01T16:29:19.798+0000",
+      "updatedByUserId": "7a16958e-af23-5002-8191-d7a96f5f8070",
+      "updatedByUsername": null,
+      "updatedDate": "2020-06-01T16:29:19.798+0000"
+    },
+    "name": "Online Library Resources",
+    "primaryServicePoint": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
+    "primaryServicePointObject": {
+      "code": "Online",
+      "description": null,
+      "discoveryDisplayName": "Online",
+      "id": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
+      "name": "Online",
+      "pickupLocation": false,
+      "shelvingLagTime": 0
+    },
+    "servicePointIds": [
+      "7c5abc9f-f3d7-4856-b8d7-6712462ca007"
+    ],
+    "servicePoints": [
+      {
+        "code": "Online",
+        "description": null,
+        "discoveryDisplayName": "Online",
+        "id": "7c5abc9f-f3d7-4856-b8d7-6712462ca007",
+        "name": "Online",
+        "pickupLocation": false,
+        "shelvingLagTime": 0
+      }
+    ]
+  },
   "permanentLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
   "receiptStatus": null,
   "receivingHistory": null,

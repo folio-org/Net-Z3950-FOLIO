@@ -19,15 +19,17 @@ use strict;
 use warnings;
 use IO::File;
 use Cpanel::JSON::XS qw(decode_json);
-use Test::More tests => 2;
+use Test::More tests => 3;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
 
-my $expected = readFile('t/data/expectedOpacHoldings.xml');
-my $folioJson = readFile('t/data/folioHoldings.json');
-my $folioHoldings = decode_json($folioJson);
-my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::_makeSingleHoldingsRecord($folioHoldings);
-is($holdingsXml, $expected, 'generated holdings match expected XML');
+for (my $i = 1; $i <= 2; $i++) {
+    my $expected = readFile("t/data/expectedOutput$i.xml");
+    my $folioJson = readFile("t/data/input$i.json");
+    my $folioHoldings = decode_json($folioJson);
+    my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::_makeSingleHoldingsRecord($folioHoldings);
+    is($holdingsXml, $expected, "generated holdings $i match expected XML");
+}
 
 
 sub readFile {
