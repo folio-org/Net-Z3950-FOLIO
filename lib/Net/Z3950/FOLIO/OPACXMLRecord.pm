@@ -67,8 +67,15 @@ sub _makeSingleHoldingsRecord {
     my $effectiveLocation = $holding->{permanentLocation};
 
     my $format = _format($holding);
-    my $localLocation = 'xxxx';
-    my $shelvingLocation = 'xxxx';
+    my $nucCode = '';
+    my $localLocation = '';
+    my $shelvingLocation = '';
+    my $location = $holding->{temporaryLocation} || $holding->{permanentLocation};
+    if ($location) {
+	$nucCode = ($location->{institution} || {})->{name};
+	$localLocation = ($location->{campus} || {})->{name};
+	$shelvingLocation = ($location->{library} || {})->{name};
+    }
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
     # In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
 
@@ -84,7 +91,7 @@ sub _makeSingleHoldingsRecord {
         <generalRetention>xxx</generalRetention>
         <completeness>xxx</completeness>
         <dateOfReport>xxx</dateOfReport>
-        <nucCode>xxx</nucCode>
+        <nucCode>$nucCode</nucCode>
         <localLocation>$localLocation</localLocation>
         <shelvingLocation>$shelvingLocation</shelvingLocation>
         <callNumber>$callNumber</callNumber>

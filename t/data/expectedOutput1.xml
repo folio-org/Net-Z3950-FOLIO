@@ -6,9 +6,9 @@
       <generalRetention>xxx</generalRetention>
       <completeness>xxx</completeness>
       <dateOfReport>xxx</dateOfReport>
-      <nucCode>xxx</nucCode>
-      <localLocation>xxxx</localLocation>
-      <shelvingLocation>xxxx</shelvingLocation>
+      <nucCode></nucCode>
+      <localLocation></localLocation>
+      <shelvingLocation></shelvingLocation>
       <callNumber>G1046.C3 .L56 2009eb</callNumber>
       <shelvingData>xxx</shelvingData>
       <copyNumber>xxx</copyNumber>
