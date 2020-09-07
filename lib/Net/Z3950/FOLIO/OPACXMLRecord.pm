@@ -69,9 +69,8 @@ sub _makeSingleHoldingsRecord {
     my $format = _format($holding);
     my $localLocation = 'xxxx';
     my $shelvingLocation = 'xxxx';
-    my $callNumber = 'xxxx';
-    my $enumAndChron = 'xxxx';
-    my $enumAndChronForVolume = 'xxxx';
+    my $callNumber = $holding->{callNumber};
+    # In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
 
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
@@ -94,14 +93,6 @@ sub _makeSingleHoldingsRecord {
         <publicNote>xxx</publicNote>
         <reproductionNote>xxx</reproductionNote>
         <termsUseRepro>xxx</termsUseRepro>
-        <enumAndChron>$enumAndChron</enumAndChron>
-        <volumes>
-          <volume>
-            <enumeration>xxx</enumeration>
-            <chronology>xxx</chronology>
-            <enumAndChron>$enumAndChronForVolume</enumAndChron>
-          </volume>
-        </volumes>
         <circulations>
           $itemRecords
         </circulations>
