@@ -107,7 +107,7 @@ sub _makeSingleHoldingsRecord {
         </circulations>
       </holding>
 ];
-    $xml =~ s/^\n//s; // trim leading newline
+    $xml =~ s/^\n//s; # trim leading newline
     $xml =~ s/^  //gm;
     return $xml;
 }
@@ -123,10 +123,13 @@ sub _makeSingleItemRecord {
     my($item) = @_;
 
     my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
-    my $availabilityDate = ''; # XXX This information is not in the FOLIO inventory data
-    my $availableThru = ''; # XXX This information is not in the FOLIO inventory data
+    my $availabilityDate = ''; # This information is not in the FOLIO inventory data
+    my $availableThru = ''; # This information is not in the FOLIO inventory data
     my $itemId = $item->{hrid};
-    my $enumAndChronForItem = ($item->{enumeration} || '') . ' ' . ($item->{chronology} || '');
+    my @tmp;
+    push @tmp, $item->{enumeration} if $item->{enumeration};
+    push @tmp, $item->{chronology} if $item->{chronology};
+    my $enumAndChronForItem = join(' ', @tmp);
     my $tl = $item->{temporaryLocation};
     my $temporaryLocation = $tl ? _makeLocation($tl) : '';
 
@@ -154,14 +157,14 @@ sub _format {
 }
 
 
-sub _location {
+sub _makeLocation {
     my($data) = @_;
 
-    my $s = '';
+    my @tmp;
     foreach my $key (qw(institution campus library primaryServicePointObject)) {
-	warn 'checking key $key';
+	push @tmp, $data->{$key}->{name} if $data->{$key};
     }
-    return $s;
+    return join('/', @tmp);
 }
 
 
