@@ -4,7 +4,8 @@ use strict;
 use warnings;
 
 sub makeOPACXMLRecord {
-    my($ihi, $marcXML) = @_;
+    my($ihi, $marc) = @_;
+    my $marcXML = $marc->as_xml_record();
 
     # The first line of $marcXML is an XML declaration, and there
     # seems to be no way to have MARC::File::XML omit this, so we just

@@ -267,8 +267,7 @@ sub _fetch_handler {
 	# OPAC-format XML made from SRS Marc record and inventory availability data
 	warn "OPAC-format XML";
 	my $marc = $this->_marc_record($rs, $index1);
-	my $xml = $marc->as_xml_record();
-	$res = makeOPACXMLRecord($rec, $xml);
+	$res = makeOPACXMLRecord($rec, $marc);
     } elsif ($format eq '1.2.840.10003.5.102') {
 	# OPAC
 	_throw(1, "OPAC format not yet supported");
