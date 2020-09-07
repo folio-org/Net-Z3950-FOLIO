@@ -34,7 +34,7 @@ sub _makeHoldingsRecords {
     return [ map { _makeSingleHoldingsRecord($_, $marc) } @$holdings ];
 }
 
-# 
+ 
 # The YAZ XML format for OPAC records is a fairly close representation
 # of the Z39.50 OPAC record, which is specified by the ASN.1 at
 # https://www.loc.gov/z3950/agency/asn1.html#RecordSyntax-opac
@@ -51,7 +51,7 @@ sub _makeHoldingsRecords {
 # Based on the document "z39.50 OPAC response examples for Cornell"
 # attached to UXPROD-560, it seems like the key elements to fill in
 # are:
-#	format (which is difficult to figure out)
+#	format
 #	localLocation
 #	shelvingLocation
 #	callNumber
