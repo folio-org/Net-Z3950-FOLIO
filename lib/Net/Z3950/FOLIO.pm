@@ -258,7 +258,6 @@ sub _fetch_handler {
 	warn "Static USMARC from SRS";
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
-	$args->{COMP} = 'f'; # XXX
     } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
 	my $marc = $this->_marc_record($rs, $index1);
