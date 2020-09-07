@@ -122,8 +122,8 @@ sub _makeSingleItemRecord {
     my($item) = @_;
 
     my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
-    my $availabilityDate = ''; # This information is not in the FOLIO inventory data
-    my $availableThru = ''; # This information is not in the FOLIO inventory data
+    my $availabilityDate = 'xxx1a'; # This information is not in the FOLIO inventory data
+    my $availableThru = 'xxx1b'; # This information is not in the FOLIO inventory data
     my $itemId = $item->{hrid};
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
@@ -137,12 +137,12 @@ sub _makeSingleItemRecord {
         <availableNow value="$availableNow" />
         <availabilityDate>$availabilityDate</availabilityDate>
         <availableThru>$availableThru</availableThru>
-        <restrictions>xxx</restrictions>
+        <restrictions>xxx2</restrictions>
         <itemId>$itemId</itemId>
-        <renewable value="xxx" />
-        <onHold value="xxx" />
+        <renewable value="xxx3" />
+        <onHold value="xxx5" />
         <enumAndChron>$enumAndChronForItem</enumAndChron>
-        <midspine>xxx</midspine>
+        <midspine>xxx4</midspine>
         <temporaryLocation>$temporaryLocation</temporaryLocation>
       </circulation>];
     $xml =~ s/^/    /gm;
