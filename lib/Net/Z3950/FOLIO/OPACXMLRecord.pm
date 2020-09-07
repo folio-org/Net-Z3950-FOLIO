@@ -83,24 +83,36 @@ sub _makeSingleHoldingsRecord {
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
 
+    my $typeOfRecord = 'xxx';
+    my $encodingLevel = 'xxx';
+    my $receiptAcqStatus = 'xxx';
+    my $generalRetention = 'xxx';
+    my $completeness = 'xxx';
+    my $dateOfReport = 'xxx';
+    my $shelvingData = 'xxx';
+    my $copyNumber = 'xxx';
+    my $publicNote = 'xxx';
+    my $reproductionNote = 'xxx';
+    my $termsUseRepro= 'xxx';
+
     my $xml = qq[
       <holding>
-        <typeOfRecord>xxx</typeOfRecord>
-        <encodingLevel>xxx</encodingLevel>
+        <typeOfRecord>$typeOfRecord</typeOfRecord>
+        <encodingLevel>$encodingLevel</encodingLevel>
         <format>$format</format>
-        <receiptAcqStatus>xxx</receiptAcqStatus>
-        <generalRetention>xxx</generalRetention>
-        <completeness>xxx</completeness>
-        <dateOfReport>xxx</dateOfReport>
+        <receiptAcqStatus>$receiptAcqStatus</receiptAcqStatus>
+        <generalRetention>$generalRetention</generalRetention>
+        <completeness>$completeness</completeness>
+        <dateOfReport>$dateOfReport</dateOfReport>
         <nucCode>$nucCode</nucCode>
         <localLocation>$localLocation</localLocation>
         <shelvingLocation>$shelvingLocation</shelvingLocation>
         <callNumber>$callNumber</callNumber>
-        <shelvingData>xxx</shelvingData>
-        <copyNumber>xxx</copyNumber>
-        <publicNote>xxx</publicNote>
-        <reproductionNote>xxx</reproductionNote>
-        <termsUseRepro>xxx</termsUseRepro>
+        <shelvingData>$shelvingData</shelvingData>
+        <copyNumber>$copyNumber</copyNumber>
+        <publicNote>$publicNote</publicNote>
+        <reproductionNote>$reproductionNote</reproductionNote>
+        <termsUseRepro>$termsUseRepro</termsUseRepro>
         <circulations>
           $itemRecords
         </circulations>
