@@ -149,7 +149,7 @@ sub _makeSingleItemRecord {
 
     my $restrictions = 'xxx2'; # Can be inferred from some values of status
     my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
-    my $onHold = 'xxx5'; # Can be determined by a separate WSAPI call
+    my $onHold = _makeOnHold($item);
     my $midspine = 'xxx4'; # Will be added in UIIN-220 but doesn't exist yet
 
     my $xml = qq[
@@ -193,6 +193,19 @@ sub _makeLocation {
 	push @tmp, $data->{$key}->{name} if $data->{$key};
     }
     return join('/', @tmp);
+}
+
+
+# Items don't know whether they are on hold, but the requests module
+# does. We can discover this by another request (or, more likely, by
+# having mod-graphql include the results of another request). The
+# relevant WSAPI is documented at
+# https://github.com/folio-org/mod-circulation/blob/cab5ab44a3383bad938f33ad616fb0ef1244e67a/ramls/circulation.raml#L278
+#
+sub _makeOnHold {
+    my($item) = @_;
+
+    return 'xxx5'; # For now
 }
 
 
