@@ -134,8 +134,11 @@ sub _makeSingleItemRecord {
     my($item) = @_;
 
     my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
-    my $availabilityDate = 'xxx1a'; # This information is not in the FOLIO inventory data
-    my $availableThru = 'xxx1b'; # This information is not in the FOLIO inventory data
+    # Availability Date and Thru are not in the FOLIO inventory
+    # data. It may be possible to derive them from Loan Date and Due
+    # Date, which are in mod-circulation.
+    my $availabilityDate = 'xxx1a';
+    my $availableThru = 'xxx1b';
     my $itemId = $item->{hrid};
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
@@ -144,17 +147,22 @@ sub _makeSingleItemRecord {
     my $tl = $item->{temporaryLocation};
     my $temporaryLocation = $tl ? _makeLocation($tl) : '';
 
+    my $restrictions = 'xxx2'; # Can be inferred from some values of status
+    my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
+    my $onHold = 'xxx5'; # Can be determined by a separate WSAPI call
+    my $midspine = 'xxx4'; # Will be added in UIIN-220 but doesn't exist yet
+
     my $xml = qq[
       <circulation>
         <availableNow value="$availableNow" />
         <availabilityDate>$availabilityDate</availabilityDate>
         <availableThru>$availableThru</availableThru>
-        <restrictions>xxx2</restrictions>
+        <restrictions>$restrictions</restrictions>
         <itemId>$itemId</itemId>
-        <renewable value="xxx3" />
-        <onHold value="xxx5" />
+        <renewable value="$renewable" />
+        <onHold value="$onHold" />
         <enumAndChron>$enumAndChronForItem</enumAndChron>
-        <midspine>xxx4</midspine>
+        <midspine>$midspine</midspine>
         <temporaryLocation>$temporaryLocation</temporaryLocation>
       </circulation>];
     $xml =~ s/^/    /gm;
