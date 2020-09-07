@@ -83,17 +83,17 @@ sub _makeSingleHoldingsRecord {
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
 
-    my $typeOfRecord = 'xxx';
-    my $encodingLevel = 'xxx';
-    my $receiptAcqStatus = 'xxx';
-    my $generalRetention = 'xxx';
-    my $completeness = 'xxx';
-    my $dateOfReport = 'xxx';
-    my $shelvingData = 'xxx';
-    my $copyNumber = 'xxx';
-    my $publicNote = 'xxx';
-    my $reproductionNote = 'xxx';
-    my $termsUseRepro= 'xxx';
+    my $typeOfRecord = 'xxx'; # LDR 06
+    my $encodingLevel = 'xxx'; # LDR 017
+    my $receiptAcqStatus = 'xxx'; # 008 06
+    my $generalRetention = 'xxx'; # 008 12
+    my $completeness = 'xxx'; # 008 16
+    my $dateOfReport = 'xxx'; # 26-31
+    my $shelvingData = 'xxx'; # thru $m
+    my $copyNumber = 'xxx'; # 852 $t
+    my $publicNote = 'xxx'; # 852 $z
+    my $reproductionNote = 'xxx'; # OPTIONAL, -- 843
+    my $termsUseRepro= 'xxx'; # OPTIONAL, -- 845
 
     my $xml = qq[
       <holding>
