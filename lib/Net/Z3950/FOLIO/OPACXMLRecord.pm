@@ -34,7 +34,7 @@ sub _makeHoldingsRecords {
     return [ map { _makeSingleHoldingsRecord($_, $marc) } @$holdings ];
 }
 
- 
+
 # The YAZ XML format for OPAC records is a fairly close representation
 # of the Z39.50 OPAC record, which is specified by the ASN.1 at
 # https://www.loc.gov/z3950/agency/asn1.html#RecordSyntax-opac
@@ -61,13 +61,20 @@ sub _makeHoldingsRecords {
 #	availableThru
 #	itemId
 #	temporaryLocation (overrides shelvingLocation)
-
+#
+# In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
+# 
 sub _makeSingleHoldingsRecord {
     my($holding, $marc) = @_;
 
-    my $effectiveLocation = $holding->{permanentLocation};
-
+    my $typeOfRecord = 'xxx'; # LDR 06
+    my $encodingLevel = 'xxx'; # LDR 017
     my $format = _format($holding, $marc);
+    my $receiptAcqStatus = 'xxx'; # 008 06
+    my $generalRetention = 'xxx'; # 008 12
+    my $completeness = 'xxx'; # 008 16
+    my $dateOfReport = 'xxx'; # 26-31
+
     my $nucCode = '';
     my $localLocation = '';
     my $shelvingLocation = '';
@@ -77,23 +84,16 @@ sub _makeSingleHoldingsRecord {
 	$localLocation = ($location->{campus} || {})->{name};
 	$shelvingLocation = ($location->{library} || {})->{name};
     }
+
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
-    # In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
-
-    my $items = _makeItemRecords($holding->{holdingsItems});
-    my $itemRecords = join('\n', @$items);
-
-    my $typeOfRecord = 'xxx'; # LDR 06
-    my $encodingLevel = 'xxx'; # LDR 017
-    my $receiptAcqStatus = 'xxx'; # 008 06
-    my $generalRetention = 'xxx'; # 008 12
-    my $completeness = 'xxx'; # 008 16
-    my $dateOfReport = 'xxx'; # 26-31
     my $shelvingData = 'xxx'; # thru $m
     my $copyNumber = 'xxx'; # 852 $t
     my $publicNote = 'xxx'; # 852 $z
     my $reproductionNote = 'xxx'; # OPTIONAL, -- 843
     my $termsUseRepro= 'xxx'; # OPTIONAL, -- 845
+
+    my $items = _makeItemRecords($holding->{holdingsItems});
+    my $itemRecords = join('\n', @$items);
 
     my $xml = qq[
       <holding>
@@ -139,18 +139,19 @@ sub _makeSingleItemRecord {
     # Date, which are in mod-circulation.
     my $availabilityDate = 'xxx1a';
     my $availableThru = 'xxx1b';
+    my $restrictions = 'xxx2'; # Can be inferred from some values of status
     my $itemId = $item->{hrid};
+    my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
+    my $onHold = _makeOnHold($item);
+
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = join(' ', @tmp);
+
+    my $midspine = 'xxx4'; # Will be added in UIIN-220 but doesn't exist yet
     my $tl = $item->{temporaryLocation};
     my $temporaryLocation = $tl ? _makeLocation($tl) : '';
-
-    my $restrictions = 'xxx2'; # Can be inferred from some values of status
-    my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
-    my $onHold = _makeOnHold($item);
-    my $midspine = 'xxx4'; # Will be added in UIIN-220 but doesn't exist yet
 
     my $xml = qq[
       <circulation>
