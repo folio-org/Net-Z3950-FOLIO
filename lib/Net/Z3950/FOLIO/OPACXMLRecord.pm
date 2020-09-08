@@ -244,10 +244,24 @@ sub _makeAvailabilityDate {
 }
 
 
-# Available Thru is not in the FOLIO inventory data. It may become
-# possible to determine it in future, when the current item status
-# gets broken into three item statuses (availability status, process
-# status and needed-for status, but that will have to wait).
+# It's anyone's guess what the <availableThru> field even means. It's
+# included in the name, without comment, in the Z39.50 ASN.1 and in
+# the YAZ OPAC XML schema.
+#
+# * I first thought it meant "Date until which the item is guaranteed
+#   to remain available".
+# * Examples in the document "z39.50 OPAC response examples for
+#   Cornell" attached to UXPROD-560 suggests that it's the opaque
+#   identifier of a loan policy.
+# * A brief note in the document "Kuali OLE Z39.50 Integration -
+#   DRAFT" suggests it means "Library building location, or possibly
+#   access policy".
+#
+# Whatever it means, it is probably not in the FOLIO inventory
+# data. It may become possible to determine it in future, when the
+# current item status gets broken into three item statuses
+# (availability status, process status and needed-for status, but that
+# will have to wait).
 # See https://docs.google.com/presentation/d/11BE_G1o-yBNg1ki8HyaDTdmkrP03_cR7KGjiXQviwuQ/edit#slide=id.g8b76928899_0_0
 #
 sub _makeAvailableThru {
