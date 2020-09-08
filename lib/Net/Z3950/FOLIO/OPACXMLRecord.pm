@@ -86,7 +86,7 @@ sub _makeSingleHoldingsRecord {
     }
 
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
-    my $shelvingData = 'xxx'; # 852 $j thru $m
+    my $shelvingData = _makeShelvingData($holding);
     my $copyNumber = 'xxx'; # 852 $t
     my $publicNote = 'xxx'; # 852 $z
     my $reproductionNote = 'xxx'; # 843
@@ -121,6 +121,24 @@ sub _makeSingleHoldingsRecord {
     $xml =~ s/^\n//s; # trim leading newline
     $xml =~ s/^  //gm;
     return $xml;
+}
+
+
+# I don't really know what they want of me here. The "documentation",
+# found only in the OPAC record-format ASN-1, simply says "852 $j thru
+# $m". But these fields mostly just duplicate the call-number:
+#
+#	$j - Shelving control number (NR)
+#	$k - Call number prefix (R)
+#	$l - Shelving form of title (NR)
+#	$m - Call number suffix (R) 
+#
+# Since the only thing we have that is _not_ part of the call-number
+# is the shelving title, I guess we may as well return that.
+
+sub _makeShelvingData {
+    my($holding) = @_;
+    return $holding->{shelvingTitle} || '';
 }
 
 
