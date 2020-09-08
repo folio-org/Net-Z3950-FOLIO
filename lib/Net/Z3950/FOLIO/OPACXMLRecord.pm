@@ -172,7 +172,7 @@ sub _makeSingleItemRecord {
 
     my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
     my $availabilityDate = _makeAvailabilityDate($item);
-    my $availableThru = 'xxx1b'; # Apparently cannot be determined in FOLIO
+    my $availableThru = _makeAvailableThru($item);
     my $restrictions = _makeRestrictions($item);
     my $itemId = $item->{hrid};
     my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
@@ -245,10 +245,9 @@ sub _makeLocation {
 }
 
 
-# Availability Date (and Availabile Thru) are not in the FOLIO
-# inventory data. It should be possible to obtain the former as the
-# Due Date in mod-circulation, if we want to add the necessary extra
-# queries.
+# Availability Date is not in the FOLIO inventory data. It should be
+# possible to obtain it as the Due Date in mod-circulation, if we want
+# to add the necessary extra queries.
 #
 sub _makeAvailabilityDate {
     my($item) = @_;
@@ -256,6 +255,18 @@ sub _makeAvailabilityDate {
 }
 
 
+# Available Thru is not in the FOLIO inventory data. It may become
+# possible to determine it in future, when the current item status
+# gets broken into three item statuses (availability status, process
+# status and needed-for status, but that will have to wait).
+#
+sub _makeAvailableThru {
+    my($item) = @_;
+    return 'xxx1b'; # For now
+}
+
+
+# 
 # The restrictions, if any can be inferred from some values of
 # status. Charlotte says "I would say all of them except: Available,
 # and On order". She will check with out contacts at Lehigh.
