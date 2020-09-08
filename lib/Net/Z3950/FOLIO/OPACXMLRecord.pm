@@ -89,7 +89,7 @@ sub _makeSingleHoldingsRecord {
     my $shelvingData = _makeShelvingData($holding);
     my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
     my $publicNote = 'xxx'; # 852 $z
-    my $reproductionNote = 'xxx'; # 843
+    my $reproductionNote = _makeReproductionNote(); # 843
     my $termsUseRepro= 'xxx'; # 845
 
     my $items = _makeItemRecords($holding->{holdingsItems});
@@ -142,6 +142,25 @@ sub _makeShelvingData {
 }
 
 
+# I think this _can_ be done, but it would be an almighty pain. In the
+# FOLIO inventory model, instances, holdings records and items can all
+# have a set of zero or more notes, each of which has a note
+# type. These noe types are drawn from three separate vocabularies
+# (one each for instances, holdings records and items), each
+# maintained in the Settings rather than hardwired like identifier
+# types. Among these vocabularies, there may be (and in the sample
+# data there are) types called "Reproduction". So we could pick these
+# out -- presumably by referring to the note-type text rather than to
+# known UUIDS -- and pull out and notes of the appropriate type.
+#
+# But you know what? It ain't worf it, Wayne.
+#
+sub _makeReproductionNote {
+    my($holding) = @_;
+    return '';
+}
+
+ 
 sub _makeItemRecords {
     my($items) = @_;
     return [ map { _makeSingleItemRecord($_) } @$items ];
