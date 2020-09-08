@@ -88,8 +88,8 @@ sub _makeSingleHoldingsRecord {
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
     my $shelvingData = _makeShelvingData($holding);
     my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
-    my $publicNote = 'xxx'; # 852 $z
-    my $reproductionNote = _makeReproductionNote(); # 843
+    my $publicNote = _noteMatching($holding, qr/public/i); # 852 $z
+    my $reproductionNote = _noteMatching($holding, qr/reproduction/i); # 843
     my $termsUseRepro= 'xxx'; # 845
 
     my $items = _makeItemRecords($holding->{holdingsItems});
@@ -156,25 +156,27 @@ sub _makeShelvingData {
 }
 
 
-# I think this _can_ be done, but it would be an almighty pain. In the
-# FOLIO inventory model, instances, holdings records and items can all
-# have a set of zero or more notes, each of which has a note
-# type. These noe types are drawn from three separate vocabularies
+# In the FOLIO inventory model, instances, holdings records and items
+# can all have a set of zero or more notes, each of which has a note
+# type. These note types are drawn from three separate vocabularies
 # (one each for instances, holdings records and items), each
 # maintained in the Settings rather than hardwired like identifier
 # types. Among these vocabularies, there may be (and in the sample
-# data there are) types called "Reproduction". So we could pick these
-# out -- presumably by referring to the note-type text rather than to
-# known UUIDS -- and pull out and notes of the appropriate type.
+# data there are) types called "Reproduction" and "Public". So we can
+# pick these out by referring to the note-type text rather than to
+# known UUIDS -- and pull out the text of notes of the appropriate
+# type.
+# 
+# For this to work, though, we will need mod-graphql to populate the
+# note-type objects.
 #
-# But you know what? It ain't worf it, Wayne.
-#
-sub _makeReproductionNote {
-    my($holding) = @_;
-    return '';
+sub _noteMatching {
+    my($holding, $regexp) = @_;
+
+    return ''; # XXX for now
 }
 
- 
+
 sub _makeItemRecords {
     my($items) = @_;
     return [ map { _makeSingleItemRecord($_) } @$items ];
