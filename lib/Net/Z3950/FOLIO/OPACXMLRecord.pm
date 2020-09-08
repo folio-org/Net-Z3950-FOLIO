@@ -293,13 +293,4 @@ use Exporter qw(import);
 our @EXPORT_OK = qw(makeOPACXMLRecord);
 
 
-# XXX only for debugging
-sub _pretty_json {
-    my($obj) = @_;
-
-    my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->sort_by;
-    return $coder->encode($obj);
-}
-
-
 1;
