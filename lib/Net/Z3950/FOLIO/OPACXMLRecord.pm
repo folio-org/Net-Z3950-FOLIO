@@ -171,12 +171,9 @@ sub _makeSingleItemRecord {
     my($item) = @_;
 
     my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
-    # Availability Date and Thru are not in the FOLIO inventory
-    # data. It may be possible to derive them from Loan Date and Due
-    # Date, which are in mod-circulation.
-    my $availabilityDate = 'xxx1a';
-    my $availableThru = 'xxx1b';
-    my $restrictions = 'xxx2'; # Can be inferred from some values of status
+    my $availabilityDate = _makeAvailabilityDate($item);
+    my $availableThru = 'xxx1b'; # Apparently cannot be determined in FOLIO
+    my $restrictions = _makeRestrictions($item);
     my $itemId = $item->{hrid};
     my $renewable = 'xxx3'; # Incredibly complicated, involves loan policies
     my $onHold = _makeOnHold($item);
@@ -248,6 +245,27 @@ sub _makeLocation {
 }
 
 
+# Availability Date (and Availabile Thru) are not in the FOLIO
+# inventory data. It should be possible to obtain the former as the
+# Due Date in mod-circulation, if we want to add the necessary extra
+# queries.
+#
+sub _makeAvailabilityDate {
+    my($item) = @_;
+    return 'xxx1a'; # For now
+}
+
+
+# The restrictions, if any can be inferred from some values of
+# status. Charlotte says "I would say all of them except: Available,
+# and On order". She will check with out contacts at Lehigh.
+#
+sub _makeRestrictions {
+    my($item) = @_;
+    return 'xxx2'; # For now
+}
+
+
 # Items don't know whether they are on hold, but the requests module
 # does. We can discover this by another request (or, more likely, by
 # having mod-graphql include the results of another request). The
@@ -256,7 +274,6 @@ sub _makeLocation {
 #
 sub _makeOnHold {
     my($item) = @_;
-
     return 'xxx5'; # For now
 }
 
