@@ -259,6 +259,7 @@ sub _makeAvailabilityDate {
 # possible to determine it in future, when the current item status
 # gets broken into three item statuses (availability status, process
 # status and needed-for status, but that will have to wait).
+# See https://docs.google.com/presentation/d/11BE_G1o-yBNg1ki8HyaDTdmkrP03_cR7KGjiXQviwuQ/edit#slide=id.g8b76928899_0_0
 #
 sub _makeAvailableThru {
     my($item) = @_;
