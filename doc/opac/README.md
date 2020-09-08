@@ -6,3 +6,4 @@ This directory is about figuring out how to serve OPAC records. Files:
 * [`Makefile`](Makefile) -- a simple controller for running the XSD validator on the sample XML files.
 * [`supporting-opac-records.txt`](supporting-opac-records.txt) -- unstructured notes on how to build in the necessary support.
 
+See also https://docs.google.com/document/d/1xwjrscPFfoCDG6u4efasYn0yjPRZphv-xRpIJneEq0U/edit#
