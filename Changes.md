@@ -7,6 +7,7 @@
 
 * Write code to hand-transform FOLIO holidings-and-items XML into YAZ's format.
 * Configure `etc/yazgfs.xml` to return OPAC records based on this XML.
+* Accept username/password from environment variables.
 * Write `Dockerfile`.
 * Determine FOLIO tenant from database name (and postpone initialisation and authentication until we know that).
 * Write tests (ensuring query and record formats have not changed).
