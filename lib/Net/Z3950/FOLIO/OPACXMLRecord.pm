@@ -90,7 +90,7 @@ sub _makeSingleHoldingsRecord {
     my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
     my $publicNote = _noteMatching($holding, qr/public/i); # 852 $z
     my $reproductionNote = _noteMatching($holding, qr/reproduction/i); # 843
-    my $termsUseRepro= 'xxx'; # 845
+    my $termsUseRepro= _makeTermsUseRepro($marc); # 845
 
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
@@ -176,6 +176,18 @@ sub _noteMatching {
     return ''; # XXX for now
 }
 
+
+# The ASN.1 one relates this OPAC-record field to MARC field 845,
+# which is "Terms Governing Use and Reproduction Note". That field has
+# 13 subfields, and there is no guidance on which might be
+# relevant. The best we can do is probably just to glue them all
+# together.
+#
+sub _makeTermsUseRepro {
+    my($marc) = @_;
+
+    return 'xxx' # for now
+}
 
 sub _makeItemRecords {
     my($items) = @_;
