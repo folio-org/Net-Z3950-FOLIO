@@ -124,6 +124,20 @@ sub _makeSingleHoldingsRecord {
 }
 
 
+sub _marcFieldChars {
+    my($marc, $fieldName, $chars) = @_;
+    my $field = $marc->field($fieldName);
+    return undef if !$field;
+    my $data = $field->data();
+    return undef if !$data;
+
+    my @pieces = split(/-/, $chars);
+    my($start1, $end1) = @pieces;
+    $end1 = $start1 if !$end1;
+    return substr($data, $start1-1, $end1-$start1+1);
+}
+
+
 # I don't really know what they want of me here. The "documentation",
 # found only in the OPAC record-format ASN-1, simply says "852 $j thru
 # $m". But these fields mostly just duplicate the call-number:
@@ -205,20 +219,6 @@ sub _makeSingleItemRecord {
 }
 
 
-sub _marcFieldChars {
-    my($marc, $fieldName, $chars) = @_;
-    my $field = $marc->field($fieldName);
-    return undef if !$field;
-    my $data = $field->data();
-    return undef if !$data;
-
-    my @pieces = split(/-/, $chars);
-    my($start1, $end1) = @pieces;
-    $end1 = $start1 if !$end1;
-    return substr($data, $start1-1, $end1-$start1+1);
-}
-
-
 # We _could_ make an attempt to get a holdings-level format, but to do
 # that we would need to have mod-graphql expand the the
 # `holdingsTypeId` field into a holdings-type object, and somehow
@@ -231,17 +231,6 @@ sub _format {
 
     my $field007 = $marc->field('007')->data();
     return substr($field007, 0, 2);
-}
-
-
-sub _makeLocation {
-    my($data) = @_;
-
-    my @tmp;
-    foreach my $key (qw(institution campus library primaryServicePointObject)) {
-	push @tmp, $data->{$key}->{name} if $data->{$key};
-    }
-    return join('/', @tmp);
 }
 
 
@@ -267,8 +256,7 @@ sub _makeAvailableThru {
 }
 
 
-# 
-# The restrictions, if any can be inferred from some values of
+# The restrictions, if any, can be inferred from some values of
 # status. Charlotte says "I would say all of them except: Available,
 # and On order". She will check with out contacts at Lehigh.
 #
@@ -287,6 +275,17 @@ sub _makeRestrictions {
 sub _makeOnHold {
     my($item) = @_;
     return 'xxx5'; # For now
+}
+
+
+sub _makeLocation {
+    my($data) = @_;
+
+    my @tmp;
+    foreach my $key (qw(institution campus library primaryServicePointObject)) {
+	push @tmp, $data->{$key}->{name} if $data->{$key};
+    }
+    return join('/', @tmp);
 }
 
 
