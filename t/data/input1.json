@@ -50,18 +50,7 @@
       "metadata": null,
       "missingPieces": null,
       "missingPiecesDate": null,
-      "notes": [
-        {
-          "itemNoteType": {
-            "id": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
-            "name": "Note",
-            "source": "folio"
-          },
-          "itemNoteTypeId": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
-          "note": "Online",
-          "staffOnly": false
-        }
-      ],
+      "notes": [],
       "numberOfMissingPieces": null,
       "numberOfPieces": null,
       "permanentLocationId": null,
@@ -143,7 +132,18 @@
   "illPolicyId": null,
   "instanceId": "2ff48cb6-a41c-11ea-8d99-9ee25e224816",
   "metadata": null,
-  "notes": [],
+  "notes": [
+    {
+      "itemNoteType": {
+        "id": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
+        "name": "Note",
+        "source": "folio"
+      },
+      "itemNoteTypeId": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
+      "note": "Online",
+      "staffOnly": false
+    }
+  ],
   "numberOfItems": null,
   "permanentLocation": null,
   "permanentLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
