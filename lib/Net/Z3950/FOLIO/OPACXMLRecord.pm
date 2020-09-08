@@ -63,17 +63,17 @@ sub _makeHoldingsRecords {
 #	temporaryLocation (overrides shelvingLocation)
 #
 # In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
-# 
+#
 sub _makeSingleHoldingsRecord {
     my($holding, $marc) = @_;
 
-    my $typeOfRecord = 'xxx'; # LDR 06
-    my $encodingLevel = 'xxx'; # LDR 017
+    my $typeOfRecord = substr($marc->leader(), 5, 1); # LDR 06
+    my $encodingLevel = substr($marc->leader(), 16, 1); # LDR 017
     my $format = _format($holding, $marc);
-    my $receiptAcqStatus = 'xxx'; # 008 06
-    my $generalRetention = 'xxx'; # 008 12
-    my $completeness = 'xxx'; # 008 16
-    my $dateOfReport = 'xxx'; # 26-31
+    my $receiptAcqStatus = _marcFieldChars($marc, '008', '06') || '';
+    my $generalRetention = _marcFieldChars($marc, '008', '12') || '';
+    my $completeness = _marcFieldChars($marc, '008', '16') || '';
+    my $dateOfReport = _marcFieldChars($marc, '008', '26-31') || '';
 
     my $nucCode = '';
     my $localLocation = '';
@@ -86,11 +86,11 @@ sub _makeSingleHoldingsRecord {
     }
 
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
-    my $shelvingData = 'xxx'; # thru $m
+    my $shelvingData = 'xxx'; # 852 $j thru $m
     my $copyNumber = 'xxx'; # 852 $t
     my $publicNote = 'xxx'; # 852 $z
-    my $reproductionNote = 'xxx'; # OPTIONAL, -- 843
-    my $termsUseRepro= 'xxx'; # OPTIONAL, -- 845
+    my $reproductionNote = 'xxx'; # 843
+    my $termsUseRepro= 'xxx'; # 845
 
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
@@ -168,6 +168,20 @@ sub _makeSingleItemRecord {
       </circulation>];
     $xml =~ s/^/    /gm;
     return $xml;
+}
+
+
+sub _marcFieldChars {
+    my($marc, $fieldName, $chars) = @_;
+    my $field = $marc->field($fieldName);
+    return undef if !$field;
+    my $data = $field->data();
+    return undef if !$data;
+
+    my @pieces = split(/-/, $chars);
+    my($start1, $end1) = @pieces;
+    $end1 = $start1 if !$end1;
+    return substr($data, $start1-1, $end1-$start1+1);
 }
 
 

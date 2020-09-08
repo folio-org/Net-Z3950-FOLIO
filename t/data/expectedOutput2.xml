@@ -1,11 +1,11 @@
     <holding>
-      <typeOfRecord>xxx</typeOfRecord>
-      <encodingLevel>xxx</encodingLevel>
+      <typeOfRecord>c</typeOfRecord>
+      <encodingLevel>5</encodingLevel>
       <format>cr</format>
-      <receiptAcqStatus>xxx</receiptAcqStatus>
-      <generalRetention>xxx</generalRetention>
-      <completeness>xxx</completeness>
-      <dateOfReport>xxx</dateOfReport>
+      <receiptAcqStatus>6</receiptAcqStatus>
+      <generalRetention>2</generalRetention>
+      <completeness>6</completeness>
+      <dateOfReport>678901</dateOfReport>
       <nucCode>Simmons University</nucCode>
       <localLocation>Main Campus</localLocation>
       <shelvingLocation>Simmons University Library</shelvingLocation>

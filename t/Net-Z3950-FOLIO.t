@@ -28,6 +28,7 @@ use Net::Z3950::FOLIO::OPACXMLRecord;
 my $dummyMarc = new MARC::Record();
 $dummyMarc->leader('03101cam a2200505Ii 4500');
 $dummyMarc->append_fields(new MARC::Field('007', 'cr cnu---unuuu'));
+$dummyMarc->append_fields(new MARC::Field('008', '1234567890123456789012345678901'));
 
 for (my $i = 1; $i <= 2; $i++) {
     my $expected = readFile("t/data/expectedOutput$i.xml");
