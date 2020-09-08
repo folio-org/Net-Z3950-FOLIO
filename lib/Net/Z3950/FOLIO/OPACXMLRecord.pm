@@ -87,7 +87,7 @@ sub _makeSingleHoldingsRecord {
 
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
     my $shelvingData = _makeShelvingData($holding);
-    my $copyNumber = 'xxx'; # 852 $t
+    my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
     my $publicNote = 'xxx'; # 852 $z
     my $reproductionNote = 'xxx'; # 843
     my $termsUseRepro= 'xxx'; # 845
