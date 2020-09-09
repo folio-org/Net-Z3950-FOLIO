@@ -95,32 +95,52 @@ sub _makeSingleHoldingsRecord {
     my $items = _makeItemRecords($holding->{holdingsItems});
     my $itemRecords = join('\n', @$items);
 
-    my $xml = qq[
-      <holding>
-        <typeOfRecord>$typeOfRecord</typeOfRecord>
-        <encodingLevel>$encodingLevel</encodingLevel>
-        <format>$format</format>
-        <receiptAcqStatus>$receiptAcqStatus</receiptAcqStatus>
-        <generalRetention>$generalRetention</generalRetention>
-        <completeness>$completeness</completeness>
-        <dateOfReport>$dateOfReport</dateOfReport>
-        <nucCode>$nucCode</nucCode>
-        <localLocation>$localLocation</localLocation>
-        <shelvingLocation>$shelvingLocation</shelvingLocation>
-        <callNumber>$callNumber</callNumber>
-        <shelvingData>$shelvingData</shelvingData>
-        <copyNumber>$copyNumber</copyNumber>
-        <publicNote>$publicNote</publicNote>
-        <reproductionNote>$reproductionNote</reproductionNote>
-        <termsUseRepro>$termsUseRepro</termsUseRepro>
-        <circulations>
-$itemRecords
-        </circulations>
-      </holding>
-];
-    $xml =~ s/^\n//s; # trim leading newline
-    $xml =~ s/^  //gm;
-    return $xml;
+#    my $xml = qq[
+#      <holding>
+#        <typeOfRecord>$typeOfRecord</typeOfRecord>
+#        <encodingLevel>$encodingLevel</encodingLevel>
+#        <format>$format</format>
+#        <receiptAcqStatus>$receiptAcqStatus</receiptAcqStatus>
+#        <generalRetention>$generalRetention</generalRetention>
+#        <completeness>$completeness</completeness>
+#        <dateOfReport>$dateOfReport</dateOfReport>
+#        <nucCode>$nucCode</nucCode>
+#        <localLocation>$localLocation</localLocation>
+#        <shelvingLocation>$shelvingLocation</shelvingLocation>
+#        <callNumber>$callNumber</callNumber>
+#        <shelvingData>$shelvingData</shelvingData>
+#        <copyNumber>$copyNumber</copyNumber>
+#        <publicNote>$publicNote</publicNote>
+#        <reproductionNote>$reproductionNote</reproductionNote>
+#        <termsUseRepro>$termsUseRepro</termsUseRepro>
+#        <circulations>
+#$itemRecords
+#        </circulations>
+#      </holding>
+#];
+#    $xml =~ s/^\n//s; # trim leading newline
+#    $xml =~ s/^  //gm;
+#    return $xml;
+
+    return _makeXMLElement(4, 'holding', (
+        [ 'typeOfRecord', $typeOfRecord ],
+        [ 'encodingLevel', $encodingLevel ],
+        [ 'format', $format ],
+        [ 'receiptAcqStatus', $receiptAcqStatus ],
+        [ 'generalRetention', $generalRetention ],
+        [ 'completeness', $completeness ],
+        [ 'dateOfReport', $dateOfReport ],
+        [ 'nucCode', $nucCode ],
+        [ 'localLocation', $localLocation ],
+        [ 'shelvingLocation', $shelvingLocation ],
+        [ 'callNumber', $callNumber ],
+        [ 'shelvingData', $shelvingData ],
+        [ 'copyNumber', $copyNumber ],
+        [ 'publicNote', $publicNote ],
+        [ 'reproductionNote', $reproductionNote ],
+        [ 'termsUseRepro', $termsUseRepro ],
+        [ 'circulations', $itemRecords, undef, 1 ],
+    ));
 }
 
 
@@ -213,7 +233,7 @@ sub _makeSingleItemRecord {
     my $tl = $item->{temporaryLocation};
     my $temporaryLocation = $tl ? _makeLocation($tl) : '';
 
-    return _makeXMLElement(10, 'circulation', (
+    return _makeXMLElement(8, 'circulation', (
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
@@ -323,19 +343,22 @@ sub _makeLocation {
 sub _makeXMLElement {
     my($indentLevel, $elementName, @elements) = @_;
 
-    my $xml = (' ' x $indentLevel) . "<$elementName>\n";
+    my $indent = ' ' x $indentLevel;
+    my $xml = "$indent<$elementName>\n";
     foreach my $element (@elements) {
-	my($name, $value, $attr) = @$element;
+	my($name, $value, $attr, $newline) = @$element;
 	my $added;
 	if ($attr) {
 	    $added = qq[<$name $attr="$value" />\n];
-	} else {
+	} elsif (!$newline) {
 	    $added = qq[<$name>$value</$name>\n];
+	} else {
+	    $added = qq[<$name>\n$value$indent  </$name>\n];
 	}
 	# warn "name=$name, value=$value, attr=$attr, added=$added";
-	$xml .= (' ' x ($indentLevel+2)) . $added;
+	$xml .= "$indent  $added";
     }
-    $xml .= (' ' x $indentLevel) . "</$elementName>";
+    $xml .= "$indent</$elementName>\n";
 }
 
 
