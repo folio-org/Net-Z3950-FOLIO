@@ -156,6 +156,11 @@ query($cql: String, $offset: Int, $limit: Int) {
           updatedDate
         }
         notes {
+          holdingsNoteType {
+            id
+            name
+            source
+          }
           holdingsNoteTypeId
           note
           staffOnly
