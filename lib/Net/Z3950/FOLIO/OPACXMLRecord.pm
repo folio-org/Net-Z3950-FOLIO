@@ -67,14 +67,6 @@ sub _makeHoldingsRecords {
 sub _makeSingleHoldingsRecord {
     my($holding, $marc) = @_;
 
-    my $typeOfRecord = substr($marc->leader(), 5, 1); # LDR 06
-    my $encodingLevel = substr($marc->leader(), 16, 1); # LDR 017
-    my $format = _format($holding, $marc);
-    my $receiptAcqStatus = _marcFieldChars($marc, '008', '06') || '';
-    my $generalRetention = _marcFieldChars($marc, '008', '12') || '';
-    my $completeness = _marcFieldChars($marc, '008', '16') || '';
-    my $dateOfReport = _marcFieldChars($marc, '008', '26-31') || '';
-
     my $nucCode = '';
     my $localLocation = '';
     my $shelvingLocation = '';
@@ -85,61 +77,27 @@ sub _makeSingleHoldingsRecord {
 	$shelvingLocation = ($location->{library} || {})->{name};
     }
 
-    my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
-    my $shelvingData = _makeShelvingData($holding);
-    my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
-    my $publicNote = _noteOfType($holding->{notes}, qr/public/i); # 852 $z
-    my $reproductionNote = _noteOfType($holding->{notes}, qr/reproduction/i); # 843
-    my $termsUseRepro= _makeTermsUseRepro($marc); # 845
-
     my $items = _makeItemRecords($holding->{holdingsItems});
-    my $itemRecords = join('\n', @$items);
-
-#    my $xml = qq[
-#      <holding>
-#        <typeOfRecord>$typeOfRecord</typeOfRecord>
-#        <encodingLevel>$encodingLevel</encodingLevel>
-#        <format>$format</format>
-#        <receiptAcqStatus>$receiptAcqStatus</receiptAcqStatus>
-#        <generalRetention>$generalRetention</generalRetention>
-#        <completeness>$completeness</completeness>
-#        <dateOfReport>$dateOfReport</dateOfReport>
-#        <nucCode>$nucCode</nucCode>
-#        <localLocation>$localLocation</localLocation>
-#        <shelvingLocation>$shelvingLocation</shelvingLocation>
-#        <callNumber>$callNumber</callNumber>
-#        <shelvingData>$shelvingData</shelvingData>
-#        <copyNumber>$copyNumber</copyNumber>
-#        <publicNote>$publicNote</publicNote>
-#        <reproductionNote>$reproductionNote</reproductionNote>
-#        <termsUseRepro>$termsUseRepro</termsUseRepro>
-#        <circulations>
-#$itemRecords
-#        </circulations>
-#      </holding>
-#];
-#    $xml =~ s/^\n//s; # trim leading newline
-#    $xml =~ s/^  //gm;
-#    return $xml;
 
     return _makeXMLElement(4, 'holding', (
-        [ 'typeOfRecord', $typeOfRecord ],
-        [ 'encodingLevel', $encodingLevel ],
-        [ 'format', $format ],
-        [ 'receiptAcqStatus', $receiptAcqStatus ],
-        [ 'generalRetention', $generalRetention ],
-        [ 'completeness', $completeness ],
-        [ 'dateOfReport', $dateOfReport ],
+        [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
+        [ 'encodingLevel', substr($marc->leader(), 16, 1) ], # LDR 017
+        [ 'format', _format($holding, $marc) ],
+        [ 'receiptAcqStatus', _marcFieldChars($marc, '008', '06') ],
+        [ 'generalRetention', _marcFieldChars($marc, '008', '12') ],
+        [ 'completeness', _marcFieldChars($marc, '008', '16') ],
+        [ 'dateOfReport', _marcFieldChars($marc, '008', '26-31') ],
         [ 'nucCode', $nucCode ],
         [ 'localLocation', $localLocation ],
         [ 'shelvingLocation', $shelvingLocation ],
-        [ 'callNumber', $callNumber ],
-        [ 'shelvingData', $shelvingData ],
-        [ 'copyNumber', $copyNumber ],
-        [ 'publicNote', $publicNote ],
-        [ 'reproductionNote', $reproductionNote ],
-        [ 'termsUseRepro', $termsUseRepro ],
-        [ 'circulations', $itemRecords, undef, 1 ],
+        # Z39.50 OPAC record has no way to express item-level callNumber
+        [ 'callNumber', $holding->{callNumber} ],
+        [ 'shelvingData', _makeShelvingData($holding) ],
+        [ 'copyNumber', $holding->{copyNumber} || '' ], # 852 $t
+        [ 'publicNote', _noteOfType($holding->{notes}, qr/public/i) ], # 852 $z
+        [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
+        [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
+        [ 'circulations', join('\n', @$items), undef, 1 ],
     ));
 }
 
