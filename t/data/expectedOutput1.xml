@@ -19,14 +19,14 @@
             
         <circulation>
           <availableNow value="0" />
-          <availabilityDate>xxx1a</availabilityDate>
-          <availableThru>xxx1b</availableThru>
+          <availabilityDate>xxx</availabilityDate>
+          <availableThru>xxx</availableThru>
           <restrictions>Missing</restrictions>
           <itemId>item12345</itemId>
-          <renewable value="xxx3" />
-          <onHold value="xxx5" />
+          <renewable value="xxx" />
+          <onHold value="xxx" />
           <enumAndChron>42</enumAndChron>
-          <midspine>xxx4</midspine>
+          <midspine>xxx</midspine>
           <temporaryLocation>Simmons University/Main Campus/Simmons University Library/Online</temporaryLocation>
         </circulation>
       </circulations>

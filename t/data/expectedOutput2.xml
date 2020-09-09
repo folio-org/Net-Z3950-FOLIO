@@ -19,14 +19,14 @@
             
         <circulation>
           <availableNow value="1" />
-          <availabilityDate>xxx1a</availabilityDate>
-          <availableThru>xxx1b</availableThru>
+          <availabilityDate>xxx</availabilityDate>
+          <availableThru>xxx</availableThru>
           <restrictions></restrictions>
           <itemId>i2036897</itemId>
-          <renewable value="xxx3" />
-          <onHold value="xxx5" />
+          <renewable value="xxx" />
+          <onHold value="xxx" />
           <enumAndChron>3 March</enumAndChron>
-          <midspine>xxx4</midspine>
+          <midspine>xxx</midspine>
           <temporaryLocation></temporaryLocation>
         </circulation>
       </circulations>
