@@ -297,6 +297,9 @@ sub _makeAvailableThru {
 # status. Charlotte says "I would say all of them except: Available,
 # and On order". She will check with out contacts at Lehigh.
 #
+# The list of valid statuses is wired right into the JSONN Schema at
+# mod-inventory-storage/ramls/item.json
+#
 sub _makeRestrictions {
     my($item) = @_;
 
