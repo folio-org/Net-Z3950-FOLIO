@@ -299,7 +299,10 @@ sub _makeAvailableThru {
 #
 sub _makeRestrictions {
     my($item) = @_;
-    return 'xxx2'; # For now
+
+    my $status = $item->{status} || return '';
+    my $name = $status->{name} || return '';
+    return ($name ne 'Available' && $name ne 'On order') ? $name : '';
 }
 
 

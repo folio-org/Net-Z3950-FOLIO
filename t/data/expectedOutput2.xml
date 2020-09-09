@@ -21,7 +21,7 @@
           <availableNow value="1" />
           <availabilityDate>xxx1a</availabilityDate>
           <availableThru>xxx1b</availableThru>
-          <restrictions>xxx2</restrictions>
+          <restrictions></restrictions>
           <itemId>i2036897</itemId>
           <renewable value="xxx3" />
           <onHold value="xxx5" />
