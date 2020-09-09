@@ -145,7 +145,7 @@ sub _marcFieldChars {
 #	$j - Shelving control number (NR)
 #	$k - Call number prefix (R)
 #	$l - Shelving form of title (NR)
-#	$m - Call number suffix (R) 
+#	$m - Call number suffix (R)
 #
 # Since the only thing we have that is _not_ part of the call-number
 # is the shelving title, I guess we may as well return that.
@@ -166,7 +166,7 @@ sub _makeShelvingData {
 # pick these out by referring to the note-type text rather than to
 # known UUIDS -- and pull out the text of notes of the appropriate
 # type.
-# 
+#
 # For this to work, though, we will need mod-graphql to populate the
 # note-type objects.
 #
@@ -188,6 +188,7 @@ sub _makeTermsUseRepro {
 
     return 'xxx' # for now
 }
+
 
 sub _makeItemRecords {
     my($items) = @_;
@@ -243,8 +244,10 @@ sub _makeSingleItemRecord {
 sub _format {
     my($holding, $marc) = @_;
 
-    my $field007 = $marc->field('007')->data();
-    return substr($field007, 0, 2);
+    my $field007 = $marc->field('007');
+    return undef if !defined $field007;
+    my $data = $field007->data();
+    return substr($data, 0, 2);
 }
 
 
