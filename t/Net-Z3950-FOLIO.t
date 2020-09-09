@@ -25,10 +25,7 @@ BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
 
 # Values taken from some random USMARC record
-my $dummyMarc = new MARC::Record();
-$dummyMarc->leader('03101cam a2200505Ii 4500');
-$dummyMarc->append_fields(new MARC::Field('007', 'cr cnu---unuuu'));
-$dummyMarc->append_fields(new MARC::Field('008', '1234567890123456789012345678901'));
+my $dummyMarc = makeDummyMarc();
 
 for (my $i = 1; $i <= 2; $i++) {
     my $expected = readFile("t/data/expectedOutput$i.xml");
@@ -36,6 +33,22 @@ for (my $i = 1; $i <= 2; $i++) {
     my $folioHoldings = decode_json($folioJson);
     my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::_makeSingleHoldingsRecord($folioHoldings, $dummyMarc);
     is($holdingsXml, $expected, "generated holdings $i match expected XML");
+}
+
+
+sub makeDummyMarc {
+    my $marc = new MARC::Record();
+    $marc->leader('03101cam a2200505Ii 4500');
+    $marc->append_fields(
+	new MARC::Field('007', 'cr cnu---unuuu'),
+	new MARC::Field('008', '1234567890123456789012345678901'),
+	new MARC::Field('845', '#', '#',
+			'3' => 'Bituminous Coal Division and National Bituminous Coal Commission Records',
+			'a' => '"No information obtained from a producer disclosing cost of production or sales realization shall be made public without the consent of the producer from whom the same shall have been obtained";',
+			'c' => '50 Stat.88.',
+	)
+    );
+    return $marc;
 }
 
 

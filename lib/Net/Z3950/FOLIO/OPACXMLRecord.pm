@@ -190,7 +190,9 @@ sub _noteOfType {
 sub _makeTermsUseRepro {
     my($marc) = @_;
 
-    return 'xxx' # for now
+    my $field845 = $marc->field('845') or return undef;
+    my @subfields = $field845->subfields() or return undef;
+    return join('', map { '$' . $_->[0] . $_->[1] } @subfields);
 }
 
 
