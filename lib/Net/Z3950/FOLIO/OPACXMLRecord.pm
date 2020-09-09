@@ -114,7 +114,7 @@ sub _makeSingleHoldingsRecord {
         <reproductionNote>$reproductionNote</reproductionNote>
         <termsUseRepro>$termsUseRepro</termsUseRepro>
         <circulations>
-          $itemRecords
+$itemRecords
         </circulations>
       </holding>
 ];
@@ -205,38 +205,26 @@ sub _makeItemRecords {
 sub _makeSingleItemRecord {
     my($item) = @_;
 
-    my $availableNow = $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
-    my $availabilityDate = _makeAvailabilityDate($item);
-    my $availableThru = _makeAvailableThru($item);
-    my $restrictions = _makeRestrictions($item);
-    my $itemId = $item->{hrid};
-    my $renewable = 'xxx'; # Incredibly complicated, involves loan policies
-    my $onHold = _makeOnHold($item);
-
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = join(' ', @tmp);
 
-    my $midspine = 'xxx'; # Will be added in UIIN-220 but doesn't exist yet
     my $tl = $item->{temporaryLocation};
     my $temporaryLocation = $tl ? _makeLocation($tl) : '';
 
-    my $xml = qq[
-      <circulation>
-        <availableNow value="$availableNow" />
-        <availabilityDate>$availabilityDate</availabilityDate>
-        <availableThru>$availableThru</availableThru>
-        <restrictions>$restrictions</restrictions>
-        <itemId>$itemId</itemId>
-        <renewable value="$renewable" />
-        <onHold value="$onHold" />
-        <enumAndChron>$enumAndChronForItem</enumAndChron>
-        <midspine>$midspine</midspine>
-        <temporaryLocation>$temporaryLocation</temporaryLocation>
-      </circulation>];
-    $xml =~ s/^/    /gm;
-    return $xml;
+    return _makeXMLElement(10, 'circulation', (
+	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
+	[ 'availabilityDate', _makeAvailabilityDate($item) ],
+        [ 'availableThru', _makeAvailableThru($item) ],
+        [ 'restrictions', _makeRestrictions($item) ],
+        [ 'itemId', $item->{hrid} ],
+        [ 'renewable', 'xxx', 'value' ], # Incredibly complicated, involves loan policies
+        [ 'onHold', _makeOnHold($item), 'value' ],
+        [ 'enumAndChron', $enumAndChronForItem ],
+        [ 'midspine', 'xxx' ], # Will be added in UIIN-220 but doesn't exist yet
+        [ 'temporaryLocation', $temporaryLocation ],
+    ));
 }
 
 
@@ -329,6 +317,25 @@ sub _makeLocation {
 	push @tmp, $data->{$key}->{name} if $data->{$key};
     }
     return join('/', @tmp);
+}
+
+
+sub _makeXMLElement {
+    my($indentLevel, $elementName, @elements) = @_;
+
+    my $xml = (' ' x $indentLevel) . "<$elementName>\n";
+    foreach my $element (@elements) {
+	my($name, $value, $attr) = @$element;
+	my $added;
+	if ($attr) {
+	    $added = qq[<$name $attr="$value" />\n];
+	} else {
+	    $added = qq[<$name>$value</$name>\n];
+	}
+	# warn "name=$name, value=$value, attr=$attr, added=$added";
+	$xml .= (' ' x ($indentLevel+2)) . $added;
+    }
+    $xml .= (' ' x $indentLevel) . "</$elementName>";
 }
 
 
