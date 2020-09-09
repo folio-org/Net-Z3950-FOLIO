@@ -88,8 +88,8 @@ sub _makeSingleHoldingsRecord {
     my $callNumber = $holding->{callNumber}; # Z39.50 OPAC record has no way to express item-level callNumber
     my $shelvingData = _makeShelvingData($holding);
     my $copyNumber = $holding->{copyNumber} || ''; # 852 $t
-    my $publicNote = _noteMatching($holding, qr/public/i); # 852 $z
-    my $reproductionNote = _noteMatching($holding, qr/reproduction/i); # 843
+    my $publicNote = _noteOfType($holding->{notes}, qr/public/i); # 852 $z
+    my $reproductionNote = _noteOfType($holding->{notes}, qr/reproduction/i); # 843
     my $termsUseRepro= _makeTermsUseRepro($marc); # 845
 
     my $items = _makeItemRecords($holding->{holdingsItems});
@@ -170,10 +170,14 @@ sub _makeShelvingData {
 # For this to work, though, we will need mod-graphql to populate the
 # note-type objects.
 #
-sub _noteMatching {
-    my($holding, $regexp) = @_;
+sub _noteOfType {
+    my($notes, $regexp) = @_;
 
-    return ''; # XXX for now
+    foreach my $note (@$notes) {
+	my $type = $note->{holdingsNoteType};
+	return $note->{note} if $type && $type->{name} =~ $regexp;
+    }
+    return '';
 }
 
 

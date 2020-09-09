@@ -84,7 +84,28 @@
   "illPolicyId": null,
   "instanceId": "2ff48cb6-a41c-11ea-8d99-9ee25e224816",
   "metadata": null,
-  "notes": [],
+  "notes": [
+    {
+      "holdingsNoteType": {
+        "id": "a336ce03-f68a-4875-b82a-4f21df8139c5",
+        "name": "Bound with",
+        "source": "local"
+      },
+      "holdingsNoteTypeId": "a336ce03-f68a-4875-b82a-4f21df8139c5",
+      "note": "This is a holdings note",
+      "staffOnly": false
+    },
+    {
+      "holdingsNoteType": {
+        "id": "6a41b714-8574-4084-8d64-a9373c3fbb59",
+        "name": "Reproduction",
+        "source": "folio"
+      },
+      "holdingsNoteTypeId": "6a41b714-8574-4084-8d64-a9373c3fbb59",
+      "note": "May be freely copied",
+      "staffOnly": false
+    }
+  ],
   "numberOfItems": null,
   "permanentLocation": {
     "campus": {

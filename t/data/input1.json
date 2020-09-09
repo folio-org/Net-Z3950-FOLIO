@@ -134,13 +134,13 @@
   "metadata": null,
   "notes": [
     {
-      "itemNoteType": {
+      "holdingsNoteType": {
         "id": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
-        "name": "Note",
+        "name": "Public",
         "source": "folio"
       },
-      "itemNoteTypeId": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
-      "note": "Online",
+      "holdingsNoteTypeId": "8d0a5eca-25de-4391-81a9-236eeefdd20b",
+      "note": "All Cretans are liars",
       "staffOnly": false
     }
   ],
