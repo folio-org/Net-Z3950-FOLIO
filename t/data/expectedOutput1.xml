@@ -18,14 +18,14 @@
       <circulations>
         <circulation>
           <availableNow value="0" />
-          <availabilityDate>xxx</availabilityDate>
-          <availableThru>xxx</availableThru>
+          <availabilityDate></availabilityDate>
+          <availableThru></availableThru>
           <restrictions>Missing</restrictions>
           <itemId>item12345</itemId>
-          <renewable value="xxx" />
-          <onHold value="xxx" />
+          <renewable value="" />
+          <onHold value="" />
           <enumAndChron>42</enumAndChron>
-          <midspine>xxx</midspine>
+          <midspine></midspine>
           <temporaryLocation>Simmons University/Main Campus/Simmons &amp; Wentworth Library/Online</temporaryLocation>
         </circulation>
       </circulations>

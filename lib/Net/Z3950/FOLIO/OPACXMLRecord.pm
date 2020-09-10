@@ -192,10 +192,10 @@ sub _makeSingleItemRecord {
         [ 'availableThru', _makeAvailableThru($item) ],
         [ 'restrictions', _makeRestrictions($item) ],
         [ 'itemId', $item->{hrid} ],
-        [ 'renewable', 'xxx', 'value' ], # Incredibly complicated, involves loan policies
+        [ 'renewable', '', 'value' ], # XXX Incredibly complicated, involves loan policies
         [ 'onHold', _makeOnHold($item), 'value' ],
         [ 'enumAndChron', $enumAndChronForItem ],
-        [ 'midspine', 'xxx' ], # Will be added in UIIN-220 but doesn't exist yet
+        [ 'midspine', '' ], # XXX Will be added in UIIN-220 but doesn't exist yet
         [ 'temporaryLocation', $temporaryLocation ],
     ));
 }
@@ -224,7 +224,7 @@ sub _format {
 #
 sub _makeAvailabilityDate {
     my($item) = @_;
-    return 'xxx'; # For now
+    return ''; # XXX for now
 }
 
 
@@ -250,7 +250,7 @@ sub _makeAvailabilityDate {
 #
 sub _makeAvailableThru {
     my($item) = @_;
-    return 'xxx'; # For now
+    return ''; # XXX for now
 }
 
 
@@ -278,7 +278,7 @@ sub _makeRestrictions {
 #
 sub _makeOnHold {
     my($item) = @_;
-    return 'xxx'; # For now
+    return ''; # XXX for now
 }
 
 
