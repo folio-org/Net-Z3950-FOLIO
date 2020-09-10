@@ -302,9 +302,11 @@ sub _makeXMLElement {
 	my($name, $value, $attr, $isPreAssembledXML) = @$element;
 	my $added;
 	if ($attr) {
-	    $added = qq[<$name $attr="$value" />\n];
+	    my $quotedValue = _quoteXML($value);
+	    $added = qq[<$name $attr="$quotedValue" />\n];
 	} elsif (!$isPreAssembledXML) {
-	    $added = qq[<$name>$value</$name>\n];
+	    my $quotedValue = _quoteXML($value);
+	    $added = qq[<$name>$quotedValue</$name>\n];
 	} else {
 	    $added = qq[<$name>\n$value$indent  </$name>\n];
 	}
@@ -312,6 +314,19 @@ sub _makeXMLElement {
 	$xml .= "$indent  $added";
     }
     $xml .= "$indent</$elementName>\n";
+}
+
+
+sub _quoteXML {
+    my($s) = @_;
+
+    return '' if !defined $s;
+    $s =~ s/&/&amp;/sg;
+    $s =~ s/</&lt;/sg;
+    $s =~ s/>/&gt;/sg;
+    $s =~ s/"/&quot;/sg;
+
+    return $s
 }
 
 

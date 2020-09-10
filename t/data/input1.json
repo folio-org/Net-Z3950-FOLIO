@@ -82,7 +82,7 @@
         "library": {
           "code": "SIM",
           "id": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
-          "name": "Simmons University Library"
+          "name": "Simmons & Wentworth Library"
         },
         "libraryId": "2805564c-b9e2-45ba-9c6f-670b11b808e2",
         "metadata": {
@@ -150,7 +150,7 @@
   "receiptStatus": null,
   "receivingHistory": null,
   "retentionPolicy": null,
-  "shelvingTitle": "The Amazing Adventures of Captain Gladys Stoat Pamphlet and Her Intrepid Spaniel Stig Among the Giant Pygmies of Beccles",
+  "shelvingTitle": "The Amazing Adventures of Captain Gladys \"Stoat\" Pamphlet and Her Intrepid Spaniel Stig Among the Giant Pygmies of Beccles",
   "statisticalCodeIds": [],
   "temporaryLocationId": null
 }
