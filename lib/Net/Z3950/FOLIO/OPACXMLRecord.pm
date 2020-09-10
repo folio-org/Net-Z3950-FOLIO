@@ -18,15 +18,10 @@ sub makeOPACXMLRecord {
     my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
     my $holdingsRecords = join('\n', @$holdings);
 
-    return qq[<opacRecord>
-  <bibliographicRecord>
-$marcXML
-  </bibliographicRecord>
-  <holdings>
-    $holdingsRecords
-  </holdings>
-</opacRecord>
-];
+    return _makeXMLElement(0, 'opacRecord', (
+        [ 'bibliographicRecord', $marcXML, undef, 1 ],
+        [ 'holdings', $holdingsRecords, undef, 1 ],
+    ));
 }
 
 sub _makeHoldingsRecords {
@@ -304,11 +299,11 @@ sub _makeXMLElement {
     my $indent = ' ' x $indentLevel;
     my $xml = "$indent<$elementName>\n";
     foreach my $element (@elements) {
-	my($name, $value, $attr, $newline) = @$element;
+	my($name, $value, $attr, $isPreAssembledXML) = @$element;
 	my $added;
 	if ($attr) {
 	    $added = qq[<$name $attr="$value" />\n];
-	} elsif (!$newline) {
+	} elsif (!$isPreAssembledXML) {
 	    $added = qq[<$name>$value</$name>\n];
 	} else {
 	    $added = qq[<$name>\n$value$indent  </$name>\n];
