@@ -1,7 +1,7 @@
 {
   "okapi": {
     "url": "https://indexdata-test-okapi.folio.indexdata.com",
-    "graphqlUrl": "http://localhost:3001",
+    "UNUSED-graphqlUrl": "http://localhost:3001",
     "tenant": "indexdata"
   },
   "login": {
