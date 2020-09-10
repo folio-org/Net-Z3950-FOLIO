@@ -62,9 +62,9 @@ sub _makeHoldingsRecords {
 sub _makeSingleHoldingsRecord {
     my($holding, $marc) = @_;
 
-    my $nucCode = '';
-    my $localLocation = '';
-    my $shelvingLocation = '';
+    my $nucCode;
+    my $localLocation;
+    my $shelvingLocation;
     my $location = $holding->{temporaryLocation} || $holding->{permanentLocation};
     if ($location) {
 	$nucCode = ($location->{institution} || {})->{name};
@@ -88,7 +88,7 @@ sub _makeSingleHoldingsRecord {
         # Z39.50 OPAC record has no way to express item-level callNumber
         [ 'callNumber', $holding->{callNumber} ],
         [ 'shelvingData', _makeShelvingData($holding) ],
-        [ 'copyNumber', $holding->{copyNumber} || '' ], # 852 $t
+        [ 'copyNumber', $holding->{copyNumber} ], # 852 $t
         [ 'publicNote', _noteOfType($holding->{notes}, qr/public/i) ], # 852 $z
         [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
@@ -125,7 +125,7 @@ sub _marcFieldChars {
 
 sub _makeShelvingData {
     my($holding) = @_;
-    return $holding->{shelvingTitle} || '';
+    return $holding->{shelvingTitle};
 }
 
 
@@ -150,7 +150,7 @@ sub _noteOfType {
 	my $type = $note->{holdingsNoteType};
 	return $note->{note} if $type && $type->{name} =~ $regexp;
     }
-    return '';
+    return undef;
 }
 
 
@@ -183,20 +183,17 @@ sub _makeSingleItemRecord {
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = join(' ', @tmp);
 
-    my $tl = $item->{temporaryLocation};
-    my $temporaryLocation = $tl ? _makeLocation($tl) : '';
-
     return _makeXMLElement(8, 'circulation', (
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
         [ 'restrictions', _makeRestrictions($item) ],
         [ 'itemId', $item->{hrid} ],
-        [ 'renewable', '', 'value' ], # XXX Incredibly complicated, involves loan policies
+        [ 'renewable', undef, 'value' ], # XXX Incredibly complicated, involves loan policies
         [ 'onHold', _makeOnHold($item), 'value' ],
         [ 'enumAndChron', $enumAndChronForItem ],
-        [ 'midspine', '' ], # XXX Will be added in UIIN-220 but doesn't exist yet
-        [ 'temporaryLocation', $temporaryLocation ],
+        [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
+        [ 'temporaryLocation', _makeLocation($item->{temporaryLocation}) ],
     ));
 }
 
@@ -224,7 +221,7 @@ sub _format {
 #
 sub _makeAvailabilityDate {
     my($item) = @_;
-    return ''; # XXX for now
+    return undef; # XXX for now
 }
 
 
@@ -250,7 +247,7 @@ sub _makeAvailabilityDate {
 #
 sub _makeAvailableThru {
     my($item) = @_;
-    return ''; # XXX for now
+    return undef; # XXX for now
 }
 
 
@@ -264,9 +261,9 @@ sub _makeAvailableThru {
 sub _makeRestrictions {
     my($item) = @_;
 
-    my $status = $item->{status} || return '';
-    my $name = $status->{name} || return '';
-    return ($name ne 'Available' && $name ne 'On order') ? $name : '';
+    my $status = $item->{status} || return undef;
+    my $name = $status->{name} || return undef;
+    return ($name ne 'Available' && $name ne 'On order') ? $name : undef;
 }
 
 
@@ -278,12 +275,13 @@ sub _makeRestrictions {
 #
 sub _makeOnHold {
     my($item) = @_;
-    return ''; # XXX for now
+    return undef;
 }
 
 
 sub _makeLocation {
     my($data) = @_;
+    return undef if !defined $data;
 
     my @tmp;
     foreach my $key (qw(institution campus library primaryServicePointObject)) {
@@ -300,6 +298,8 @@ sub _makeXMLElement {
     my $xml = "$indent<$elementName>\n";
     foreach my $element (@elements) {
 	my($name, $value, $attr, $isPreAssembledXML) = @$element;
+	next if !defined $value;
+
 	my $added;
 	if ($attr) {
 	    my $quotedValue = _quoteXML($value);
