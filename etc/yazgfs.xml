@@ -7,7 +7,7 @@
       <retrieval syntax="xml" />
       <retrieval syntax="opac">
         <backend syntax="xml" name="opac">
-          <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
+          <marc inputformat="xml" inputcharset="utf-8" outputformat="opac" outputcharset="marc-8"/>
         </backend>
       </retrieval>
     </retrievalinfo>
