@@ -1,47 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-	This YAZ GFS configuration file can be used by z2folio
-	using the "-f etc/yazgfs.xml" command-line option, to enable
-	support for XML record mapping and MARC conversion.
-
-	Supports retrieving records in three formats:
-	  format xml, elementset folio: the raw inventory-storage record
-	  format xml, elementset marcxml: USMARC in MARCXML format
-	  format usmarc, any elementset: USMARC in ISO 2709 format
-
--->
 <yazgfs>
-  <listen id="tcp9998">tcp:@:9998</listen>
-  <server id="main" listenref="tcp9998">
+  <listen id="tcp9997">tcp:@:9997</listen>
+  <server id="main" listenref="tcp9997">
     <retrievalinfo>
-      <!-- see https://software.indexdata.com/yaz/doc/tools.retrieval.html -->
-      <retrieval syntax="xml" name="folio"/>
-
-      <retrieval syntax="xml" name="marcxml">
-        <backend>
-          <xslt stylesheet="folio2marcxml.xsl"/>
-        </backend>
-      </retrieval>
-      <retrieval syntax="usmarc" name="d">
-        <backend>
-          <xslt stylesheet="folio2marcxml.xsl"/>
-          <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
-        </backend>
-      </retrieval>
-      <retrieval syntax="usmarc">
-        <backend>
-        </backend>
-      </retrieval>
-
-      <retrieval syntax="xml" name="opac">
-        <backend>
-          <xslt stylesheet="folio2opac.xsl"/>
-        </backend>
-      </retrieval>
+      <retrieval syntax="usmarc" />
+      <retrieval syntax="xml" />
       <retrieval syntax="opac">
-        <backend name="F" syntax="opac">
-          <xslt stylesheet="folio2opac.xsl"/>
-          <marc inputformat="marc" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
+        <backend syntax="xml" name="opac">
+          <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
         </backend>
       </retrieval>
     </retrievalinfo>
