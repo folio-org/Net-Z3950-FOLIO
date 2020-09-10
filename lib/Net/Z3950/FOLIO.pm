@@ -21,7 +21,11 @@ use Net::Z3950::FOLIO::OPACXMLRecord qw(makeOPACXMLRecord);
 
 our $VERSION = '0.01';
 
-1;
+
+sub FORMAT_USMARC { '1.2.840.10003.5.10' }
+sub FORMAT_XML { '1.2.840.10003.5.109.10' }
+sub FORMAT_OPAC { '1.2.840.10003.5.102' }
+sub ATTRSET_BIB1 { '1.2.840.10003.3.1' }
 
 
 =head1 NAME
@@ -248,30 +252,26 @@ sub _fetch_handler {
     warn "REQ_FORM=$format, COMP=$comp\n";
 
     my $res;
-    if ($format eq '1.2.840.10003.5.10' && $comp eq 'd') {
+    if ($format eq FORMAT_USMARC && $comp eq 'd') {
 	# Dynamically generated USMARC from the FOLIO inventory records
 	warn "Dynamically generated USMARC from the FOLIO inventory records";
 	$res = _xml_record($rec);
 	$args->{REP_FORM} = 'xml';
-    } elsif ($format eq '1.2.840.10003.5.10') {
+    } elsif ($format eq FORMAT_USMARC) {
 	# Static USMARC from SRS
-	warn "Static USMARC from SRS";
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
-    } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'usmarc') {
+    } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = $marc->as_xml_record();
-    } elsif ($format eq '1.2.840.10003.5.109.10' && $comp eq 'opac') {
-	# OPAC-format XML made from SRS Marc record and inventory availability data
-	warn "OPAC-format XML";
+    } elsif ($format eq FORMAT_XML && $comp eq 'opac') {
+	# OPAC-format XML
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = makeOPACXMLRecord($rec, $marc);
-    } elsif ($format eq '1.2.840.10003.5.102') {
-	# OPAC
+    } elsif ($format eq FORMAT_OPAC) {
 	_throw(1, "OPAC format not yet supported");
-    } elsif ($format eq '1.2.840.10003.5.109.10') {
-	# XML
+    } elsif ($format eq FORMAT_XML) {
 	warn "XML";
 	$res = _xml_record($rec);
     } else {
@@ -583,7 +583,7 @@ sub _toCQL {
     foreach my $attr (@$attrs) {
 	my $set = $attr->{attributeSet} || $defaultSet;
 	# Unknown attribute set (anything except BIB-1)
-	_throw(121, $set) if $set ne '1.2.840.10003.3.1';
+	_throw(121, $set) if $set ne Net::Z3950::FOLIO::ATTRSET_BIB1;
 	if ($attr->{attributeType} == 1) {
 	    my $val = $attr->{attributeValue};
 	    $field = _ap2index($gh->{cfg}->{indexMap}, $val);
