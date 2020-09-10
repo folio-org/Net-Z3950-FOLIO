@@ -57,7 +57,8 @@ sub _makeHoldingsRecords {
 #	itemId
 #	temporaryLocation (overrides shelvingLocation)
 #
-# In the FOLIO data model, $enumAndChron does not exist at the holdings or volume level
+# In the FOLIO data model, <enumAndChron> does not exist at the
+# holdings or volume level, only at the item level.
 #
 sub _makeSingleHoldingsRecord {
     my($holding, $marc) = @_;
@@ -181,7 +182,7 @@ sub _makeSingleItemRecord {
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
     push @tmp, $item->{chronology} if $item->{chronology};
-    my $enumAndChronForItem = join(' ', @tmp);
+    my $enumAndChronForItem = @tmp ? join(' ', @tmp) : undef;
 
     return _makeXMLElement(8, 'circulation', (
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
@@ -189,7 +190,11 @@ sub _makeSingleItemRecord {
         [ 'availableThru', _makeAvailableThru($item) ],
         [ 'restrictions', _makeRestrictions($item) ],
         [ 'itemId', $item->{hrid} ],
-        [ 'renewable', undef, 'value' ], # XXX Incredibly complicated, involves loan policies
+	# XXX Determining a correct value for <renewable> would be
+	# very complicated, involving loan policies. But we have to
+	# include _something_, because this element is mandatory in
+	# YAZ's OPACXML schema -- probably accidentally
+        [ 'renewable', '', 'value' ],
         [ 'onHold', _makeOnHold($item), 'value' ],
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
@@ -273,9 +278,12 @@ sub _makeRestrictions {
 # relevant WSAPI is documented at
 # https://github.com/folio-org/mod-circulation/blob/cab5ab44a3383bad938f33ad616fb0ef1244e67a/ramls/circulation.raml#L278
 #
+# But we have to provide a non-undef value here, because this element
+# is mandatory in YAZ's OPACXML schema -- probably accidentally.
+#
 sub _makeOnHold {
     my($item) = @_;
-    return undef;
+    return ''; # XXX for now
 }
 
 
