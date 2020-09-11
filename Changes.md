@@ -10,6 +10,8 @@
 * Accept username/password from environment variables.
 * Write `Dockerfile`.
 * Determine FOLIO tenant from database name (and postpone initialisation and authentication until we know that).
+* Formal release
+* Move documentation to Markdown format
 * Write tests (ensuring query and record formats have not changed).
 * Read FOLIO edge-module specifications and make whatever changes they require.
 * Write a non-trivial version of `etc/folio2marcxml.xsl`.
