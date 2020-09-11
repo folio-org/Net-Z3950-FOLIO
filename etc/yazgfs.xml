@@ -6,9 +6,7 @@
       <retrieval syntax="usmarc" />
       <retrieval syntax="xml" />
       <retrieval syntax="opac">
-        <backend syntax="xml" name="opac">
-          <marc inputformat="xml" inputcharset="utf-8" outputformat="marc" outputcharset="marc-8"/>
-        </backend>
+        <backend syntax="xml" name="opac" />
       </retrieval>
     </retrievalinfo>
   </server>
