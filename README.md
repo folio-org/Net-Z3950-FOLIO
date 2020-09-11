@@ -28,6 +28,17 @@ If you don't want to install, you can run from the development checkout as:
 
     perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml
 
+## Building and running from Docker
+
+    terminal1$ docker build -t zfolio .
+    terminal1$ docker run -it --rm -p9997:9997 --name run-zfolio zfolio
+
+    terminal2$ yaz-client @:9997
+    Z> find @attr 1=4 a
+    Z> format opac
+    Z> show 1
+
+
 ## Additional information
 
 ### Other documentation
