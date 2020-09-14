@@ -102,6 +102,7 @@ sub _reload_config_file {
     $fh->close();
 
     $this->{cfg} = decode_json($json);
+    _expand_variable_references($this->{cfg});
 
     my $gqlfile = $this->{cfg}->{graphqlQuery}
         or die "$0: no GraphQL query file defined";
@@ -115,6 +116,32 @@ sub _reload_config_file {
 	or die "$0: can't open GraphQL query file '$gqlfile': $!";
     { local $/; $this->{cfg}->{graphql} = <$fh> };
     $fh->close();
+}
+
+
+# XXX note, does not currently support arrays, but we don't need them
+sub _expand_variable_references {
+    my($obj) = @_;
+
+    foreach my $key (sort keys %$obj) {
+	my $val = $obj->{$key};
+	if (!ref($val)) {
+	    $obj->{$key} = _expand_single_variable_reference($val);
+	} else {
+	    _expand_variable_references($val);
+	}
+    }
+}
+
+
+sub _expand_single_variable_reference {
+    my ($val) = @_;
+
+    while ($val =~ /(.*?)\${(.*?)}(.*)/) {
+	$val = $1 . $ENV{$2} . $3;
+    }
+
+    return $val;
 }
 
 

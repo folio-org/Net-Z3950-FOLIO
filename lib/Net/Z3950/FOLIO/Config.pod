@@ -14,7 +14,7 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
     },
     "login": {
       "username": "diku_admin",
-      "password": "************"
+      "password": "${OKAPI_PASSWORD}"
     },
     "indexMap": {
       "1": "author",
@@ -40,6 +40,12 @@ instance records into MARC.
 The structure of the file is pretty simple. There are several
 top-level section, each described in its own section below, and each
 of them an object with several keys that can exist in it.
+
+If any string value contains sequences of the form C<${NAME}>, they
+are each replaced by the values of the corresponding environment
+variables C<$NAME>, providing a mechanism for injecting values into
+the condfiguration. This is useful if, for example, it is necessary to
+avoid embedding authentication secrets in the configuration file.
 
 =head2 C<okapi>
 
