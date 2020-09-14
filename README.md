@@ -7,7 +7,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
 ## Introduction
 
-A Z39.50 server for FOLIO bibliographic data.
+[`z2folio`](bin/z2folio) is a Z39.50 server for FOLIO bibliographic and holdings data, supporting record retrieval in USMARC, OPAC and XML formats. The functionality is all provided by [the `Net::Z3950::FOLIO` library](lib/Net/Z3950/FOLIO.pm), which is also part of this distribution. It is written in Perl, and follows standard Perl-module conventions.
 
 ## Installation
 
@@ -24,7 +24,7 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
 ## Running
 
-If you don't want to install, you can run from the development checkout as:
+If you don't want to install, you can run directly from the development checkout as:
 
     perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml
 
@@ -38,6 +38,9 @@ If you don't want to install, you can run from the development checkout as:
     Z> format opac
     Z> show 1
 
+## Authentication
+
+Whichever approach to running the server you prefer, the [default configuration file](etc/config.json) specifies that the password used to authenticate onto the back-end FOLIO system must be specified in the `FOLIO_PASSWORD` environment variable. You can provide that however seems best to you -- e.g. injecting it into a Docker container -- or indeed use a different configuration file that hardwires the credentials.
 
 ## Additional information
 
