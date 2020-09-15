@@ -5,8 +5,8 @@
 
 ## To do
 
-* Move documentation to Markdown format
 * Provide module descriptor specifying dependencies (required as per edge-module conventions)
+* Richer query support
 * Formal release
 * Determine FOLIO tenant from database name (and postpone initialisation and authentication until we know that).
 * Write tests (ensuring query and record formats have not changed).
