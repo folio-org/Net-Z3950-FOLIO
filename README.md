@@ -51,7 +51,7 @@ Whichever approach to running the server you prefer, the [default configuration 
 * [The underlying library.](doc/from-pod/Net-Z3950-FOLIO.md)
 * [The configuration file format.](doc/from-pod/Net-Z3950-FOLIO-Config.md)
 * Developer documentation about [FOLIO's SRS system](doc/srs/using-srs.md), which the Z-server uses to obtain MARC records.
-* Developer documentation about [the Z39.50 OPAC record format] (doc/opac/README.md) and the YAZ toolkit's XML equivalent.
+* Developer documentation about [the Z39.50 OPAC record format](doc/opac/README.md) and the YAZ toolkit's XML equivalent.
 
 Other [modules](https://dev.folio.org/source-code/) are described,
 with further FOLIO Developer documentation at [dev.folio.org](https://dev.folio.org/)
