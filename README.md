@@ -31,7 +31,7 @@ If you don't want to install, you can run directly from the development checkout
 ## Building and running from Docker
 
     terminal1$ docker build -t zfolio .
-    terminal1$ docker run -it --rm -p9997:9997 --name run-zfolio zfolio
+    terminal1$ docker run -it --rm -p9997:9997 -e OKAPI_PASSWORD=swordfish --name run-zfolio zfolio
 
     terminal2$ yaz-client @:9997
     Z> find @attr 1=4 a
@@ -40,7 +40,7 @@ If you don't want to install, you can run directly from the development checkout
 
 ## Authentication
 
-Whichever approach to running the server you prefer, the [default configuration file](etc/config.json) specifies that the password used to authenticate onto the back-end FOLIO system must be specified in the `FOLIO_PASSWORD` environment variable. You can provide that however seems best to you -- e.g. injecting it into a Docker container -- or indeed use a different configuration file that hardwires the credentials.
+Whichever approach to running the server you prefer, the [default configuration file](etc/config.json) specifies that the password used to authenticate onto the back-end FOLIO system must be specified in the `FOLIO_PASSWORD` environment variable. You can provide that however seems best to you -- e.g. injecting it into a Docker container with the `-e name=value` as above -- or indeed use a different configuration file that hardwires the credentials.
 
 ## Additional information
 
