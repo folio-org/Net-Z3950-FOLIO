@@ -58,7 +58,7 @@ The following command-line options govern how it functions:
 
 =over 4
 
-=item -c configFile
+=item C<-c configFile>
 
 Specifies that the named I<configFile> should be used to configure the
 functionality of the server: if this option is not specified, then the
@@ -68,7 +68,7 @@ C<Net::Z3950::FOLIO::Config>, and a sample configuration file,
 C<config.json>, is supplied in the C<etc> directory of the
 distribution.
 
-=item --
+=item C<-->
 
 Indicates the end of C<z2folio>-specific options.  This is
 required if YAZ options are to be specified, so that C<z2folio>
