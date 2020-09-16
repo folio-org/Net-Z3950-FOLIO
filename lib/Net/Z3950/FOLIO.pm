@@ -614,8 +614,11 @@ sub _toCQL {
     # First we determine USE attribute
     foreach my $attr (@$attrs) {
 	my $set = $attr->{attributeSet} || $defaultSet;
-	# Unknown attribute set (anything except BIB-1)
-	_throw(121, $set) if $set ne Net::Z3950::FOLIO::ATTRSET_BIB1;
+	if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 &&
+	    lc($set) ne 'bib-1') {
+	    # Unknown attribute set (anything except BIB-1)
+	    _throw(121, $set);
+	}
 	if ($attr->{attributeType} == 1) {
 	    my $val = $attr->{attributeValue};
 	    $field = _ap2index($gh->{cfg}->{indexMap}, $val);
@@ -678,8 +681,8 @@ sub _toCQL {
 		$term =~ s/#/?/g;
             } elsif ($value == 104) {
 		# Z39.58-style (CCL) truncation: #=single char, ?=multiple
-		$term =~ s/#/?/g;
 		$term =~ s/\?\d?/*/g;
+		$term =~ s/#/?/g;
             } elsif ($value != 100) {
                 _throw(120, $value);
             }
@@ -732,6 +735,9 @@ sub _ap2index {
 
 
 package Net::Z3950::RPN::RSID;
+
+sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
+
 sub _toCQL {
     my $self = shift;
     my($args, $defaultSet) = @_;
