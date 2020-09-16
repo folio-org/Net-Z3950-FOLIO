@@ -44,16 +44,16 @@ pipeline {
       }
     }
 
-    stage('Build') { 
-      steps {
-        dir(env.BUILD_DIR) {
-          sh "perl Makefile.PL"
-          sh "make"
-          sh "make test"
-          sh "sudo make install"
-        }
-      }
-    }
+    //stage('Build') { 
+    //  steps {
+    //    dir(env.BUILD_DIR) {
+    //      sh "perl Makefile.PL"
+    //      sh "make"
+    //      sh "make test"
+    //      sh "sudo make install"
+    //    }
+    //  }
+    //}
    
     
     stage('Build Docker') {
