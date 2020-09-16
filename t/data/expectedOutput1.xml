@@ -16,6 +16,8 @@
           <availableNow value="0" />
           <restrictions>Missing</restrictions>
           <itemId>item12345</itemId>
+          <renewable value="" />
+          <onHold value="" />
           <enumAndChron>42</enumAndChron>
           <temporaryLocation>Simmons University/Main Campus/Simmons &amp; Wentworth Library/Online</temporaryLocation>
         </circulation>

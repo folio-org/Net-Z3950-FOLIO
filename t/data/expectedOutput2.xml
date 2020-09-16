@@ -16,6 +16,8 @@
         <circulation>
           <availableNow value="1" />
           <itemId>i2036897</itemId>
+          <renewable value="" />
+          <onHold value="" />
           <enumAndChron>3 March</enumAndChron>
         </circulation>
       </circulations>
