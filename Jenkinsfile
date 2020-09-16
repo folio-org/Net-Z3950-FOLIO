@@ -5,6 +5,7 @@ pipeline {
   environment {
     BUILD_DIR = "${env.WORKSPACE}"
     modDescriptor = 'ModuleDescriptor.json'
+    env.name = "mod-z3950"
   }
 
   options {
@@ -74,22 +75,21 @@ pipeline {
       }
     }
 
-    // no md yet
-    //stage('Publish Module Descriptor') {
-    //  when {
-    //    anyOf { 
-    //      branch 'master'
-    //      expression { return env.isRelease }
-    //    }
-    //  }
-    //  steps {
-    //    script {
-    //      def foliociLib = new org.folio.foliociCommands()
-    //      foliociLib.updateModDescriptor(env.MD) 
-    //    }
-    //    postModuleDescriptor(env.MD)
-    //  }
-    //}
+    stage('Publish Module Descriptor') {
+      when {
+        anyOf { 
+          branch 'master'
+          expression { return env.isRelease }
+        }
+      }
+      steps {
+        script {
+          def foliociLib = new org.folio.foliociCommands()
+          foliociLib.updateModDescriptor(env.modDescriptor) 
+        }
+        postModuleDescriptor(env.modDescriptor)
+      }
+    }
 
   } // end stages
 
