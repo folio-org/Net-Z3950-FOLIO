@@ -1,5 +1,4 @@
 @Library ('folio_jenkins_shared_libs') _
-
 pipeline {
 
   environment {
@@ -57,24 +56,6 @@ pipeline {
           }
         }
       } 
-    }
-
-    stage('Publish Docker Image') { 
-      when { 
-        anyOf {
-          branch 'master'
-          expression { return env.isRelease }
-        }
-      }
-      steps {
-        script {
-          docker.withRegistry('https://index.docker.io/v1/', 'DockerHubIDJenkins') {
-            sh "docker tag ${env.dockerRepo}/${env.name}:${env.version} ${env.dockerRepo}/${env.name}:latest"
-            sh "docker push ${env.dockerRepo}/${env.name}:${env.version}"
-            sh "docker push ${env.dockerRepo}/${env.name}:latest"
-          }
-        }
-      }
     }
 
     stage('Publish Module Descriptor') {
