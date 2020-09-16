@@ -15,7 +15,7 @@ BEGIN {
 	[ '@and water air', '(water and air)' ],
 	[ '@or fire earth', '(fire or earth)' ],
 #	[ '@not water earth', '(fire not earth)' ], # Will not work until Net::Z3950::PQF v1.0
-	
+
 	# Boolean combinations
 	[ '@and water @or fire earth', '(water and (fire or earth))' ],
 	[ '@and @or fire earth air', '((fire or earth) and air)' ],
@@ -27,6 +27,47 @@ BEGIN {
 	# Access points
 	[ '@attr 1=1 kernighan', 'author=kernighan' ],
 	[ '@attr 1=4 unix', 'title=unix' ],
+#	[ '@attr 1=7 9780253357014', 'xxx' ],
+#	[ '@attr 1=8 2167-8359', 'xxx' ],
+	[ '@attr 1=12 12345', 'hrid=12345' ],
+	[ '@attr 1=21 palaeontology', 'subject=palaeontology' ],
+	[ '@attr 1=1003 ritchie', 'author=ritchie' ],
+#	[ '@attr 1=1016 churchill', '(author=churchill or title=churchill or hrid=churchill or subject=churchill)' ],
+	[ '@attr 1=1019 marc', 'source=marc' ],
+	[ '@attr 1=1108 marc', 'source=marc' ],
+	[ '@attr 1=1155 marc', 'source=marc' ],
+#	[ '@attr 1=1211 793828439', 'xxx' ],
+
+	# Relation attributes
+	[ '@attr 1=12 @attr 2=1 42', 'hrid < 42' ],
+	[ '@attr 1=12 @attr 2=2 42', 'hrid <= 42' ],
+	[ '@attr 1=12 @attr 2=3 42', 'hrid = 42' ],
+	[ '@attr 1=12 @attr 2=4 42', 'hrid >= 42' ],
+	[ '@attr 1=12 @attr 2=5 42', 'hrid > 42' ],
+	[ '@attr 1=12 @attr 2=6 42', 'hrid <> 42' ],
+	[ '@attr 1=12 @attr 2=100 42', 'hrid =/phonetic 42' ],
+	[ '@attr 1=12 @attr 2=101 42', 'hrid =/stem 42' ],
+	[ '@attr 1=12 @attr 2=102 42', 'hrid =/relevant 42' ],
+
+	# Position attributes
+	[ '@attr 3=1 42', '^42' ],
+	[ '@attr 3=2 42', '^42' ],
+	[ '@attr 3=3 42', '42' ],
+
+	# Structure attributes are simply ignored, so no tests for these
+
+	# Truncation attributes
+	[ '@attr 5=1 42', '42*' ],
+	[ '@attr 5=2 42', '*42' ],
+	[ '@attr 5=3 42', '*42*' ],
+	[ '@attr 5=100 42', '42' ],
+	[ '@attr 5=101 42#39#5abc', '42?39?5abc' ],
+	[ '@attr 5=104 42#39?5abc', '42?39*abc' ],
+
+	# Completeness attributes
+	[ '@attr 6=1 42', '42' ],
+	[ '@attr 6=2 42', '^42^' ],
+	[ '@attr 6=3 42', '^42^' ],
 
 	# Complex combinations
 	[ '@and @attr 1=1003 kernighan @attr 1=4 unix', '(author=kernighan and title=unix)' ],
