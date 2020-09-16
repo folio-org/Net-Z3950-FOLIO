@@ -5,7 +5,6 @@ pipeline {
   environment {
     BUILD_DIR = "${env.WORKSPACE}"
     modDescriptor = 'ModuleDescriptor.json'
-    env.name = "mod-z3950"
   }
 
   options {
@@ -27,18 +26,21 @@ pipeline {
             def foliociLib = new org.folio.foliociCommands()
 
             def mdJson = readJSON(file: env.modDescriptor)
-            def name = mdJson.name
             def modId = mdJson.id
+            env.name = sh(returnStdout: true, 
+                 script: "echo ${name} | cut -d '-' -f -2").trim()
+            env.bare_version = sh(returnStdout: true, 
+                 script: "echo ${name} | cut -d '-' -f 3-").trim()
         
             // if release 
             if ( foliociLib.isRelease() ) {
               env.isRelease = true 
               env.dockerRepo = 'folioorg'
-              env.version = modId
+              env.version = env.bare_version
             }
             else {
               env.dockerRepo = 'folioci'
-              env.version = "${modId}-SNAPSHOT.${env.BUILD_NUMBER}"
+              env.version = "${env.bare_version}-SNAPSHOT.${env.BUILD_NUMBER}"
             }
           }
         }
