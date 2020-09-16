@@ -32,7 +32,7 @@ BEGIN {
 	[ '@attr 1=12 12345', 'hrid=12345' ],
 	[ '@attr 1=21 palaeontology', 'subject=palaeontology' ],
 	[ '@attr 1=1003 ritchie', 'author=ritchie' ],
-#	[ '@attr 1=1016 churchill', '(author=churchill or title=churchill or hrid=churchill or subject=churchill)' ],
+	[ '@attr 1=1016 churchill', '(author=churchill or title=churchill or hrid=churchill or subject=churchill)' ],
 	[ '@attr 1=1019 marc', 'source=marc' ],
 	[ '@attr 1=1108 marc', 'source=marc' ],
 	[ '@attr 1=1155 marc', 'source=marc' ],

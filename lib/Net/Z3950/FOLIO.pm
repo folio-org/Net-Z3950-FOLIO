@@ -621,6 +621,13 @@ sub _toCQL {
 	}
     }
 
+    if ($field) {
+	my @fields = split(/,/, $field);
+	if (@fields > 1) {
+	    return '(' . join(' or ', map { $self->_CQLTerm($_) } @fields) . ')';
+	}
+    }
+
     return $self->_CQLTerm($field);
 }
 
