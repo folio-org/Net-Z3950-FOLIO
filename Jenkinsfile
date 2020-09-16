@@ -57,7 +57,7 @@ pipeline {
    
     stage('Build Docker') {
       steps {
-        doDocker = {
+        script = {
           buildDocker {
             publishMaster = 'yes'
             healthChk = 'no'
