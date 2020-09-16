@@ -55,12 +55,15 @@ pipeline {
       }
     }
    
+    
     stage('Build Docker') {
       steps {
-        script = {
-          buildDocker {
-            publishMaster = 'yes'
-            healthChk = 'no'
+        script {
+          doDocker = {
+            buildDocker {
+              publishMaster = 'yes'
+              healthChk = 'no'
+            }
           }
         }
       } 
