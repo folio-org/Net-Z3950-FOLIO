@@ -1,0 +1,33 @@
+{
+  "id": "mod-z3950-1.0.0",
+  "name": "Z39.50/SRU/SRW server for FOLIO",
+  "provides": [
+    {
+      "id": "sru",
+      "version": "1.0.0",
+      "handlers" : [
+        {
+          "methods" : [ "GET" ],
+          "pathPattern" : "/sru",
+          "permissionsRequired": []
+        }
+      ]
+    }
+  ],
+  "requires": [
+    {
+      "id": "graphql",
+      "version": "1.0.0"
+    }
+  ],
+  "launchDescriptor": {
+    "dockerImage": "mod-z3950:0.1.0",
+    "dockerPull": false,
+    "dockerArgs": {
+      "HostConfig": {
+        "Memory": 402653184,
+        "PortBindings": { "9997/tcp": [ { "HostPort": "%p" } ] }
+      }
+    }
+  }
+}
