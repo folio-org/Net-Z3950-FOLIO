@@ -28,9 +28,9 @@ pipeline {
             def mdJson = readJSON(file: env.modDescriptor)
             def modId = mdJson.id
             env.name = sh(returnStdout: true, 
-                 script: "echo ${name} | cut -d '-' -f -2").trim()
+                 script: "echo ${modId} | cut -d '-' -f -2").trim()
             env.bare_version = sh(returnStdout: true, 
-                 script: "echo ${name} | cut -d '-' -f 3-").trim()
+                 script: "echo ${modId} | cut -d '-' -f 3-").trim()
         
             // if release 
             if ( foliociLib.isRelease() ) {
