@@ -4,6 +4,7 @@ pipeline {
 
   environment {
     BUILD_DIR = "${env.WORKSPACE}"
+    modDescriptor = 'ModuleDescriptor.json'
   }
 
   options {
@@ -24,46 +25,32 @@ pipeline {
           script {
             def foliociLib = new org.folio.foliociCommands()
 
-            // there's an MD coming at some point so temp for testing
-            env.name = 'z2folio'
-            env.z2folioversion = '0.0.1'
+            def mdJson = readJSON(file: env.modDescriptor)
+            def name = mdJson.name
+            def modId = mdJson.id
         
             // if release 
             if ( foliociLib.isRelease() ) {
               env.isRelease = true 
               env.dockerRepo = 'folioorg'
-              env.version = env.z2folioversion
+              env.version = modId
             }
             else {
               env.dockerRepo = 'folioci'
-              env.version = "${env.z2folioversion}-SNAPSHOT.${env.BUILD_NUMBER}"
+              env.version = "${modId}-SNAPSHOT.${env.BUILD_NUMBER}"
             }
           }
         }
         sendNotifications 'STARTED'  
       }
     }
-
-    //stage('Build') { 
-    //  steps {
-    //    dir(env.BUILD_DIR) {
-    //      sh "perl Makefile.PL"
-    //      sh "make"
-    //      sh "make test"
-    //      sh "sudo make install"
-    //    }
-    //  }
-    //}
-   
     
     stage('Build Docker') {
       steps {
         script {
-          doDocker = {
-            buildDocker {
-              publishMaster = 'yes'
-              healthChk = 'no'
-            }
+          buildDocker {
+            publishMaster = 'yes'
+            healthChk = 'no'
           }
         }
       } 
