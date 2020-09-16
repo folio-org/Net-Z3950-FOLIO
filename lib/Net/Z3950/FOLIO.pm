@@ -603,10 +603,6 @@ sub _toCQL {
     my($args, $defaultSet) = @_;
     my $gh = $args->{GHANDLE};
     my $field;
-    my $relation;
-    my($left_anchor, $right_anchor) = (0, 0);
-    my($left_truncation, $right_truncation) = (0, 0);
-    my $term = $self->{term};
 
     my $attrs = $self->{attributes};
     untie $attrs;
@@ -625,7 +621,21 @@ sub _toCQL {
 	}
     }
 
-    # Then we can handle any other attributes
+    return $self->_CQLTerm($field);
+}
+
+
+sub _CQLTerm {
+    my $self = shift;
+    my($field) = @_;
+
+    my $relation;
+    my($left_anchor, $right_anchor) = (0, 0);
+    my($left_truncation, $right_truncation) = (0, 0);
+    my $term = $self->{term};
+    my $attrs = $self->{attributes};
+
+    # Handle non-use attributes
     foreach my $attr (@$attrs) {
         my $type = $attr->{attributeType};
         my $value = $attr->{attributeValue};
