@@ -126,7 +126,7 @@ sub _expand_variable_references {
     foreach my $key (sort keys %$obj) {
 	my $val = $obj->{$key};
 	if (!ref($val)) {
-	    $obj->{$key} = _expand_single_variable_reference($val);
+	    $obj->{$key} = _expand_single_variable_reference($key, $val);
 	} else {
 	    _expand_variable_references($val);
 	}
@@ -135,10 +135,15 @@ sub _expand_variable_references {
 
 
 sub _expand_single_variable_reference {
-    my ($val) = @_;
+    my ($key, $val) = @_;
 
     while ($val =~ /(.*?)\${(.*?)}(.*)/) {
-	$val = $1 . $ENV{$2} . $3;
+	my $env = $ENV{$2};
+	if (!defined $env) {
+	    warn "environment variable '$2' not defined for '$key'";
+	    $env = '';
+	}
+	$val = "$1$env$3";
     }
 
     return $val;
