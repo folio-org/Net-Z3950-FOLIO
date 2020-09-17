@@ -31,6 +31,7 @@ BEGIN {
 	[ '@attr 1=8 2167-8359', 'identifiers =/@value/@identifierTypeId="913300b2-03ed-469a-8179-c1092c991227" 2167-8359' ],
 	[ '@attr 1=12 12345', 'hrid=12345' ],
 	[ '@attr 1=21 palaeontology', 'subject=palaeontology' ],
+	[ '@attr 1=31 2007', 'publication.dateOfPublication=2007' ],
 	[ '@attr 1=1003 ritchie', 'author=ritchie' ],
 	[ '@attr 1=1016 churchill', '(author=churchill or title=churchill or hrid=churchill or subject=churchill)' ],
 	[ '@attr 1=1019 marc', 'source=marc' ],
