@@ -25,15 +25,15 @@ BEGIN {
 	[ '@or @and water air @and fire earth', '((water and air) or (fire and earth))' ],
 
 	# Access points
-	[ '@attr 1=1 kernighan', 'author=kernighan' ],
+	[ '@attr 1=1 kernighan', 'contributors =/@name kernighan' ],
 	[ '@attr 1=4 unix', 'title=unix' ],
 	[ '@attr 1=7 9780253357014', 'identifiers =/@value/@identifierTypeId="8261054f-be78-422d-bd51-4ed9f33c3422" 9780253357014' ],
 	[ '@attr 1=8 2167-8359', 'identifiers =/@value/@identifierTypeId="913300b2-03ed-469a-8179-c1092c991227" 2167-8359' ],
 	[ '@attr 1=12 12345', 'hrid=12345' ],
-	[ '@attr 1=21 palaeontology', 'subject=palaeontology' ],
+	[ '@attr 1=21 palaeontology', 'subjects=palaeontology' ],
 	[ '@attr 1=31 2007', 'publication.dateOfPublication=2007' ],
-	[ '@attr 1=1003 ritchie', 'author=ritchie' ],
-	[ '@attr 1=1016 churchill', '(author=churchill or title=churchill or hrid=churchill or subject=churchill)' ],
+	[ '@attr 1=1003 ritchie', 'contributors =/@name ritchie' ],
+	[ '@attr 1=1016 churchill', '(contributors =/@name churchill or title=churchill or hrid=churchill or subjects=churchill)' ],
 	[ '@attr 1=1019 marc', 'source=marc' ],
 	[ '@attr 1=1108 marc', 'source=marc' ],
 	[ '@attr 1=1155 marc', 'source=marc' ],
@@ -71,7 +71,7 @@ BEGIN {
 	[ '@attr 6=3 42', '^42^' ],
 
 	# Complex combinations
-	[ '@and @attr 1=1003 kernighan @attr 1=4 unix', '(author=kernighan and title=unix)' ],
+	[ '@and @attr 1=1003 kernighan @attr 1=4 unix', '(contributors =/@name kernighan and title=unix)' ],
     );
 }
 
@@ -79,7 +79,9 @@ use Test::More tests => 2*scalar(@tests) + 2;
 
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 
-$ENV{OKAPI_PASSWORD} = ''; # Avoid warning from failed variable substitution
+# Avoid warnings from failed variable substitution
+$ENV{OKAPI_URL} = $ENV{OKAPI_TENANT} = $ENV{OKAPI_USER} = $ENV{OKAPI_PASSWORD} = '';
+
 my $service = new Net::Z3950::FOLIO('etc/config.json');
 ok(defined $service, 'made FOLIO service object');
 my $parser = new Net::Z3950::PQF();
