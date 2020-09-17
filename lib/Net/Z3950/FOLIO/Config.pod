@@ -18,6 +18,7 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
     },
     "indexMap": {
       "1": "author",
+      "7": "identifiers/@value/@identifierTypeId=\"8261054f-be78-422d-bd51-4ed9f33c3422\"",
       "4": "title",
       "21": "subject",
       "1016": "author,title,hrid,subject"
@@ -110,6 +111,17 @@ access-points to.
 
 Each value may be a comma-separated list of multiple CQL indexes to be
 queried.
+
+Each CQL index specified as a value in the index map, or as one of the
+comma-separated components of the value, may contain a forward
+slash. If it does, then the part before the slash is used as the
+actual index name, and the part after the slash as a CQL relation
+modifier. For example, if the index map contains
+
+  "999": "foo/bar=quux"
+
+Then a search for C<@attr 1=9 thrick> will be translated to the CQL
+=query C<foo =/bar=quux thrick>.
 
 =head2 C<graphqlQuery>
 

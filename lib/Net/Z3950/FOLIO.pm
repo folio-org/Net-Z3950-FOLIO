@@ -642,12 +642,17 @@ sub _CQLTerm {
     my $term = $self->{term};
     my $attrs = $self->{attributes};
 
+    if (defined $field && $field =~ /(.*?)\/(.*)/) {
+	$field = $1;
+	$relation = "=/$2";
+    }
+
     # Handle non-use attributes
     foreach my $attr (@$attrs) {
         my $type = $attr->{attributeType};
         my $value = $attr->{attributeValue};
 
-        if ($type == 2) {
+        if ($type == 2 && !defined $relation) {
 	    # Relation.  The following switch hard-codes information
 	    # about the crrespondance between the BIB-1 attribute set
 	    # and CQL context set.
