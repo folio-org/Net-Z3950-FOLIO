@@ -19,7 +19,7 @@ use Data::Dumper; $Data::Dumper::Indent = 1;
 use Net::Z3950::FOLIO::ResultSet;
 use Net::Z3950::FOLIO::OPACXMLRecord qw(makeOPACXMLRecord);
 
-our $VERSION = '0.01';
+our $VERSION = '1.0';
 
 
 sub FORMAT_USMARC { '1.2.840.10003.5.10' }
