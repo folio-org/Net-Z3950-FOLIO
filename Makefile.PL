@@ -16,7 +16,12 @@ WriteMakefile(
 	URI::Escape => 3.31,
 	XML::Simple => 2.25,
 	Net::Z3950::PQF => 1.0,
-    }, # e.g., Module::Name => 1.1
+    },
+    META_ADD => {
+	no_index => {
+	    namespace => [ 'Net::Z3950::RPN' ],
+	},
+    },
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Net/Z3950/FOLIO.pm', # retrieve abstract from module
        AUTHOR         => 'Mike Taylor <mike@indexdata.com>') : ()),
