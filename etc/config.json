@@ -1,11 +1,11 @@
 {
   "okapi": {
-    "url": "https://indexdata-test-okapi.folio.indexdata.com",
+    "url": "${OKAPI_URL}",
     "UNUSED-graphqlUrl": "http://localhost:3001",
-    "tenant": "indexdata"
+    "tenant": "${OKAPI_TENANT}"
   },
   "login": {
-    "username": "id_admin",
+    "username": "${OKAPI_USER}",
     "password": "${OKAPI_PASSWORD}"
   },
   "indexMap": {
