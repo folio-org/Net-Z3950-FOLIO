@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.1](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.1) (IN PROGRESS)
+## [1.1](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.1) (Thu Sep 17 19:46:10 2020 +0100)
 
 * Attempt to mark classes in the `Net::Z3950::RPN` namespace as non-indexed, so PAUSE doesn't trip up on them when trying to index the module and seeing that classes of the same name are defined the SimplerServer distribution. Note that this have **no functional effect** on the behaviour of the code: it is only matter of getting the release to appear on CPAN.
 
