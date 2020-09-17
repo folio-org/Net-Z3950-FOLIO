@@ -14,7 +14,7 @@ BEGIN {
 	# Simple booleans
 	[ '@and water air', '(water and air)' ],
 	[ '@or fire earth', '(fire or earth)' ],
-#	[ '@not water earth', '(fire not earth)' ], # Will not work until Net::Z3950::PQF v1.0
+	[ '@not water earth', '(water not earth)' ],
 
 	# Boolean combinations
 	[ '@and water @or fire earth', '(water and (fire or earth))' ],
