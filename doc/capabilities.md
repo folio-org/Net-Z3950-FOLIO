@@ -67,7 +67,33 @@ If it is necessary to provide a different main configuration file or YAZ GFS con
 
 ## Z39.50
 
-XXX
+As a Z39.50 server, the software supports the following services:
+
+* [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1)
+* [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1)
+* [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1)
+* [Delete](https://www.loc.gov/z3950/agency/markup/05.html#3.2.4.1)
+* [Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
+
+Support for
+[Scan](https://www.loc.gov/z3950/agency/markup/05.html#3.2.8.1)
+is an option for subsequent versions.
+There are presently no plans to support
+[Extended Services](https://www.loc.gov/z3950/agency/markup/06.html#3.2.9.1),
+[Explain](https://www.loc.gov/z3950/agency/markup/07.html#3.2.10)
+or the unloved
+[Close](https://www.loc.gov/z3950/agency/markup/08.html#3.2.11.1)
+service.
+
+(The
+[Segment](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.2),
+[Access Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.5.1),
+[Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.1),
+[Trigger Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.2)
+and
+[Resource-report](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.3)
+services are not supported by the underlying SimpleServer library, so there is no realistic prospect of supporting them in the FOLIO server.)
+
 
 
 ### Searching

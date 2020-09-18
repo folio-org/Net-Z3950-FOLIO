@@ -52,6 +52,7 @@ Thanks to the magic of the protocol-polyglot [YAZ GFS](https://software.indexdat
 
 ### Other documentation
 
+* [Capabilities of this Z39.50/SRU server](doc/capabilities.md)
 * [The change-log for this module.](Changes.md)
 * [The `z2folio` program.](doc/from-pod/z2folio.md)
 * [The underlying library.](doc/from-pod/Net-Z3950-FOLIO.md)
