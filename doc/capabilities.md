@@ -5,11 +5,12 @@
 * [Server deployment](#server-deployment)
     * [Running under Docker](#running-under-docker)
 * [Z39.50](#z3950)
+    * [Authentication](#authentication)
     * [Searching](#searching)
     * [Retrieval](#retrieval)
 * [SRU](#sru)
-    * [Searching](#searching)
-    * [Retrieval](#retrieval)
+    * [SRU searching](#sru-searching)
+    * [SRU retrieval](#sru-retrieval)
 * [SRW](#srw)
 * [Appendix: developer notes](#appendix-developer-notes)
 
@@ -19,7 +20,7 @@
 
 The FOLIO Z39.50 server is [a FOLIO module](https://github.com/folio-org/Net-Z3950-FOLIO)) that provides access to the inventory information of a FOLIO tenant (bibliographic, holdings and item-level) by means of [the ANSI/NISO Z39.50 protocol](https://en.wikipedia.org/wiki/Z39.50) that is in widespread use in libraries and ILL solutions. Because it is based on [the YAZ Generic Frontend Server](https://software.indexdata.com/yaz/doc/server.html), is also supports [the REST-like SRU standard](https://www.loc.gov/standards/sru/) and [its SOAP-based equivalent SRW](https://www.loc.gov/standards/sru/companionSpecs/srw.html).
 
-The server is implemented as a Perl module, [`Net::Z3950::FOLIO`](https://metacpan.org/pod/Net::Z3950::ZOOM), which is available on CPAN (the Perl software repository) like any other Perl module. (Perl was chosen because [the `Net::Z3950::SimpleServer` module](https://metacpan.org/pod/Net::Z3950::SimpleServer) makes it so much easier to implement a Z39.50 server than in other languages.)
+The server is implemented as a Perl module, [`Net::Z3950::FOLIO`](https://metacpan.org/pod/Net::Z3950::FOLIO), which is available on CPAN (the Perl software repository) like any other Perl module. (Perl was chosen because [the `Net::Z3950::SimpleServer` module](https://metacpan.org/pod/Net::Z3950::SimpleServer) makes it so much easier to implement a Z39.50 server than in other languages.)
 
 The behaviour of the Z39.50 server is driven in part by [a configuration file](from-pod/Net-Z3950-FOLIO-Config.md). The server is distributed with [a standard configuration](../etc/config.json) which specifies things like how to determine what FOLIO servive to access, where to find the GraphQL query that extracts holdings information, and how Z39.50 queries are mapped into the CQL queries that FOLIO uses. It is possible to run the server with a different configuration, but this document describes capabilities such as the supported searches under the assumption that the standard configuration is in user. Standard disclaimers apply.
 
@@ -31,10 +32,10 @@ Since the FOLIO Z39.50 server is strictly a client to the rest of FOLIO (it uses
 
 When using the standard configuration file (see above), it is necessary to provide four pieces of information as environment variables:
 
-* `OKAPI_URL` -- the URL of the Okapi service to contact for GraphQL and SRS services, i.e. the FOLIO whose inventory is to be accessed.
-* `OKAPI_TENANT` -- the tenant to use on that Okapi URL. (This is presently hardwired at configuration time, but in future will be taken from the Z39.50 database name.)
-* `OKAPI_USER` -- the user to act as: note that this user will need permissions to access GraphQL, inventory and SRS.
-* `OKAPI_PASSWORD` -- the password used to authenticate as the nominated user.
+* `OKAPI_URL` &mdash; the URL of the Okapi service to contact for GraphQL and SRS services, i.e. the FOLIO whose inventory is to be accessed.
+* `OKAPI_TENANT` &mdash; the tenant to use on that Okapi URL. (This is presently hardwired at configuration time, but in future will be taken from the Z39.50 database name.)
+* `OKAPI_USER` &mdash; the user to act as: note that this user will need permissions to access GraphQL, inventory and SRS.
+* `OKAPI_PASSWORD` &mdash; the password used to authenticate as the nominated user.
 
 For example:
 
@@ -69,15 +70,17 @@ If it is necessary to provide a different main configuration file or YAZ GFS con
 
 As a Z39.50 server, the software supports the following services:
 
-* [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1)
-* [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1)
-* [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1)
+* [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1), including authentication and diagnostics (see [below](#authentication))
+* [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1), with support for Bath profile queries (see [below](#searching))
+* [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1) in USMARC, OPAC and XML formats (see [below](#retrieval))
 * [Delete](https://www.loc.gov/z3950/agency/markup/05.html#3.2.4.1)
-* [Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
+* [Trigger Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.2)
 
 Support for
+[Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
+is incomplete; both sorting and
 [Scan](https://www.loc.gov/z3950/agency/markup/05.html#3.2.8.1)
-is an option for subsequent versions.
+are possible features in future versions.
 There are presently no plans to support
 [Extended Services](https://www.loc.gov/z3950/agency/markup/06.html#3.2.9.1),
 [Explain](https://www.loc.gov/z3950/agency/markup/07.html#3.2.10)
@@ -89,11 +92,41 @@ service.
 [Segment](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.2),
 [Access Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.5.1),
 [Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.1),
-[Trigger Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.2)
 and
 [Resource-report](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.3)
-services are not supported by the underlying SimpleServer library, so there is no realistic prospect of supporting them in the FOLIO server.)
+services are not supported by the underlying SimpleServer library, so there is no realistic prospect of supporting them in the FOLIO server; but there is no evidence that any client exists that can use these services.)
 
+
+### Authentication
+
+If no default username and password are specified in the server's configuration, or if the user has reason to want to authenticate onto FOLIO as a differet user, these tokens can be provided in the Z39.50 Init request as a single "open" authentication string, separated by a forward slash (`/`). (In the YAZ command-line client, this can be done using the command `auth user/pass`. If authentication onto FOLIO is rejected &mdash; because of incorrect tokens or for any other reason &mdash; the Z39.50 server will reject the Init request, with the response including a diagnostic `otherInfo` unit.
+
+Here's how that looks using the YAZ command-line client:
+
+	Z> open @:9997
+	Connecting...OK.
+	Sent initrequest.
+	Connection rejected by v3 target.
+	ID     : 81/81
+	Name   : z2folio gateway/GFS/YAZ
+	Version: 1.2/5.30.3 2af59bc45cf4508d5c84f350ee99804c4354b3b3
+	Init response contains 1 otherInfo unit:
+	  1: otherInfo unit contains 1 diagnostic:
+	    1: code=1014 (Init/AC: Authentication System error),
+		addinfo='Password does not match'
+	Z> auth mike/swordfish
+	Authentication set to Open (mike/swordfish)
+	Z> open @:9997
+	Connecting...OK.
+	Sent initrequest.
+	Connection accepted by v3 target.
+	ID     : 81/81
+	Name   : z2folio gateway/GFS/YAZ
+	Version: 1.2/5.30.3 2af59bc45cf4508d5c84f350ee99804c4354b3b3
+	Options: search present delSet triggerResourceCtrl sort namedResultSets
+	Z> 
+
+Usually, the Z39.50 server will be configured to default to logging in as a specied user (see the discussion of `OKAPI_USER` and `OKAPI_PASSWORD` [above](#server-deployment)).
 
 
 ### Searching
@@ -109,15 +142,17 @@ XXX
 
 ## SRU
 
+XXX sorting _is_ supported, unlike Z39.50!
+
 XXX When building new clients to integrate with this server, SRU may be easier to use then Z39.50 because it is defined as in terms of XML and HTTP, a format and protocol for which there are many libriaries available in many languages.
 
 
-### Searching
+### SRU searching
 
 XXX
 
 
-### Retrieval
+### SRU retrieval
 
 XXX
 
