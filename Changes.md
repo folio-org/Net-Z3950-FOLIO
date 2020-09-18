@@ -3,6 +3,7 @@
 ## [1.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.3) (IN PROGRESS)
 
 * Add dependency on `source-storage-source-records` interface.
+* TODO: more polite rejection of searches with no access-point specified.
 
 ## [1.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.2) (Fri Sep 18 10:15:11 BST 2020)
 
