@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [1.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.3) (IN PROGRESS)
+
+* Add dependency on `source-storage-source-records` interface.
+
 ## [1.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.2) (Fri Sep 18 10:15:11 BST 2020)
 
 * Fix a couple of archaic formations that recent Perls complain about: unescaped `{` in regular expressions, passing a scalar reference to `keys`. These were causing test failures on some platforms.
