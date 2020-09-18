@@ -23,5 +23,6 @@
 ## To do
 
 * Determine FOLIO tenant from database name (and postpone initialisation and authentication until we know that).
-* automatic generation of MARC records (will need a non-trivial version of `etc/folio2marcxml.xsl`).
+* Support Z39.50 sorting.
+* Automatic generation of MARC records (will need a non-trivial version of `etc/folio2marcxml.xsl`).
 
