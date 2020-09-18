@@ -137,7 +137,7 @@ sub _expand_variable_references {
 sub _expand_single_variable_reference {
     my ($key, $val) = @_;
 
-    while ($val =~ /(.*?)\${(.*?)}(.*)/) {
+    while ($val =~ /(.*?)\$\{(.*?)}(.*)/) {
 	my $env = $ENV{$2};
 	if (!defined $env) {
 	    warn "environment variable '$2' not defined for '$key'";
@@ -523,7 +523,7 @@ sub _JSON_to_MARC {
 		# *sigh* I have to gather an array of single-key hashes into one hash
 		my @subfields;
 		for (my $j = 0; $j < @{$value->{subfields}}; $j++) {
-		    foreach my $k2 (keys $value->{subfields}->[$j]) {
+		    foreach my $k2 (keys %{ $value->{subfields}->[$j] }) {
 			push @subfields, $k2, $value->{subfields}->[$j]->{$k2};
 		    }
 		}
