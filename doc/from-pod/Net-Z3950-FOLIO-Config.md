@@ -7,7 +7,7 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
     {
       "okapi": {
         "url": "https://folio-snapshot-okapi.dev.folio.org",
-        "tenant": "diku"
+        "tenant": "${OKAPI_TENANT-indexdata}"
       },
       "login": {
         "username": "diku_admin",
@@ -15,11 +15,13 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
       },
       "indexMap": {
         "1": "author",
+        "7": "identifiers/@value/@identifierTypeId=\"8261054f-be78-422d-bd51-4ed9f33c3422\"",
         "4": "title",
-        "21": "subject"
+        "21": "subject",
+        "1016": "author,title,hrid,subject"
       },
-      "graphqlQuery": "instances.graphql-query", ###
-      "queryFilter": "source=marc", ###
+      "graphqlQuery": "instances.graphql-query",
+      "queryFilter": "source=marc",
       "chunkSize": 5,
       "fieldMap": {
         "title": "245$a",
@@ -43,6 +45,13 @@ are each replaced by the values of the corresponding environment
 variables `$NAME`, providing a mechanism for injecting values into
 the condfiguration. This is useful if, for example, it is necessary to
 avoid embedding authentication secrets in the configuration file.
+
+When substituting environment variables, the bash-like fallback syntax
+`${NAME-VALUE}` is recognised. This evaluates to the value of the
+environment variable `$NAME` when defined, falling back to the
+constant value `VALUE` otherwise. In this way, the configuration can
+include default values which may be overridden with environment
+variables.
 
 ## `okapi`
 
@@ -95,6 +104,20 @@ Contains any number of elements, all with string values. The keys are
 the numbers of BIB-1 use attributes, and the corresponding values are
 those of fields in the FOLIO instance revord to map those
 access-points to.
+
+Each value may be a comma-separated list of multiple CQL indexes to be
+queried.
+
+Each CQL index specified as a value in the index map, or as one of the
+comma-separated components of the value, may contain a forward
+slash. If it does, then the part before the slash is used as the
+actual index name, and the part after the slash as a CQL relation
+modifier. For example, if the index map contains
+
+    "999": "foo/bar=quux"
+
+Then a search for `@attr 1=9 thrick` will be translated to the CQL
+&#x3d;query `foo =/bar=quux thrick`.
 
 ## `graphqlQuery`
 

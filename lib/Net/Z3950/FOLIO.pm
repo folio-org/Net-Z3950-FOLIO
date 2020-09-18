@@ -138,12 +138,23 @@ sub _expand_single_variable_reference {
     my ($key, $val) = @_;
 
     while ($val =~ /(.*?)\$\{(.*?)}(.*)/) {
-	my $env = $ENV{$2};
+	my($pre, $inclusion, $post) = ($1, $2, $3);
+
+	my($name, $default);
+	if ($inclusion =~ /(.*?)-(.*)/) {
+	    $name = $1;
+	    $default = $2;
+	} else {
+	    $name = $inclusion;
+	    $default = undef;
+	}
+
+	my $env = $ENV{$name} || $default;
 	if (!defined $env) {
 	    warn "environment variable '$2' not defined for '$key'";
 	    $env = '';
 	}
-	$val = "$1$env$3";
+	$val = "$pre$env$post";
     }
 
     return $val;

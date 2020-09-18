@@ -10,7 +10,7 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
   {
     "okapi": {
       "url": "https://folio-snapshot-okapi.dev.folio.org",
-      "tenant": "diku"
+      "tenant": "${OKAPI_TENANT-indexdata}"
     },
     "login": {
       "username": "diku_admin",
@@ -48,6 +48,14 @@ are each replaced by the values of the corresponding environment
 variables C<$NAME>, providing a mechanism for injecting values into
 the condfiguration. This is useful if, for example, it is necessary to
 avoid embedding authentication secrets in the configuration file.
+
+When substituting environment variables, the bash-like fallback syntax
+C<${NAME-VALUE}> is recognised. This evaluates to the value of the
+environment variable C<$NAME> when defined, falling back to the
+constant value C<VALUE> otherwise. In this way, the configuration can
+include default values which may be overridden with environment
+variables.
+
 
 =head2 C<okapi>
 
