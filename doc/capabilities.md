@@ -131,7 +131,63 @@ Usually, the Z39.50 server will be configured to default to logging in as a spec
 
 ### Searching
 
-XXX
+The FOLIO Z39.50 server supports all boolean operations (AND, OR, ANDNOT) nested to arbitrary depths.
+
+The standard configuration supports searching on the following use attributes (type 1):
+
+* **1.** Personal name. Same as 1003.
+* **4.** Title.
+* **7.** ISBN.
+* **8.** ISSN.
+* **12.** Local number. Interpreted as HRID (human-readable identifier).
+* **21.** Subject heading.
+* **31.** Date of publication. **Does not work** with the present inventory module, as it does not support this search.
+* **1003.** Author. Interpreted as contributors
+* **1016.** Any. Interpreted as a search on FOLIO's "keyword" index. This includes title, contributors and identifiers.
+* **1019.** Record source. Interpreted as the inventory's "source" index, which is "marc" for MARC records stored in SRS.
+* **1108.** DC-Source. Same as 1019.
+* **1155.** Sources of Data. Same as 1019.
+* **1211.** OCLC Number. **Does not work** with the present inventory module.
+* **9999.** A special non-standard access-point that searches contributors, title, HRID and subjects. This is similar to the set of fields indexed as "keyword" (access-point 1016), but implemented as a four-way OR, so less efficient (but more inclusive).
+
+When no access-point is specified for a term, that term is searched for in the "keyword" index by default, i.e. finding title, contributors and identifiers.
+
+The following relation attributes (type 2) are supported:
+
+* **1.** Less than
+* **2.** Less than or equal
+* **3.** Equal
+* **4.** Greater or equal
+* **5.** Greater than
+* **6.** Not equal
+* **100.** Phonetic
+* **101.** Stem
+* **102.** Relevance
+
+The following position attributes (type 3) are supported:
+
+* **1.** First in field
+* **2.** First in subfield. Same as 1.
+* **3.** Any position in field.
+
+All structure attributes (type 4) are ignored
+
+The following truncation attributes (type 5) are supported:
+
+* **1.** Right truncation
+* **2.** Left truncation
+* **3.** Left and right
+* **100.** Do not truncate
+* **101.** Process # in search trm
+* **104.** Z39.58 (CCL-style masking)
+
+The following completeness attributes (type 6) are supported:
+
+* **1.** Incomplete subfield
+* **2.** Complete subfield. Same as 3.
+* **3.** Complete field
+
+**NOTE.** "Support" here means that the Z39.50 server generates the correct CQL query to express the Z39.50 query using these attributes: the FOLIO back-end does not necessarily support all the CQL queries &mdash; for example, stemming is not supported in the back-end; but if and when it is, it will be accessible via Z39.50.
 
 
 ### Retrieval
