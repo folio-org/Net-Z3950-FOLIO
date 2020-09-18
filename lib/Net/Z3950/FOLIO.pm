@@ -538,7 +538,9 @@ sub _JSON_to_MARC {
 			push @subfields, $k2, $value->{subfields}->[$j]->{$k2};
 		    }
 		}
-		$marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
+		if (@subfields) {
+		    $marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
+		}
 	    }
 	}
     }
