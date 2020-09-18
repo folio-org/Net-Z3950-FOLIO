@@ -613,6 +613,7 @@ sub _toCQL {
     my $self = shift;
     my($args, $defaultSet) = @_;
     my $gh = $args->{GHANDLE};
+    my $indexMap = $gh->{cfg}->{indexMap};
     my $field;
 
     my $attrs = $self->{attributes};
@@ -628,8 +629,13 @@ sub _toCQL {
 	}
 	if ($attr->{attributeType} == 1) {
 	    my $val = $attr->{attributeValue};
-	    $field = _ap2index($gh->{cfg}->{indexMap}, $val);
+	    $field = _ap2index($indexMap, $val);
 	}
+    }
+
+    if (!$field && $indexMap) {
+	# No explicit access-point, fall back to default if specified
+	$field = $indexMap->{default};
     }
 
     if ($field) {

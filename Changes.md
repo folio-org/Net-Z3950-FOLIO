@@ -4,7 +4,7 @@
 
 * Add dependency on `source-storage-source-records` interface.
 * When substituting environment variables in the configuration file, recognise the bash-like fallback syntax `${NAME-VALUE}`, which uses the value of the environment variable `NAME` when defined, falling back to the constant value `VALUE` otherwise. This allows the configuration to include default values which can be overridden with environment variables.
-* TODO: more polite rejection of searches with no access-point specified.
+* Use `default` configured index when no Z39.50 access-point is specified for a search.
 * TODO: documentation of server capabilities.
 
 ## [1.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.2) (Fri Sep 18 10:15:11 BST 2020)
