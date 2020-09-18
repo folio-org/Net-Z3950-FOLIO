@@ -205,7 +205,7 @@ XXX When building new clients to integrate with this server, SRU may be easier t
 
 ### SRU searching
 
-XXX
+XXX http://lehigh-z3950-test.folio.indexdata.com:9997/sru/TEST?version=1.1&operation=searchRetrieve&query=title=a&maximumRecords=1&recordSchema=opac
 
 
 ### SRU retrieval
