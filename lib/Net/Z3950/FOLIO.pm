@@ -25,6 +25,7 @@ our $VERSION = '1.2';
 sub FORMAT_USMARC { '1.2.840.10003.5.10' }
 sub FORMAT_XML { '1.2.840.10003.5.109.10' }
 sub FORMAT_OPAC { '1.2.840.10003.5.102' }
+sub FORMAT_JSON { '1.2.840.10003.5.1000.81.3' }
 sub ATTRSET_BIB1 { '1.2.840.10003.3.1' }
 
 
@@ -322,6 +323,8 @@ sub _fetch_handler {
 	$res = makeOPACXMLRecord($rec, $marc);
     } elsif ($format eq FORMAT_OPAC) {
 	_throw(1, "OPAC format not yet supported");
+    } elsif ($format eq FORMAT_JSON) {
+	$res = _pretty_json($rec);
     } elsif ($format eq FORMAT_XML) {
 	warn "XML";
 	$res = _xml_record($rec);
