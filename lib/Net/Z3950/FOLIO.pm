@@ -231,30 +231,38 @@ sub _init_handler {
 
 sub _search_handler {
     my($args) = @_;
-    my $session = $args->{HANDLE};
     my $this = $args->{GHANDLE};
+    my $session = $args->{HANDLE};
 
     # For now, we ignore the dbname. In the future we will use this as
     # the tenant ID, which will mean postponing the authentication
     # call from the Init handler to now, when we first discover the
     # dbname.
 
-    my $cql;
     if ($args->{CQL}) {
-	$cql = $args->{CQL};
+	$this->{cql} = $args->{CQL};
     } else {
 	my $type1 = $args->{RPN}->{query};
-	$cql = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
-	warn "search: translated '" . $args->{QUERY} . "' to '$cql'\n";
+	$this->{cql} = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
+	warn "search: translated '" . $args->{QUERY} . "' to '" . $this->{cql} . "'\n";
     }
 
-    my $setname = $args->{SETNAME};
+    $this->{sortspec} = undef;
+    $args->{HITS} = $this->_rerun_search($session, $args->{SETNAME}, @_);
+}
+
+
+sub _rerun_search {
+    my $this = shift();
+    my($session, $setname) = @_;
+
+    my $cql = $this->{cql};
     my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
     $session->{resultsets}->{$setname} = $rs;
 
     my $chunkSize = $this->{cfg}->{chunkSize} || 10;
     $this->_do_search($rs, 0, $chunkSize);
-    $args->{HITS} = $rs->total_count();
+    return $rs->total_count();
 }
 
 
@@ -406,6 +414,7 @@ sub _delete_handler {
 sub _sort_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
+    my $this = $args->{GHANDLE};
 
     my $setnames = $args->{INPUT};
     _throw(230, '1') if @$setnames > 1; # Sort: too many input results
@@ -413,23 +422,77 @@ sub _sort_handler {
     my $rs = $session->{resultsets}->{$setname};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
-    my $cqlSort = _sortspec2cql($args->{SEQUENCE});
+    my $cqlSort = $this->_sortspecs2cql($args->{SEQUENCE});
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
-    warn Dumper($args);
-    return;
+    $this->{sortspec} = $cqlSort;
+    $this->_rerun_search($session, $args->{OUTPUT}, @_);
 }
 
 
-sub _sortspec2cql {
+sub _sortspecs2cql {
+    my $this = shift();
     my($sequence) = @_;
 
     my @res = ();
-    foreach my $item (@$sequence) {
-	warn Dumper(ITEM => $item);
+    foreach my $item (@$sequence) {	
+	push @res, $this->_singleSortspecs2cql($item);
     }
 
-    return undef;
+    my $spec = join(' ', @res);
+    return $spec;
+}
+
+
+sub _singleSortspecs2cql {
+    my $this = shift();
+    my($item) = @_;
+    my $indexMap = $this->{cfg}->{indexMap};
+
+    my $set = $item->{ATTRSET};
+    if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 && lc($set) ne 'bib-1') {
+	# Unknown attribute set (anything except BIB-1)
+	_throw(121, $set);
+    }
+
+    my $missing = _translateSortParam($item->{MISSING}, 213, {
+	1 => 'missingFail',
+	2 => 'missingLow',
+    });
+
+    my $relation = _translateSortParam($item->{RELATION}, 214, {
+	0 => 'ascending',
+	1 => 'descending',
+    });
+
+    my $case = _translateSortParam($item->{CASE}, 215, {
+	0 => 'respectCase',
+	1 => 'ignoreCase',
+    });
+
+    my $cqlIndex;
+    my $attrs = $item->{SORT_ATTR};
+    foreach my $attr (@$attrs) {
+	my $type = $attr->{ATTR_TYPE};
+	_throw(237, "sort-attribute of type $type (only 1 is supported)") if defined $type && $type != 1;
+
+	my $val = $attr->{ATTR_VALUE};
+	$cqlIndex = $indexMap->{$val};
+	_throw(207, "undefined sort-index $val") if !defined $cqlIndex;
+	last;
+    }
+
+    warn "cqlIndex=$cqlIndex, missing=$missing, relation=$relation, case=$case";
+    return "$cqlIndex/sort.$missing/sort.$relation/sort.$case";
+}
+
+
+sub _translateSortParam {
+    my($zval, $diag, $map) = @_;
+
+    my $cqlVal = $map->{$zval};
+    _throw($diag, $zval) if !$cqlVal;
+    return $cqlVal;
 }
 
 
@@ -442,6 +505,11 @@ sub _do_search {
     my $cql = $rs->{cql};
     if ($qf) {
 	$cql = $cql ? "($cql) and ($qf)" : $qf;
+    }
+    my $sortspec = $this->{sortspec};
+    if ($sortspec) {
+	$cql = "($cql) sortby $sortspec";
+	warn "search: added sortspec, yielding '$cql'";
     }
 
     my $url = $okapiCfg->{url};
@@ -538,7 +606,9 @@ sub _JSON_to_MARC {
 			push @subfields, $k2, $value->{subfields}->[$j]->{$k2};
 		    }
 		}
-		$marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
+		if (@subfields) {
+		    $marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
+		}
 	    }
 	}
     }
@@ -613,6 +683,7 @@ sub _toCQL {
     my $self = shift;
     my($args, $defaultSet) = @_;
     my $gh = $args->{GHANDLE};
+    my $indexMap = $gh->{cfg}->{indexMap};
     my $field;
 
     my $attrs = $self->{attributes};
@@ -628,8 +699,13 @@ sub _toCQL {
 	}
 	if ($attr->{attributeType} == 1) {
 	    my $val = $attr->{attributeValue};
-	    $field = _ap2index($gh->{cfg}->{indexMap}, $val);
+	    $field = _ap2index($indexMap, $val);
 	}
+    }
+
+    if (!$field && $indexMap) {
+	# No explicit access-point, fall back to default if specified
+	$field = $indexMap->{default};
     }
 
     if ($field) {

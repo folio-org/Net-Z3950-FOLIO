@@ -115,7 +115,8 @@ more records than are actually wanted.
 Contains any number of elements, all with string values. The keys are
 the numbers of BIB-1 use attributes, and the corresponding values are
 those of fields in the FOLIO instance revord to map those
-access-points to.
+access-points to. The key `default` is special, and is used for terms
+where no BIB-1 use attribute is specified.
 
 Each value may be a comma-separated list of multiple CQL indexes to be
 queried.
