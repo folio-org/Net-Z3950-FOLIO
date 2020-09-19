@@ -8,6 +8,7 @@
     * [Authentication](#authentication)
     * [Searching](#searching)
     * [Retrieval](#retrieval)
+    * [Sorting](#sorting)
 * [SRU](#sru)
     * [SRU searching](#sru-searching)
     * [SRU retrieval](#sru-retrieval)
@@ -73,14 +74,12 @@ As a Z39.50 server, the software supports the following services:
 * [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1), including authentication and diagnostics (see [below](#authentication))
 * [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1), with support for Bath profile queries (see [below](#searching))
 * [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1) in USMARC, OPAC and XML formats (see [below](#retrieval))
+* [Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
 * [Delete](https://www.loc.gov/z3950/agency/markup/05.html#3.2.4.1)
 * [Trigger Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.2)
 
-Support for
-[Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
-is incomplete; both sorting and
 [Scan](https://www.loc.gov/z3950/agency/markup/05.html#3.2.8.1)
-are possible features in future versions.
+is a possible feature for future versions.
 There are presently no plans to support
 [Extended Services](https://www.loc.gov/z3950/agency/markup/06.html#3.2.9.1),
 [Explain](https://www.loc.gov/z3950/agency/markup/07.html#3.2.10)
@@ -195,12 +194,15 @@ The following completeness attributes (type 6) are supported:
 XXX
 
 
+### Sorting
+
+XXX
+
+
 
 ## SRU
 
-XXX sorting _is_ supported, unlike Z39.50!
-
-XXX When building new clients to integrate with this server, SRU may be easier to use then Z39.50 because it is defined as in terms of XML and HTTP, a format and protocol for which there are many libriaries available in many languages.
+XXX When building new clients to integrate with this server, SRU may be easier to use than Z39.50 because it is defined as in terms of XML and HTTP, a format and protocol for which there are many libriaries available in many languages.
 
 
 ### SRU searching
