@@ -120,24 +120,34 @@ sub _reload_config_file {
 }
 
 
-# XXX note, does not currently support arrays, but we don't need them
 sub _expand_variable_references {
     my($obj) = @_;
 
     foreach my $key (sort keys %$obj) {
-	my $val = $obj->{$key};
-	if (!ref($val)) {
-	    $obj->{$key} = _expand_single_variable_reference($key, $val);
-	} else {
-	    _expand_variable_references($val);
-	}
+	$obj->{$key} = _expand_single_variable_reference($key, $obj->{$key});
+    }
+
+    return $obj;
+}
+
+sub _expand_single_variable_reference {
+    my($key, $val) = @_;
+
+    if (ref($val) eq 'HASH') {
+	return _expand_variable_references($val);
+    } elsif (ref($val) eq 'ARRAY') {
+	return [ map { _expand_single_variable_reference($key, $_) } @$val ];
+    } elsif (!ref($val)) {
+	return _expand_scalar_variable_reference($key, $val);
+    } else {
+	die "non-hash, non-array, non-scale configuration key '$key'";
     }
 }
 
-
-sub _expand_single_variable_reference {
+sub _expand_scalar_variable_reference {
     my ($key, $val) = @_;
 
+    my $orig = $val;
     while ($val =~ /(.*?)\$\{(.*?)}(.*)/) {
 	my($pre, $inclusion, $post) = ($1, $2, $3);
 
@@ -321,12 +331,12 @@ sub _fetch_handler {
     } elsif ($format eq FORMAT_XML) {
 	_throw(25, "XML records available in element-sets: raw, usmarc, opac");
 
-    } elsif ($format eq FORMAT_USMARC && ($comp eq 'f' || $comp eq 'b')) {
+    } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
-	_throw(25, "USMARC records available in element-sets: f, b, d");
+	_throw(25, "USMARC records available in element-sets: f, b");
 
     } else {
 	_throw(239, $format); # 239 = Record syntax not supported
@@ -451,6 +461,7 @@ sub _singleSortspecs2cql {
     my $this = shift();
     my($item) = @_;
     my $indexMap = $this->{cfg}->{indexMap};
+    my $omitCfg = $this->{cfg}->{omitSortIndexModifiers};
 
     my $set = $item->{ATTRSET};
     if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 && lc($set) ne 'bib-1') {
@@ -458,20 +469,20 @@ sub _singleSortspecs2cql {
 	_throw(121, $set);
     }
 
-    my $missing = _translateSortParam($item->{MISSING}, 213, {
-	1 => 'missingFail',
-	2 => 'missingLow',
-    });
-
-    my $relation = _translateSortParam($item->{RELATION}, 214, {
-	0 => 'ascending',
-	1 => 'descending',
-    });
-
-    my $case = _translateSortParam($item->{CASE}, 215, {
-	0 => 'respectCase',
-	1 => 'ignoreCase',
-    });
+    my @modifiers = (
+	[ missing => _translateSortParam($item->{MISSING}, 213, {
+	    1 => 'missingFail',
+	    2 => 'missingLow',
+	})],
+	[ relation => _translateSortParam($item->{RELATION}, 214, {
+	    0 => 'ascending',
+	    1 => 'descending',
+	})],
+	[ case => _translateSortParam($item->{CASE}, 215, {
+	    0 => 'respectCase',
+	    1 => 'ignoreCase',
+        })],
+    );
 
     my $cqlIndex;
     my $attrs = $item->{SORT_ATTR};
@@ -485,8 +496,17 @@ sub _singleSortspecs2cql {
 	last;
     }
 
-    warn "cqlIndex=$cqlIndex, missing=$missing, relation=$relation, case=$case";
-    return "$cqlIndex/sort.$missing/sort.$relation/sort.$case";
+    my $res = $cqlIndex;
+
+    my $omitList = $omitCfg->{$cqlIndex};
+    foreach my $modifier (@modifiers) {
+	my($name, $value) = @$modifier;
+	if (!$omitList || ! grep { $_ eq $name } @$omitList) {
+	    $res .= "/sort.$value";
+	}
+    };
+
+    return $res;
 }
 
 
