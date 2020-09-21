@@ -98,7 +98,7 @@ services are not supported by the underlying SimpleServer library, so there is n
 
 ### Authentication
 
-If no default username and password are specified in the server's configuration, or if the user has reason to want to authenticate onto FOLIO as a differet user, these tokens can be provided in the Z39.50 Init request as a single "open" authentication string, separated by a forward slash (`/`). (In the YAZ command-line client, this can be done using the command `auth user/pass`. If authentication onto FOLIO is rejected &mdash; because of incorrect tokens or for any other reason &mdash; the Z39.50 server will reject the Init request, with the response including a diagnostic `otherInfo` unit.
+If no default username and password are specified in the server's configuration, or if the user has reason to want to authenticate onto FOLIO as a differet user, these tokens can be provided in the Z39.50 Init request as a single "open" authentication string, separated by a forward slash (`/`). (In the YAZ command-line clientw, this can be done using the command `auth user/pass`. If authentication onto FOLIO is rejected &mdash; because of incorrect tokens or for any other reason &mdash; the Z39.50 server will reject the Init request, with the response including a diagnostic `otherInfo` unit.
 
 Here's how that looks using the YAZ command-line client:
 
@@ -191,12 +191,34 @@ The following completeness attributes (type 6) are supported:
 
 ### Retrieval
 
-XXX
+Records can be retrieved in the following record syntaxes:
+
+* **JSON** (1.2.840.10003.5.1000.81.3) &mdash; The entire composite record, as obtained from mod-graphql, is returned as-is. Since all the other forms of the record that can delivered are derived from this, it can be a useful way to see the Real Truth that those records are versions of.
+* **XML** (1.2.840.10003.5.109.10) &mdash; Three different schemas are supported (expressed in Z39.50 terms as element-set names):
+  * `raw` &mdash; a literal, mechanical transliteration of the JSON data into XML. Can be useful as the input to further XSLT transformations.
+  * `usmarc` &mdash; the standard [MARCXML](https://www.loc.gov/standards/marcxml/) representation of a USMARC record in XML.
+  * `opac` &mdash; the [YAZ toolkit](https://www.indexdata.com/yaz/)'s de-factor standard representation of a Z39.50 OPAC record in XML, including the bibliographic data expressed as MARCXML alongside holdings and item-level information.
+* **USMARC** (1.2.840.10003.5.10) &mdash; ISO 2709-encoded USMARC records. The element-set names `f` and `b` are supported, and are both equivalent. Other element-set names are reserved for future expansion.
+* **OPAC** (1.2.840.10003.5.102) &mdash; [the Z39.50 OPAC record format](https://www.loc.gov/z3950/agency/asn1.html#RecordSyntax-opac).
+
 
 
 ### Sorting
 
-XXX
+The Z39.50 Sort service is supported as follows:
+
+* Only one result-set can be sorted at once, i.e. the service cannot be used to merge multiple result sets.
+* "Generic" sorting is supported; "database-specific" sorting is not.
+* Within each sort key:
+  * Sort-fields can be specified as a sort-attribute of type 1 (use attribute) with value coresponding to the field to sort on. These values are the same as for use attributes when searching.
+  * Relations 0 (ascending) and 1 (descending) are supported. Relations 3 (ascending by frequency) and 4 (descending by frequency) are not.
+  * Cases 0 (case-sensitive) and 1 (case-insensitive) are supported.
+  * Missing-value specifications 1 (fail) and 2 (null value) are supported. Value 3 (treat missing as a specified value) is not.
+
+So, for example, the YAZ command-line client comment `sort 1=4 s< 1=21 i>` will sort first by title, case-insensitively in ascending order, then by HRID, case-sensitively in descending order.
+
+**NOTE.** As with searching, "support" here means that the Z39.50 server generates the correct CQL query to express the Z39.50 query using these attributes: the FOLIO back-end does not necessarily support all the CQL queries.
+
 
 
 
