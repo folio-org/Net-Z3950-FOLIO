@@ -304,15 +304,12 @@ sub _fetch_handler {
     warn "REQ_FORM=$format, COMP=$comp\n";
 
     my $res;
-    if ($format eq FORMAT_USMARC && $comp eq 'd') {
-	# Dynamically generated USMARC from the FOLIO inventory records
-	warn "Dynamically generated USMARC from the FOLIO inventory records";
+    if ($format eq FORMAT_JSON) {
+	$res = _pretty_json($rec);
+
+    } elsif ($format eq FORMAT_XML && $comp eq 'raw') {
+	# Mechanical XML translitation of the JSON response
 	$res = _xml_record($rec);
-	$args->{REP_FORM} = 'xml';
-    } elsif ($format eq FORMAT_USMARC) {
-	# Static USMARC from SRS
-	my $marc = $this->_marc_record($rs, $index1);
-	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
 	my $marc = $this->_marc_record($rs, $index1);
@@ -321,13 +318,16 @@ sub _fetch_handler {
 	# OPAC-format XML
 	my $marc = $this->_marc_record($rs, $index1);
 	$res = makeOPACXMLRecord($rec, $marc);
-    } elsif ($format eq FORMAT_OPAC) {
-	_throw(1, "OPAC format not yet supported");
-    } elsif ($format eq FORMAT_JSON) {
-	$res = _pretty_json($rec);
     } elsif ($format eq FORMAT_XML) {
-	warn "XML";
-	$res = _xml_record($rec);
+	_throw(25, "XML records available in element-sets: raw, usmarc, opac");
+
+    } elsif ($format eq FORMAT_USMARC && ($comp eq 'f' || $comp eq 'b')) {
+	# Static USMARC from SRS
+	my $marc = $this->_marc_record($rs, $index1);
+	$res = $marc->as_usmarc();
+    } elsif ($format eq FORMAT_USMARC) {
+	_throw(25, "USMARC records available in element-sets: f, b, d");
+
     } else {
 	_throw(239, $format); # 239 = Record syntax not supported
     }
