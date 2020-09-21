@@ -217,8 +217,7 @@ The Z39.50 Sort service is supported as follows:
 
 So, for example, the YAZ command-line client comment `sort 1=4 s< 1=21 i>` will sort first by title, case-insensitively in ascending order, then by HRID, case-sensitively in descending order.
 
-**NOTE.** As with searching, "support" here means that the Z39.50 server generates the correct CQL query to express the Z39.50 query using these attributes: the FOLIO back-end does not necessarily support all the CQL queries.
-
+**NOTE.** As with searching, "support" here means that the Z39.50 server generates the correct CQL query to express the Z39.50 query using these attributes: the FOLIO back-end does not necessarily support all the CQL queries. Where a given index does not support some of the sort-index modifiers that it ought, these can be explicily omitted using [the `omitSortIndexModifiers` configuration option](from-pod/Net-Z3950-FOLIO-Config.md#omitSortIndexModifiers).
 
 
 
