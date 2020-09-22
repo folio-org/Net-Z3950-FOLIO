@@ -57,6 +57,7 @@ Thanks to the magic of the protocol-polyglot [YAZ GFS](https://software.indexdat
 * [The `z2folio` program.](doc/from-pod/z2folio.md)
 * [The underlying library.](doc/from-pod/Net-Z3950-FOLIO.md)
 * [The configuration file format.](doc/from-pod/Net-Z3950-FOLIO-Config.md)
+* Developer documentation about [the release procedure](doc/release-procedure.md)
 * Developer documentation about [FOLIO's SRS system](doc/srs/using-srs.md), which the Z-server uses to obtain MARC records.
 * Developer documentation about [the Z39.50 OPAC record format](doc/opac/README.md) and the YAZ toolkit's XML equivalent.
 
