@@ -13,6 +13,8 @@ Since this Z39.50 server is written as a Perl module, it adheres to Perl release
 
 * The change-log is [`Changes.md`](../Changes.md) rather than `CHANGELOG.md` or `NEWS.md`.
 
+* The master documentation is written in [POD](https://perldoc.perl.org/perlpod.html), embedded in Perl source files. Since it is useful to be able to read documentation directly from Markdown in [the GitHub source](https://github.com/folio-org/Net-Z3950-FOLIO/), Markdown versions can be automatically generated from the POD sources in [the `doc/from-pod` directory](from-pod).
+
 * [The module descriptor](../ModuleDescriptor.json) is a static file which must be maintained by hand, rather than being automatically generated from a template. (We could build a system to do the latter, but have not yet done so.)
 
 
@@ -21,6 +23,7 @@ Since this Z39.50 server is written as a Perl module, it adheres to Perl release
 The procedure therefore consists of the following steps:
 
 * Make the actual changes to the software, including relevant documentation, change-log entries (within an "IN PROGRESS" release section), and tests if appropriate. Commit.
+* Regenerate the Markdown versions of the POD documentation by running `make` in [`doc/from-pod`](from-pod).
 * Check that the standard Perl build-test-and-clean procedure runs successfully and without warnings about unpackaged files, etc.:
 ```	
 	perl Makefile.PL
