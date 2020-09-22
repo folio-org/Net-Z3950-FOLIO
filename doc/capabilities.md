@@ -263,11 +263,3 @@ As with SRU, CQL queries are passed straight through to FOLIO; all records are r
 
 
 
-## Appendix: developer notes
-
-XXX version number is two-part in Perl, and always x.y.0 in FOLIO.
-
-XXX Release process involves updating version number in FOLIO.pm, ModuleDescriptor.json and possibly Changes.md
-
-
-
