@@ -5,10 +5,10 @@
 * [Server deployment](#server-deployment)
     * [Running under Docker](#running-under-docker)
 * [Z39.50](#z3950)
-    * [Authentication](#authentication)
-    * [Searching](#searching)
-    * [Retrieval](#retrieval)
-    * [Sorting](#sorting)
+    * [Z39.50 Authentication](#z3950-authentication)
+    * [Z39.50 Searching](#z3950-searching)
+    * [Z39.50 Retrieval](#z3950-retrieval)
+    * [Z39.50 Sorting](#z3950-sorting)
 * [SRU](#sru)
     * [SRU searching](#sru-searching)
     * [SRU retrieval](#sru-retrieval)
@@ -71,9 +71,9 @@ If it is necessary to provide a different main configuration file or YAZ GFS con
 
 As a Z39.50 server, the software supports the following services:
 
-* [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1), including authentication and diagnostics (see [below](#authentication))
-* [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1), with support for Bath profile queries (see [below](#searching))
-* [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1) in USMARC, OPAC and XML formats (see [below](#retrieval))
+* [Init](https://www.loc.gov/z3950/agency/markup/04.html#3.2.1.1), including authentication and diagnostics (see [below](#z3950-authentication))
+* [Search](https://www.loc.gov/z3950/agency/markup/04.html#3.2.2.1), with support for Bath profile queries (see [below](#z3950-searching))
+* [Present](https://www.loc.gov/z3950/agency/markup/04.html#3.2.3.1) in USMARC, OPAC and XML formats (see [below](#z3950-retrieval))
 * [Sort](https://www.loc.gov/z3950/agency/markup/05.html#3.2.7.1)
 * [Delete](https://www.loc.gov/z3950/agency/markup/05.html#3.2.4.1)
 * [Trigger Resource Control](https://www.loc.gov/z3950/agency/markup/05.html#3.2.6.2)
@@ -96,7 +96,7 @@ and
 services are not supported by the underlying SimpleServer library, so there is no realistic prospect of supporting them in the FOLIO server; but there is no evidence that any client exists that can use these services.)
 
 
-### Authentication
+### Z39.50 authentication
 
 If no default username and password are specified in the server's configuration, or if the user has reason to want to authenticate onto FOLIO as a differet user, these tokens can be provided in the Z39.50 Init request as a single "open" authentication string, separated by a forward slash (`/`). (In the YAZ command-line clientw, this can be done using the command `auth user/pass`. If authentication onto FOLIO is rejected &mdash; because of incorrect tokens or for any other reason &mdash; the Z39.50 server will reject the Init request, with the response including a diagnostic `otherInfo` unit.
 
@@ -128,7 +128,7 @@ Here's how that looks using the YAZ command-line client:
 Usually, the Z39.50 server will be configured to default to logging in as a specied user (see the discussion of `OKAPI_USER` and `OKAPI_PASSWORD` [above](#server-deployment)).
 
 
-### Searching
+### Z39.50 searching
 
 The FOLIO Z39.50 server supports all boolean operations (AND, OR, ANDNOT) nested to arbitrary depths.
 
@@ -189,7 +189,7 @@ The following completeness attributes (type 6) are supported:
 **NOTE.** "Support" here means that the Z39.50 server generates the correct CQL query to express the Z39.50 query using these attributes: the FOLIO back-end does not necessarily support all the CQL queries &mdash; for example, stemming is not supported in the back-end; but if and when it is, it will be accessible via Z39.50.
 
 
-### Retrieval
+### Z39.50 retrieval
 
 Records can be retrieved in the following record syntaxes:
 
@@ -203,7 +203,7 @@ Records can be retrieved in the following record syntaxes:
 
 
 
-### Sorting
+### Z39.50 sorting
 
 The Z39.50 Sort service is supported as follows:
 
