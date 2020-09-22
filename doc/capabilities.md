@@ -10,6 +10,7 @@
     * [Z39.50 Retrieval](#z3950-retrieval)
     * [Z39.50 Sorting](#z3950-sorting)
 * [SRU](#sru)
+    * [SRU authentication](#sru-authentication)
     * [SRU searching](#sru-searching)
     * [SRU retrieval](#sru-retrieval)
 * [SRW](#srw)
@@ -19,7 +20,7 @@
 
 ## Overview
 
-The FOLIO Z39.50 server is [a FOLIO module](https://github.com/folio-org/Net-Z3950-FOLIO)) that provides access to the inventory information of a FOLIO tenant (bibliographic, holdings and item-level) by means of [the ANSI/NISO Z39.50 protocol](https://en.wikipedia.org/wiki/Z39.50) that is in widespread use in libraries and ILL solutions. Because it is based on [the YAZ Generic Frontend Server](https://software.indexdata.com/yaz/doc/server.html), is also supports [the REST-like SRU standard](https://www.loc.gov/standards/sru/) and [its SOAP-based equivalent SRW](https://www.loc.gov/standards/sru/companionSpecs/srw.html).
+The FOLIO Z39.50 server is [a FOLIO module](https://github.com/folio-org/Net-Z3950-FOLIO)) that provides access to the inventory information of a FOLIO tenant (bibliographic, holdings and item-level) by means of [the ANSI/NISO Z39.50 protocol](https://en.wikipedia.org/wiki/Z39.50) that is in widespread use in libraries and ILL solutions. Because it is based on [the YAZ Generic Frontend Server](https://software.indexdata.com/yaz/doc/server.html), it also supports [the REST-like SRU standard](https://www.loc.gov/standards/sru/) and [its SOAP-based equivalent SRW](https://www.loc.gov/standards/sru/companionSpecs/srw.html).
 
 The server is implemented as a Perl module, [`Net::Z3950::FOLIO`](https://metacpan.org/pod/Net::Z3950::FOLIO), which is available on CPAN (the Perl software repository) like any other Perl module. (Perl was chosen because [the `Net::Z3950::SimpleServer` module](https://metacpan.org/pod/Net::Z3950::SimpleServer) makes it so much easier to implement a Z39.50 server than in other languages.)
 
@@ -197,7 +198,7 @@ Records can be retrieved in the following record syntaxes:
 * **XML** (1.2.840.10003.5.109.10) &mdash; Three different schemas are supported (expressed in Z39.50 terms as element-set names):
   * `raw` &mdash; a literal, mechanical transliteration of the JSON data into XML. Can be useful as the input to further XSLT transformations.
   * `usmarc` &mdash; the standard [MARCXML](https://www.loc.gov/standards/marcxml/) representation of a USMARC record in XML.
-  * `opac` &mdash; the [YAZ toolkit](https://www.indexdata.com/yaz/)'s de-factor standard representation of a Z39.50 OPAC record in XML, including the bibliographic data expressed as MARCXML alongside holdings and item-level information.
+  * `opac` &mdash; the [YAZ toolkit](https://www.indexdata.com/yaz/)'s de-facto standard representation of a Z39.50 OPAC record in XML, including the bibliographic data expressed as MARCXML alongside holdings and item-level information.
 * **USMARC** (1.2.840.10003.5.10) &mdash; ISO 2709-encoded USMARC records. The element-set names `f` and `b` are supported, and are both equivalent. Other element-set names are reserved for future expansion.
 * **OPAC** (1.2.840.10003.5.102) &mdash; [the Z39.50 OPAC record format](https://www.loc.gov/z3950/agency/asn1.html#RecordSyntax-opac).
 
@@ -223,23 +224,42 @@ So, for example, the YAZ command-line client comment `sort 1=4 s< 1=21 i>` will 
 
 ## SRU
 
-XXX When building new clients to integrate with this server, SRU may be easier to use than Z39.50 because it is defined as in terms of XML and HTTP, a format and protocol for which there are many libriaries available in many languages.
+[The SRU standard](https://www.loc.gov/standards/sru/) is a recasting of Z39.50-like semantics into a more web-friendly format, in which requests are expressed as HTTP URLs with specific query parameters, and responses are XML documents. Unlike Z39.50, it is stateless: each request is self-contained and does not depend on earlier operations. As a result, it has no concept of session initialization, and no result sets: each request is its own search and immedately returns the relevant records. A typical SRU request looks like this:
+
+http://lehigh-z3950-test.folio.indexdata.com:9997/sru/TEST?version=1.1&operation=searchRetrieve&query=title=a&maximumRecords=1&recordSchema=opac
+
+When building new clients to integrate with this server, SRU may be easier to use than Z39.50 because it is defined as in terms of XML and HTTP, a format and protocol for which there are many libriaries available in many languages.
+
+
+### SRU authentication
+
+As with Z39.50 authentication, the default username and password are wired into the server's configuration, but these can be overridden by individual requests.
+
+[The SRU specification](https://www.loc.gov/standards/sru/) does not specify a way to communicate a username and password to an SRU server; and although there is [an authentication extension](https://www.loc.gov/standards/sru/extensions/authentication.html), it too is silent on application-level username/password pairs, instead focussing on IP-based authentication, HTTP Basic authentication, the use of HTTPS, and opaque authentication tokens. YAZ-based SRU servers, then, adopt the convention of using the `x-username` and `x-password` extension parameters to convey a username and password. For example:
+
+http://lehigh-z3950-test.folio.indexdata.com:9997/sru/TEST?version=1.1&operation=searchRetrieve&query=title=a&maximumRecords=1&recordSchema=opac&x-username=mike&x-password=swordfish
 
 
 ### SRU searching
 
-XXX http://lehigh-z3950-test.folio.indexdata.com:9997/sru/TEST?version=1.1&operation=searchRetrieve&query=title=a&maximumRecords=1&recordSchema=opac
+In SRU, the query is expressed is CQL, the same query language that FOLIO uses internally. The FOLIO SRU server therefore passes the query straight through to the back-end, and all CQL queries that work in FOLIO's inventory instances store will work in CQL. (The `indexMap` part of the configuration file is therefore not used when serving SRU requests.)
 
 
 ### SRU retrieval
 
-XXX
+In SRU, all records are returned in XML. The following schemas are supported (specified as the `recordSchema` parameter):
+
+* `raw` &mdash; a literal, mechanical transliteration of the entire composite JSON record, as obtained from mod-graphql.
+* `usmarc` &mdash; the standard [MARCXML](https://www.loc.gov/standards/marcxml/) representation of a USMARC record in XML.
+* `opac` &mdash; the [YAZ toolkit](https://www.indexdata.com/yaz/)'s de-facto standard representation of a Z39.50 OPAC record in XML, including the bibliographic data expressed as MARCXML alongside holdings and item-level information.
 
 
 
 ## SRW
 
-XXX
+[SRW](https://www.loc.gov/standards/sru/companionSpecs/srw.html) is a binding of the SRU semantics onto [SOAP](https://en.wikipedia.org/wiki/SOAP)-based transport. It is not widely used, but is nevertheless also supported by the FOLIO Z39.50 server.
+
+As with SRU, CQL queries are passed straight through to FOLIO; all records are returned in XML format, and the `raw`, `usmarc` and `opac` schemas are supported.
 
 
 
