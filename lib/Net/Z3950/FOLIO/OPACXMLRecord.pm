@@ -69,8 +69,8 @@ sub _makeSingleHoldingsRecord {
     my $location = $holding->{temporaryLocation} || $holding->{permanentLocation};
     if ($location) {
 	$nucCode = ($location->{institution} || {})->{name};
-	$localLocation = ($location->{campus} || {})->{name};
-	$shelvingLocation = ($location->{library} || {})->{name};
+	$localLocation = ($location->{library} || {})->{name};
+	$shelvingLocation = $location->{name};
     }
 
     my $items = _makeItemRecords($holding->{holdingsItems});
