@@ -290,6 +290,7 @@ sub _makeOnHold {
 sub _makeLocation {
     my($data) = @_;
     return undef if !defined $data;
+    return $data->{name} if defined $data->{name};
 
     my @tmp;
     foreach my $key (qw(institution campus library primaryServicePointObject)) {
