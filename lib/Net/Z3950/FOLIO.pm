@@ -509,7 +509,7 @@ sub _singleSortspecs2cql {
 	if (!$omitList || ! grep { $_ eq $name } @$omitList) {
 	    $res .= "/sort.$value";
 	} else {
-	    warn "omitting '$name' sort-modifier for access-point $accessPoint ($cqlIndex)";
+	    # warn "omitting '$name' sort-modifier for access-point $accessPoint ($cqlIndex)";
 	}
     };
 
