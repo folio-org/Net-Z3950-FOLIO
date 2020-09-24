@@ -26,7 +26,7 @@
     "9999": "contributors/@name,title,hrid,subjects"
   },
   "omitSortIndexModifiers": {
-    "hrid": [ "missing", "case" ]
+    "12": [ "missing", "case" ]
   },
   "graphqlQuery": "instances.graphql-query",
   "queryFilter": "source=marc",

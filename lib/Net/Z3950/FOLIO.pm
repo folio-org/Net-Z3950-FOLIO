@@ -486,23 +486,26 @@ sub _singleSortspecs2cql {
 
     my $cqlIndex;
     my $attrs = $item->{SORT_ATTR};
+    my $accessPoint;
     foreach my $attr (@$attrs) {
 	my $type = $attr->{ATTR_TYPE};
 	_throw(237, "sort-attribute of type $type (only 1 is supported)") if defined $type && $type != 1;
 
-	my $val = $attr->{ATTR_VALUE};
-	$cqlIndex = $indexMap->{$val};
-	_throw(207, "undefined sort-index $val") if !defined $cqlIndex;
+	$accessPoint = $attr->{ATTR_VALUE};
+	$cqlIndex = $indexMap->{$accessPoint};
+	_throw(207, "undefined sort-index $accessPoint") if !defined $cqlIndex;
 	last;
     }
 
     my $res = $cqlIndex;
 
-    my $omitList = $omitCfg->{$cqlIndex};
+    my $omitList = $omitCfg->{$accessPoint};
     foreach my $modifier (@modifiers) {
 	my($name, $value) = @$modifier;
 	if (!$omitList || ! grep { $_ eq $name } @$omitList) {
 	    $res .= "/sort.$value";
+	} else {
+	    warn "omitting '$name' sort-modifier for access-point $accessPoint ($cqlIndex)";
 	}
     };
 

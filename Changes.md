@@ -8,7 +8,7 @@
 * Use `default` configured index when no Z39.50 access-point is specified for a search.
 * Support Z39.50 sorting.
 * Make the set of available record-syntaxes and element-sets more coherent.
-* Add configuration option to omit specified sort-index modifiers for specific indexes. We should not need this, but in practice we will until CQLPG-102 is fixed.
+* Add configuration option to omit specified sort-index modifiers for specific access points. We should not need this, but in practice we will until CQLPG-102 is fixed.
 * Provide [documentation of server capabilities](doc/capabilities.md). Fixes ZF-17.
 * Modify how FOLIO location data is mapped to OPAC-record fields. Fixes ZF-19.
 * The `itemId` field in the OPAC record now contains the item barcode instead of HRID. Fixes ZF-21.
