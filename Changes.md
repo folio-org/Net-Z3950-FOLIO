@@ -6,7 +6,7 @@
 * Add dependency on `source-storage-source-records` interface.
 * When substituting environment variables in the configuration file, recognise the bash-like fallback syntax `${NAME-VALUE}`, which uses the value of the environment variable `NAME` when defined, falling back to the constant value `VALUE` otherwise. This allows the configuration to include default values which can be overridden with environment variables.
 * Use `default` configured index when no Z39.50 access-point is specified for a search.
-* Support Z39.50 sorting.
+* Support Z39.50 sorting. Fixes ZF-1.
 * Make the set of available record-syntaxes and element-sets more coherent.
 * Add configuration option to omit specified sort-index modifiers for specific access points. We should not need this, but in practice we will until CQLPG-102 is fixed.
 * Provide [documentation of server capabilities](doc/capabilities.md). Fixes ZF-17.
@@ -23,13 +23,21 @@
 
 ## [1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.0) (Thu Sep 17 16:25:51 BST 2020)
 
-* First released version.
+* First released version. Includes:
+  * ZF-3 (Support returning OPAC records)
+  * ZF-4 (Support returning MARC records)
+  * ZF-5 (Get MARC records directly from linked storage (SRS))
+  * ZF-6 (Get the basic server working)
+  * ZF-7 (Improve query-mapping)
+  * ZF-12 (Generate OPAC record from holdings/items according to mapping)
+  * ZF-15 (Dockerize the Z39.50 server)
+  * ZF-16 (Make release v1.0)
 
 ## 0.01 (Thu Dec  6 13:03:26 2018)
 * Original version; created by `h2xs -X --name=Net::Z3950::FOLIO --compat-version=5.8.0 --omit-constant --skip-exporter --skip-ppport`
 
 ## To do
 
-* Determine FOLIO tenant from database name (and postpone initialisation and authentication until we know that).
-* Automatic generation of MARC records (will need a non-trivial version of `etc/folio2marcxml.xsl`).
+* Determine FOLIO tenant from database name, and postpone initialisation and authentication until we know that (ZF-2).
+* Automatic generation of MARC records (ZF-14). Thi will need a non-trivial version of `etc/folio2marcxml.xsl` (ZF-8).
 
