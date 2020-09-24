@@ -714,7 +714,7 @@ sub _toCQL {
     my($args, $defaultSet) = @_;
     my $gh = $args->{GHANDLE};
     my $indexMap = $gh->{cfg}->{indexMap};
-    my $field;
+    my($field, $relation);
 
     my $attrs = $self->{attributes};
     untie $attrs;
@@ -730,30 +730,31 @@ sub _toCQL {
 	if ($attr->{attributeType} == 1) {
 	    my $val = $attr->{attributeValue};
 	    $field = _ap2index($indexMap, $val);
+	    $relation = _ap2relation($indexMap, $val);
 	}
     }
 
     if (!$field && $indexMap) {
 	# No explicit access-point, fall back to default if specified
 	$field = _ap2index($indexMap, 'default');
+	$relation = _ap2relation($indexMap, 'default');
     }
 
     if ($field) {
 	my @fields = split(/,/, $field);
 	if (@fields > 1) {
-	    return '(' . join(' or ', map { $self->_CQLTerm($_) } @fields) . ')';
+	    return '(' . join(' or ', map { $self->_CQLTerm($_, $relation) } @fields) . ')';
 	}
     }
 
-    return $self->_CQLTerm($field);
+    return $self->_CQLTerm($field, $relation);
 }
 
 
 sub _CQLTerm {
     my $self = shift;
-    my($field) = @_;
+    my($field, $relation) = @_;
 
-    my $relation;
     my($left_anchor, $right_anchor) = (0, 0);
     my($left_truncation, $right_truncation) = (0, 0);
     my $term = $self->{term};
@@ -769,30 +770,32 @@ sub _CQLTerm {
         my $type = $attr->{attributeType};
         my $value = $attr->{attributeValue};
 
-        if ($type == 2 && !defined $relation) {
+        if ($type == 2) {
 	    # Relation.  The following switch hard-codes information
 	    # about the crrespondance between the BIB-1 attribute set
 	    # and CQL context set.
-	    if ($value == 1) {
-		$relation = "<";
-	    } elsif ($value == 2) {
-		$relation = "<=";
-	    } elsif ($value == 3) {
-		$relation = "=";
-	    } elsif ($value == 4) {
-		$relation = ">=";
-	    } elsif ($value == 5) {
-		$relation = ">";
-	    } elsif ($value == 6) {
-		$relation = "<>";
-	    } elsif ($value == 100) {
-		$relation = "=/phonetic";
-	    } elsif ($value == 101) {
-		$relation = "=/stem";
-	    } elsif ($value == 102) {
-		$relation = "=/relevant";
-	    } else {
-		_throw(117, $value);
+	    if ($relation) {
+		if ($value == 1) {
+		    $relation = "<";
+		} elsif ($value == 2) {
+		    $relation = "<=";
+		} elsif ($value == 3) {
+		    $relation = "=";
+		} elsif ($value == 4) {
+		    $relation = ">=";
+		} elsif ($value == 5) {
+		    $relation = ">";
+		} elsif ($value == 6) {
+		    $relation = "<>";
+		} elsif ($value == 100) {
+		    $relation = "=/phonetic";
+		} elsif ($value == 101) {
+		    $relation = "=/stem";
+		} elsif ($value == 102) {
+		    $relation = "=/relevant";
+		} else {
+		    _throw(117, $value);
+		}
 	    }
         }
 
@@ -871,6 +874,16 @@ sub _ap2index {
     _throw(114, $value) if !defined $field;
     return $field->{cql} if ref $field;
     return $field;
+}
+
+
+sub _ap2relation {
+    my($indexMap, $value) = @_;
+
+    return undef if !defined $indexMap;
+    my $field = $indexMap->{$value};
+    return undef if !defined $field || !ref $field;
+    return $field->{relation};
 }
 
 

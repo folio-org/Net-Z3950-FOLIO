@@ -16,6 +16,7 @@
     "8": "identifiers/@value/@identifierTypeId=\"913300b2-03ed-469a-8179-c1092c991227\"",
     "12": {
       "cql": "hrid",
+      "relation": "==",
       "omitSortIndexModifiers": [ "missing", "case" ]
     },
     "21": "subjects",

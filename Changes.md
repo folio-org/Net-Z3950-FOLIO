@@ -12,6 +12,7 @@
 * Provide [documentation of server capabilities](doc/capabilities.md). Fixes ZF-17.
 * Modify how FOLIO location data is mapped to OPAC-record fields. Fixes ZF-19.
 * The `itemId` field in the OPAC record now contains the item barcode instead of HRID. Fixes ZF-21.
+* Support and document `relation` specification in index-map specification, allowing the use of `==` for HRID searches. Fixes ZF-20.
 
 ## [1.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.2) (Fri Sep 18 10:15:11 BST 2020)
 

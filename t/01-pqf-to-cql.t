@@ -29,7 +29,7 @@ BEGIN {
 	[ '@attr 1=4 unix', 'title=unix' ],
 	[ '@attr 1=7 9780253357014', 'identifiers =/@value/@identifierTypeId="8261054f-be78-422d-bd51-4ed9f33c3422" 9780253357014' ],
 	[ '@attr 1=8 2167-8359', 'identifiers =/@value/@identifierTypeId="913300b2-03ed-469a-8179-c1092c991227" 2167-8359' ],
-	[ '@attr 1=12 12345', 'hrid=12345' ],
+	[ '@attr 1=12 12345', 'hrid == 12345' ], # Tests non-standard default relation
 	[ '@attr 1=21 palaeontology', 'subjects=palaeontology' ],
 	[ '@attr 1=31 2007', 'publication.dateOfPublication=2007' ],
 	[ '@attr 1=1003 ritchie', 'contributors =/@name ritchie' ],
