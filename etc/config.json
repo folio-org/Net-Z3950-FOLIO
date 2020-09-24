@@ -33,9 +33,5 @@
   },
   "graphqlQuery": "instances.graphql-query",
   "queryFilter": "source=marc",
-  "chunkSize": 5,
-  "fieldMap": {
-    "title": "245$a",
-    "author": "100$a"
-  }
+  "chunkSize": 5
 }
