@@ -189,7 +189,7 @@ sub _makeSingleItemRecord {
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
         [ 'restrictions', _makeRestrictions($item) ],
-        [ 'itemId', $item->{hrid} ],
+        [ 'itemId', $item->{barcode} ],
 	# XXX Determining a correct value for <renewable> would be
 	# very complicated, involving loan policies. But we have to
 	# include _something_, because this element is mandatory in

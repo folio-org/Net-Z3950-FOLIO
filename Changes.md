@@ -9,8 +9,9 @@
 * Support Z39.50 sorting.
 * Make the set of available record-syntaxes and element-sets more coherent.
 * Add configuration option to omit specified sort-index modifiers for specific indexes. We should not need this, but in practice we will until CQLPG-102 is fixed.
-* Provide [documentation of server capabilities](doc/capabilities.md).
+* Provide [documentation of server capabilities](doc/capabilities.md). Fixes ZF-17.
 * Modify how FOLIO location data is mapped to OPAC-record fields. Fixes ZF-19.
+* The `itemId` field in the OPAC record now contains the item barcode instead of HRID. Fixes ZF-21.
 
 ## [1.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.2) (Fri Sep 18 10:15:11 BST 2020)
 
