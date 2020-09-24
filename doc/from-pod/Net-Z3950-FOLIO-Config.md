@@ -17,11 +17,13 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
         "1": "author",
         "7": "identifiers/@value/@identifierTypeId=\"8261054f-be78-422d-bd51-4ed9f33c3422\"",
         "4": "title",
+        "12": {
+          "cql": "hrid",
+          "relation": "==",
+          "omitSortIndexModifiers": [ "missing", "case" ]
+        },
         "21": "subject",
         "1016": "author,title,hrid,subject"
-      },
-      "omitSortIndexModifiers": {
-        "hrid": [ "missing", "case" ]
       },
       "graphqlQuery": "instances.graphql-query",
       "queryFilter": "source=marc",
@@ -103,42 +105,49 @@ more records than are actually wanted.
 
 ## `indexMap`
 
-Contains any number of elements, all with string values. The keys are
-the numbers of BIB-1 use attributes, and the corresponding values are
-those of fields in the FOLIO instance revord to map those
-access-points to. The key \`default\` is special, and is used for terms
-where no BIB-1 use attribute is specified.
+Contains any number of elements. The keys are the numbers of BIB-1 use
+attributes, and the corresponding values contain instructions about
+the indexes in the FOLIO instance record to map those access-points
+to. The key `default` is special, and is used for terms where no BIB-1
+use attribute is specified.
 
-Each value may be a comma-separated list of multiple CQL indexes to be
-queried.
+Each value may be either a string, in which case it is interpreted as
+a CQL index to map to (see below for details), or an object. When the
+object version is used, that object's `cql` member contains the CQL
+index mapping (see below), and any of the following additional members
+may also be included:
 
-Each CQL index specified as a value in the index map, or as one of the
-comma-separated components of the value, may contain a forward
-slash. If it does, then the part before the slash is used as the
-actual index name, and the part after the slash as a CQL relation
-modifier. For example, if the index map contains
+- `omitSortIndexModifiers`
+
+    A bug in FOLIO's CQL query interpreter means that for some indexes,
+    query translation will fail if a sort-specification is provided that
+    requests certain valid behaviours, e.g. a case-sensitive search on the
+    HRID index. To work around this until it's fixed, an index's
+    `omitSortIndexModifiers` allows you to specify a list of the
+    index-modifier types that they do not support, so that the server can
+    omit those qualifiers when creating sort-specifications. The valid
+    index-modifier types are `missing`, `relation` and `case`.
+
+- `relation`
+
+    If specified, the value is the relation that should be used instead of
+    `=` by default when searching in this index. This is useful mostly
+    for defaulting to the strict-equality relation `==` for indexes whose
+    values are atomic, such as identifiers.
+
+Each `cql` value (or string value when the object form is not used)
+may be a comma-separated list of multiple CQL indexes to be queried.
+
+Each CQL index specified as a value, or as one of the comma-separated
+components of a value, may contain a forward slash. If it does, then
+the part before the slash is used as the actual index name, and the
+part after the slash as a CQL relation modifier. For example, if the
+index map contains
 
     "999": "foo/bar=quux"
 
 Then a search for `@attr 1=9 thrick` will be translated to the CQL
-&#x3d;query `foo =/bar=quux thrick`.
-
-## `omitSortIndexModifiers`
-
-A bug in FOLIO's CQL query interpreter means that for some indexes,
-query translation will fail if a sort-specification is provided that
-requests certain valid behaviours, e.g. a case-sensitive search on the
-HRID index. See https://issues.folio.org/browse/CQLPG-102
-
-To work around this until it's fixed, the FOLIO Z39.50 server's
-configuration allows you to specify a map of CQL index names to a list
-of the index-modifier types that they do not support, so that the
-server can omit those qualifiers when creating
-sort-specifications. The valid index-modifier types are
-`missing`,
-`relation`
-and
-`case`.
+query `foo =/bar=quux thrick`.
 
 ## `graphqlQuery`
 
@@ -154,12 +163,6 @@ every query submitted by the client, so it acts as a filter allowing
 through only records that satisfy it. This might be used, for example,
 to specify `source=marc` to limit search result to only to those
 FOLIO instance records that were translated from MARC imports.
-
-## `fieldMap`
-
-Contains any number of elements, all with string values. The keys are
-the names of fields in the FOLIO instance record, and the
-corresponding values are those of MARC fields to map those fields to.
 
 # SEE ALSO
 
