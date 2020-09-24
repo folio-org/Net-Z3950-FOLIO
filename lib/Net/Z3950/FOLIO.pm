@@ -492,7 +492,7 @@ sub _singleSortspecs2cql {
 	_throw(237, "sort-attribute of type $type (only 1 is supported)") if defined $type && $type != 1;
 
 	$accessPoint = $attr->{ATTR_VALUE};
-	$cqlIndex = $indexMap->{$accessPoint};
+	$cqlIndex = Net::Z3950::RPN::Term::_ap2index($indexMap, $accessPoint);
 	_throw(207, "undefined sort-index $accessPoint") if !defined $cqlIndex;
 	last;
     }
@@ -731,7 +731,7 @@ sub _toCQL {
 
     if (!$field && $indexMap) {
 	# No explicit access-point, fall back to default if specified
-	$field = $indexMap->{default};
+	$field = _ap2index($indexMap, 'default');
     }
 
     if ($field) {
