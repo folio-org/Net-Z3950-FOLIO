@@ -461,7 +461,6 @@ sub _singleSortspecs2cql {
     my $this = shift();
     my($item) = @_;
     my $indexMap = $this->{cfg}->{indexMap};
-    my $omitCfg = $this->{cfg}->{omitSortIndexModifiers};
 
     my $set = $item->{ATTRSET};
     if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 && lc($set) ne 'bib-1') {
@@ -484,22 +483,27 @@ sub _singleSortspecs2cql {
         })],
     );
 
-    my $cqlIndex;
+    my($accessPoint, $cqlIndex, $entry);
     my $attrs = $item->{SORT_ATTR};
-    my $accessPoint;
     foreach my $attr (@$attrs) {
 	my $type = $attr->{ATTR_TYPE};
 	_throw(237, "sort-attribute of type $type (only 1 is supported)") if defined $type && $type != 1;
 
 	$accessPoint = $attr->{ATTR_VALUE};
-	$cqlIndex = Net::Z3950::RPN::Term::_ap2index($indexMap, $accessPoint);
-	_throw(207, "undefined sort-index $accessPoint") if !defined $cqlIndex;
+	$entry = $indexMap->{$accessPoint};
+	_throw(207, "undefined sort-index $accessPoint") if !defined $entry;
+	if (ref $entry) {
+	    $cqlIndex = $entry->{cql};
+	} else {
+	    $cqlIndex = $entry;
+	    $entry = undef;
+	}
 	last;
     }
 
     my $res = $cqlIndex;
 
-    my $omitList = $omitCfg->{$accessPoint};
+    my $omitList = $entry ? $entry->{omitSortIndexModifiers} : [];
     foreach my $modifier (@modifiers) {
 	my($name, $value) = @$modifier;
 	if (!$omitList || ! grep { $_ eq $name } @$omitList) {
@@ -865,6 +869,7 @@ sub _ap2index {
 
     my $field = $indexMap->{$value};
     _throw(114, $value) if !defined $field;
+    return $field->{cql} if ref $field;
     return $field;
 }
 
