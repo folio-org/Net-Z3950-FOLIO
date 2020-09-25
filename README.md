@@ -9,6 +9,15 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
 [`z2folio`](bin/z2folio) is a Z39.50 server for FOLIO bibliographic and holdings data, supporting record retrieval in USMARC, OPAC and XML formats. The functionality is all provided by [the `Net::Z3950::FOLIO` library](lib/Net/Z3950/FOLIO.pm), which is also part of this distribution. It is written in Perl, and follows standard Perl-module conventions.
 
+## Dependencies
+
+Dependencies are defined in the [module descriptor](ModuleDescriptor.json) but since the FOLIO Z39.50 server is strictly a client to the rest of FOLIO it does not need to be installed as a part of FOLIO itself, and can run outside of a FOLIO installation provided it is pointing to an Okapi server with the following modules enabled:
+
+* [`mod-graphql`](https://github.com/folio-org/mod-graphql)
+* [`mod-source-record-storage`](https://github.com/folio-org/mod-source-record-storage)
+
+> The Okapi connection details (url, tenant, username, password) are defined via environment variables or [configuration file](etc/config.json).
+
 ## Installation
 
 To install this module type the following:
