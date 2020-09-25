@@ -14,9 +14,13 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 Dependencies are defined in the [module descriptor](ModuleDescriptor.json) but since the FOLIO Z39.50 server is strictly a client to the rest of FOLIO it does not need to be installed as a part of FOLIO itself, and can run outside of a FOLIO installation provided it is pointing to an Okapi server with the following modules enabled:
 
 * [`mod-graphql`](https://github.com/folio-org/mod-graphql)
+* [`mod-inventory`](https://github.com/folio-org/mod-inventory)
+* [`mod-inventory-storage`](https://github.com/folio-org/mod-inventory-storage)
 * [`mod-source-record-storage`](https://github.com/folio-org/mod-source-record-storage)
 
-> The Okapi connection details (url, tenant, username, password) are defined via environment variables or [configuration file](etc/config.json).
+Of these, the last three are fairly ubiquitous in FOLIO installations, but mod-graphql may need to be added.
+
+The Okapi connection details (url, tenant, username, password) are defined in [the configuration file](etc/config.json) or via environment variables: see **Authentication** below.
 
 ## Installation
 
