@@ -71,12 +71,12 @@ Contains three elements (two mandatory, one optional), all with string values:
 
     Usually, the main Okapi URL is used for all interaction with FOLIO:
     logging in, searching, retrieving records, etc. When the optional
-    &#x3d;`graphqlUrl` configuration entry is provided, it is used for GraphQL
+    `graphqlUrl` configuration entry is provided, it is used for GraphQL
     queries only. This provides a way of "side-loading" mod-graphql, which
     is useful in at least two situations: when the FOLIO snapshot services
     are unavailable (since the production services do not presently
-    &#x3d;included mod-graphql); and when you need to run against a development
-    &#x3d;version of mod-graphql so you can make changes to its behaviour.
+    included mod-graphql); and when you need to run against a development
+    version of mod-graphql so you can make changes to its behaviour.
 
 - `tenant`
 
