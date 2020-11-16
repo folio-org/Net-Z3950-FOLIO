@@ -148,6 +148,7 @@ The standard configuration supports searching on the following use attributes (t
 * **1108.** DC-Source. Same as 1019.
 * **1155.** Sources of Data. Same as 1019.
 * **1211.** OCLC Number. **Does not work** with the present inventory module.
+* **9998.** A non-standard access-point used for searching by the barcode of items.
 * **9999.** A special non-standard access-point that searches contributors, title, HRID and subjects. This is similar to the set of fields indexed as "keyword" (access-point 1016), but implemented as a four-way OR, so less efficient (but more inclusive).
 
 When no access-point is specified for a term, that term is searched for in the "keyword" index by default, i.e. finding title, contributors and identifiers.
@@ -244,6 +245,7 @@ http://lehigh-z3950-test.folio.indexdata.com:9997/sru/TEST?version=1.1&operation
 
 In SRU, the query is expressed is CQL, the same query language that FOLIO uses internally. The FOLIO SRU server therefore passes the query straight through to the back-end, and all CQL queries that work in FOLIO's inventory instances store will work in CQL. (The `indexMap` part of the configuration file is therefore not used when serving SRU requests.)
 
+To see some of the CQL searches that are supported on the FOLIO back-end, see the values corresponding to the BIB-1 use attributes in the `indexMap` part of [the standard configuration](../etc/config.json): for example, `item.barcode=14120137` can be used to search for bibliographic records of instances that have an item with the specific barcode.
 
 ### SRU retrieval
 

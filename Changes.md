@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [1.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.4) (IN PROGRESS)
+
+* Add support for searching by local barcode. Fixes ZF-23.
+
 ## [1.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.3) (Thu Sep 24 20:16:12 BST 2020)
 
 * Make robust when dealing with MARC fields that have no subfields.
