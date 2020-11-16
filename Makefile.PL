@@ -25,4 +25,19 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Net/Z3950/FOLIO.pm', # retrieve abstract from module
        AUTHOR         => 'Mike Taylor <mike@indexdata.com>') : ()),
+
+    (eval { ExtUtils::MakeMaker->VERSION(6.46) } ? (META_MERGE => {
+        'meta-spec' => { version => 2 },
+         resources => {
+             repository => {
+                 type => 'git',
+                 url  => 'https://github.com/folio-org/Net-Z3950-FOLIO.git',
+                 web  => 'https://github.com/folio-org/Net-Z3950-FOLIO',
+             },
+             bugtracker => {
+                 web => 'https://issues.folio.org/projects/ZF/issues',
+             },
+         }})
+         : ()
+    ),
 );
