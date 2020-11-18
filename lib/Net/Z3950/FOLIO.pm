@@ -36,7 +36,7 @@ Net::Z3950::FOLIO - Z39.50 server for FOLIO bibliographic data
 =head1 SYNOPSIS
 
  use Net::Z3950::FOLIO;
- $service = new Net::Z3950::FOLIO('config.json');
+ $service = new Net::Z3950::FOLIO('config');
  $service->launch_server("someServer", @ARGV);
 
 =head1 DESCRIPTION
@@ -55,22 +55,22 @@ C<simple2zoom> program.  All the work happens inside the library.)
 
 =head1 METHODS
 
-=head2 new($configFile)
+=head2 new($configBase)
 
- $s2z = new Net::Z3950::FOLIO('config.json');
+ $s2z = new Net::Z3950::FOLIO('config');
 
 Creates and returns a new Net::Z3950::FOLIO object, configured according to
-the JSON file C<$configFile> that is the only argument.  The format of
+the JSON file C<$configFile.json> specified by the only argument.  The format of
 this file is described in C<Net::Z3950::FOLIO::Config>.
 
 =cut
 
 sub new {
     my $class = shift();
-    my($cfgfile) = @_;
+    my($cfgbase) = @_;
 
     my $this = bless {
-	cfgfile => $cfgfile || 'config.json',
+	cfgbase => $cfgbase || 'config',
 	cfg => undef,
 	ua => new LWP::UserAgent(),
 	token => undef,
@@ -96,9 +96,9 @@ sub new {
 sub _reload_config_file {
     my $this = shift();
 
-    my $cfgfile = $this->{cfgfile};
-    my $fh = new IO::File("<$cfgfile")
-	or die "$0: can't open config file '$cfgfile': $!";
+    my $cfgbase = $this->{cfgbase};
+    my $fh = new IO::File("<$cfgbase.json")
+	or die "$0: can't open config file '$cfgbase.json': $!";
     my $json; { local $/; $json = <$fh> };
     $fh->close();
 
@@ -108,7 +108,7 @@ sub _reload_config_file {
     my $gqlfile = $this->{cfg}->{graphqlQuery}
         or die "$0: no GraphQL query file defined";
 
-    my $path = $cfgfile;
+    my $path = $cfgbase;
     if ($path =~ /\//) {
 	$path =~ s/(.*)?\/.*/$1/;
 	$gqlfile = "$path/$gqlfile";

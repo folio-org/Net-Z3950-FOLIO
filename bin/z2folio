@@ -4,10 +4,10 @@
 # Copyright (C) 2018 The Open Library Foundation
 #
 # Run like this:
-#	perl -I../lib ./z2folio -c ../etc/config.json -- -f ../etc/yazgfs.xml
+#	perl -I../lib ./z2folio -c ../etc/config -- -f ../etc/yazgfs.xml
 #
 # For a simple regression-test, use:
-#	perl -I../lib ./z2folio -c ../etc/config.json -- -1 -f ../etc/yazgfs.xml & (sleep 1; ( echo "find mineral"; echo "format sutrs"; echo "show 1") | yaz-client localhost:9998/gils )
+#	perl -I../lib ./z2folio -c ../etc/config -- -1 -f ../etc/yazgfs.xml & (sleep 1; ( echo "find mineral"; echo "format sutrs"; echo "show 1") | yaz-client localhost:9998/gils )
 
 use Getopt::Std;
 use Net::Z3950::FOLIO;
@@ -17,7 +17,7 @@ use warnings;
 
 my %opts;
 if (!getopts("c:", \%opts)) {
-    print STDERR "Usage: $0 [-c <config-file>] [-- YAZ-options]\n";
+    print STDERR "Usage: $0 [-c <config-base>] [-- YAZ-options]\n";
     exit 1;
 }
 
@@ -34,7 +34,7 @@ z2folio - Z39.50 server for FOLIO bibliographic data
 C<z2folio>
 [
 C<-c>
-I<configFile>
+I<configBase>
 ]
 [
 C<-->
@@ -58,9 +58,9 @@ The following command-line options govern how it functions:
 
 =over 4
 
-=item C<-c configFile>
+=item C<-c configBase>
 
-Specifies that the named I<configFile> should be used to configure the
+Specifies that the named C<configBase.json> should be used as the base configuration for the
 functionality of the server: if this option is not specified, then the
 file C<config.json> in the working directory is used.  The format of
 the configuration file is described separately in
