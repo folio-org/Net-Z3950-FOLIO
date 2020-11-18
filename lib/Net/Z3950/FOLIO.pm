@@ -209,8 +209,8 @@ sub _rerun_search {
 
 sub _fetch_handler {
     my($args) = @_;
-    my $session = $args->{HANDLE};
     my $ghandle = $args->{GHANDLE};
+    my $session = $args->{HANDLE};
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
@@ -356,8 +356,8 @@ sub _delete_handler {
 
 sub _sort_handler {
     my($args) = @_;
-    my $session = $args->{HANDLE};
     my $ghandle = $args->{GHANDLE};
+    my $session = $args->{HANDLE};
 
     my $setnames = $args->{INPUT};
     _throw(230, '1') if @$setnames > 1; # Sort: too many input results
