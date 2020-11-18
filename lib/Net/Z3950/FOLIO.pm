@@ -132,21 +132,23 @@ sub _eval_wrapper {
 
 sub _init_handler {
     my($args) = @_;
-    my $this = $args->{GHANDLE};
-
-    $this->_reload_config_file();
-
-    my $user = $args->{USER};
-    my $pass = $args->{PASS};
-    $args->{HANDLE} = {
-	username => $user || '',
-	password => $pass || '',
-	resultsets => {},  # result sets, indexed by setname
-    };
 
     $args->{IMP_ID} = '81';
     $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
     $args->{IMP_NAME} = 'z2folio gateway';
+    $args->{HANDLE} = {
+	resultsets => {},  # result sets, indexed by setname
+    };
+
+    my $ghandle = $args->{GHANDLE};
+    $ghandle->_reload_config_file();
+    $ghandle->_login($args->{USER}, $args->{PASS});
+}
+
+
+sub _login {
+    my $this = shift();
+    my($user, $pass) = @_;
 
     my $cfg = $this->{cfg};
     my $login = $cfg->{login} || {};
@@ -163,6 +165,7 @@ sub _init_handler {
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
+
     $this->{token} = $res->header('X-Okapi-token');
 }
 
