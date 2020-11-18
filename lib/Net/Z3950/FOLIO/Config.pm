@@ -16,15 +16,15 @@ sub new {
     my $class = shift();
     my($cfgbase) = @_;
 
-    my $cfg = _compile_config($cfgbase);
+    my $cfg = compile_config($cfgbase);
     return bless $cfg, $class;
 }
 
 
-sub _compile_config {
+sub compile_config {
     my($cfgbase) = @_;
 
-    my $cfg = _compile_config_file($cfgbase);
+    my $cfg = compile_config_file($cfgbase);
     my $gqlfile = $cfg->{graphqlQuery}
         or die "$0: no GraphQL query file defined";
 
@@ -42,7 +42,7 @@ sub _compile_config {
 }
 
 
-sub _compile_config_file {
+sub compile_config_file {
     my($cfgbase) = @_;
 
     my $fh = new IO::File("<$cfgbase.json")
@@ -51,36 +51,36 @@ sub _compile_config_file {
     $fh->close();
 
     my $cfg = decode_json($json);
-    _expand_variable_references($cfg);
+    expand_variable_references($cfg);
     return $cfg;
 }
 
 
-sub _expand_variable_references {
+sub expand_variable_references {
     my($obj) = @_;
 
     foreach my $key (sort keys %$obj) {
-	$obj->{$key} = _expand_single_variable_reference($key, $obj->{$key});
+	$obj->{$key} = expand_single_variable_reference($key, $obj->{$key});
     }
 
     return $obj;
 }
 
-sub _expand_single_variable_reference {
+sub expand_single_variable_reference {
     my($key, $val) = @_;
 
     if (ref($val) eq 'HASH') {
-	return _expand_variable_references($val);
+	return expand_variable_references($val);
     } elsif (ref($val) eq 'ARRAY') {
-	return [ map { _expand_single_variable_reference($key, $_) } @$val ];
+	return [ map { expand_single_variable_reference($key, $_) } @$val ];
     } elsif (!ref($val)) {
-	return _expand_scalar_variable_reference($key, $val);
+	return expand_scalar_variable_reference($key, $val);
     } else {
 	die "non-hash, non-array, non-scale configuration key '$key'";
     }
 }
 
-sub _expand_scalar_variable_reference {
+sub expand_scalar_variable_reference {
     my ($key, $val) = @_;
 
     my $orig = $val;
