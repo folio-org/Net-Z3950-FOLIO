@@ -96,16 +96,22 @@ sub new {
 sub _reload_config_file {
     my $this = shift();
 
-    my $cfgbase = $this->{cfgbase};
+    $this->{cfg} = _compile_config_file($this->{cfgbase});
+}
+
+
+sub _compile_config_file {
+    my($cfgbase) = @_;
+
     my $fh = new IO::File("<$cfgbase.json")
 	or die "$0: can't open config file '$cfgbase.json': $!";
     my $json; { local $/; $json = <$fh> };
     $fh->close();
 
-    $this->{cfg} = decode_json($json);
-    _expand_variable_references($this->{cfg});
+    my $cfg = decode_json($json);
+    _expand_variable_references($cfg);
 
-    my $gqlfile = $this->{cfg}->{graphqlQuery}
+    my $gqlfile = $cfg->{graphqlQuery}
         or die "$0: no GraphQL query file defined";
 
     my $path = $cfgbase;
@@ -115,8 +121,10 @@ sub _reload_config_file {
     }
     $fh = new IO::File("<$gqlfile")
 	or die "$0: can't open GraphQL query file '$gqlfile': $!";
-    { local $/; $this->{cfg}->{graphql} = <$fh> };
+    { local $/; $cfg->{graphql} = <$fh> };
     $fh->close();
+
+    return $cfg;
 }
 
 
