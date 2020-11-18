@@ -82,7 +82,7 @@ BEGIN { use_ok('Net::Z3950::FOLIO') };
 # Avoid warnings from failed variable substitution
 $ENV{OKAPI_URL} = $ENV{OKAPI_TENANT} = $ENV{OKAPI_USER} = $ENV{OKAPI_PASSWORD} = 'x';
 
-my $service = new Net::Z3950::FOLIO('etc/config.json');
+my $service = new Net::Z3950::FOLIO('etc/config');
 ok(defined $service, 'made FOLIO service object');
 my $parser = new Net::Z3950::PQF();
 
