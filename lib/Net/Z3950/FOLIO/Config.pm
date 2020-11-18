@@ -16,8 +16,29 @@ sub new {
     my $class = shift();
     my($cfgbase) = @_;
 
-    my $cfg = _compile_config_file($cfgbase);
+    my $cfg = _compile_config($cfgbase);
     return bless $cfg, $class;
+}
+
+
+sub _compile_config {
+    my($cfgbase) = @_;
+
+    my $cfg = _compile_config_file($cfgbase);
+    my $gqlfile = $cfg->{graphqlQuery}
+        or die "$0: no GraphQL query file defined";
+
+    my $path = $cfgbase;
+    if ($path =~ /\//) {
+	$path =~ s/(.*)?\/.*/$1/;
+	$gqlfile = "$path/$gqlfile";
+    }
+    my $fh = new IO::File("<$gqlfile")
+	or die "$0: can't open GraphQL query file '$gqlfile': $!";
+    { local $/; $cfg->{graphql} = <$fh> };
+    $fh->close();
+
+    return $cfg;
 }
 
 
@@ -31,20 +52,6 @@ sub _compile_config_file {
 
     my $cfg = decode_json($json);
     _expand_variable_references($cfg);
-
-    my $gqlfile = $cfg->{graphqlQuery}
-        or die "$0: no GraphQL query file defined";
-
-    my $path = $cfgbase;
-    if ($path =~ /\//) {
-	$path =~ s/(.*)?\/.*/$1/;
-	$gqlfile = "$path/$gqlfile";
-    }
-    $fh = new IO::File("<$gqlfile")
-	or die "$0: can't open GraphQL query file '$gqlfile': $!";
-    { local $/; $cfg->{graphql} = <$fh> };
-    $fh->close();
-
     return $cfg;
 }
 
@@ -304,5 +311,5 @@ This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "LICENSE" for more information.
 
 =cut
-    
+
 1;
