@@ -172,7 +172,7 @@ sub _login {
 
 sub _search_handler {
     my($args) = @_;
-    my $this = $args->{GHANDLE};
+    my $ghandle = $args->{GHANDLE};
     my $session = $args->{HANDLE};
 
     # For now, we ignore the dbname. In the future we will use this as
@@ -181,15 +181,15 @@ sub _search_handler {
     # dbname.
 
     if ($args->{CQL}) {
-	$this->{cql} = $args->{CQL};
+	$ghandle->{cql} = $args->{CQL}; ### move to session
     } else {
 	my $type1 = $args->{RPN}->{query};
-	$this->{cql} = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
-	warn "search: translated '" . $args->{QUERY} . "' to '" . $this->{cql} . "'\n";
+	$ghandle->{cql} = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
+	warn "search: translated '" . $args->{QUERY} . "' to '" . $ghandle->{cql} . "'\n";
     }
 
-    $this->{sortspec} = undef;
-    $args->{HITS} = $this->_rerun_search($session, $args->{SETNAME}, @_);
+    $ghandle->{sortspec} = undef; ### move to session
+    $args->{HITS} = $ghandle->_rerun_search($session, $args->{SETNAME}, @_);
 }
 
 
@@ -210,7 +210,7 @@ sub _rerun_search {
 sub _fetch_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
-    my $this = $args->{GHANDLE};
+    my $ghandle = $args->{GHANDLE};
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
@@ -225,9 +225,9 @@ sub _fetch_handler {
 	# chunks of the specified size, and fetching the one that
 	# contains the requested record.
 	my $index0 = $index1 - 1;
-	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
+	my $chunkSize = $ghandle->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
-	$this->_do_search($rs, $chunk * $chunkSize, $chunkSize);
+	$ghandle->_do_search($rs, $chunk * $chunkSize, $chunkSize);
 	$rec = $rs->record($index1-1);
 	_throw(1, "missing record") if !defined $rec;
     }
@@ -252,18 +252,18 @@ sub _fetch_handler {
 	$res = _xml_record($rec);
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
-	my $marc = $this->_marc_record($rs, $index1);
+	my $marc = $ghandle->_marc_record($rs, $index1);
 	$res = $marc->as_xml_record();
     } elsif ($format eq FORMAT_XML && $comp eq 'opac') {
 	# OPAC-format XML
-	my $marc = $this->_marc_record($rs, $index1);
+	my $marc = $ghandle->_marc_record($rs, $index1);
 	$res = makeOPACXMLRecord($rec, $marc);
     } elsif ($format eq FORMAT_XML) {
 	_throw(25, "XML records available in element-sets: raw, usmarc, opac");
 
     } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
-	my $marc = $this->_marc_record($rs, $index1);
+	my $marc = $ghandle->_marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
 	_throw(25, "USMARC records available in element-sets: f, b");
@@ -357,7 +357,7 @@ sub _delete_handler {
 sub _sort_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
-    my $this = $args->{GHANDLE};
+    my $ghandle = $args->{GHANDLE};
 
     my $setnames = $args->{INPUT};
     _throw(230, '1') if @$setnames > 1; # Sort: too many input results
@@ -365,11 +365,11 @@ sub _sort_handler {
     my $rs = $session->{resultsets}->{$setname};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
-    my $cqlSort = $this->_sortspecs2cql($args->{SEQUENCE});
+    my $cqlSort = $ghandle->_sortspecs2cql($args->{SEQUENCE});
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
-    $this->{sortspec} = $cqlSort;
-    $this->_rerun_search($session, $args->{OUTPUT}, @_);
+    $ghandle->{sortspec} = $cqlSort;
+    $ghandle->_rerun_search($session, $args->{OUTPUT}, @_);
 }
 
 
