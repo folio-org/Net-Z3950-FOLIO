@@ -13,7 +13,6 @@ WriteMakefile(
 	MARC::Record => 2.0,
 	MARC::File::XML => 1.0.5,
 	Net::Z3950::ZOOM => 1.30,
-	URI::Escape => 3.31,
 	XML::Simple => 2.25,
 	Net::Z3950::PQF => 1.0,
     },

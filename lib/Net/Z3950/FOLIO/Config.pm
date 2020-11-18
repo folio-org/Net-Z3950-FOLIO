@@ -1,6 +1,106 @@
 use strict;
 use warnings;
 
+
+package Net::Z3950::FOLIO::Config;
+
+use 5.008000;
+use strict;
+use warnings;
+
+use IO::File;
+use Cpanel::JSON::XS qw(decode_json);
+
+
+sub new {
+    my $class = shift();
+    my($cfgbase) = @_;
+
+    my $cfg = _compile_config_file($cfgbase);
+    return bless $cfg, $class;
+}
+
+
+sub _compile_config_file {
+    my($cfgbase) = @_;
+
+    my $fh = new IO::File("<$cfgbase.json")
+	or die "$0: can't open config file '$cfgbase.json': $!";
+    my $json; { local $/; $json = <$fh> };
+    $fh->close();
+
+    my $cfg = decode_json($json);
+    _expand_variable_references($cfg);
+
+    my $gqlfile = $cfg->{graphqlQuery}
+        or die "$0: no GraphQL query file defined";
+
+    my $path = $cfgbase;
+    if ($path =~ /\//) {
+	$path =~ s/(.*)?\/.*/$1/;
+	$gqlfile = "$path/$gqlfile";
+    }
+    $fh = new IO::File("<$gqlfile")
+	or die "$0: can't open GraphQL query file '$gqlfile': $!";
+    { local $/; $cfg->{graphql} = <$fh> };
+    $fh->close();
+
+    return $cfg;
+}
+
+
+sub _expand_variable_references {
+    my($obj) = @_;
+
+    foreach my $key (sort keys %$obj) {
+	$obj->{$key} = _expand_single_variable_reference($key, $obj->{$key});
+    }
+
+    return $obj;
+}
+
+sub _expand_single_variable_reference {
+    my($key, $val) = @_;
+
+    if (ref($val) eq 'HASH') {
+	return _expand_variable_references($val);
+    } elsif (ref($val) eq 'ARRAY') {
+	return [ map { _expand_single_variable_reference($key, $_) } @$val ];
+    } elsif (!ref($val)) {
+	return _expand_scalar_variable_reference($key, $val);
+    } else {
+	die "non-hash, non-array, non-scale configuration key '$key'";
+    }
+}
+
+sub _expand_scalar_variable_reference {
+    my ($key, $val) = @_;
+
+    my $orig = $val;
+    while ($val =~ /(.*?)\$\{(.*?)}(.*)/) {
+	my($pre, $inclusion, $post) = ($1, $2, $3);
+
+	my($name, $default);
+	if ($inclusion =~ /(.*?)-(.*)/) {
+	    $name = $1;
+	    $default = $2;
+	} else {
+	    $name = $inclusion;
+	    $default = undef;
+	}
+
+	my $env = $ENV{$name} || $default;
+	if (!defined $env) {
+	    warn "environment variable '$2' not defined for '$key'";
+	    $env = '';
+	}
+	$val = "$pre$env$post";
+    }
+
+    return $val;
+}
+
+
 =head1 NAME
 
 Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway

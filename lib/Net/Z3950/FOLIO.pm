@@ -4,18 +4,17 @@ use 5.008000;
 use strict;
 use warnings;
 
-use IO::File;
 use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::SimpleServer;
 use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
 use MARC::File::XML (BinaryEncoding => 'utf8', RecordFormat => 'USMARC');
-use URI::Escape;
 use XML::Simple;
 use Scalar::Util qw(blessed reftype);
 use Data::Dumper; $Data::Dumper::Indent = 1;
 
+use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
 use Net::Z3950::FOLIO::OPACXMLRecord qw(makeOPACXMLRecord);
 
@@ -96,87 +95,7 @@ sub new {
 sub _reload_config_file {
     my $this = shift();
 
-    $this->{cfg} = _compile_config_file($this->{cfgbase});
-}
-
-
-sub _compile_config_file {
-    my($cfgbase) = @_;
-
-    my $fh = new IO::File("<$cfgbase.json")
-	or die "$0: can't open config file '$cfgbase.json': $!";
-    my $json; { local $/; $json = <$fh> };
-    $fh->close();
-
-    my $cfg = decode_json($json);
-    _expand_variable_references($cfg);
-
-    my $gqlfile = $cfg->{graphqlQuery}
-        or die "$0: no GraphQL query file defined";
-
-    my $path = $cfgbase;
-    if ($path =~ /\//) {
-	$path =~ s/(.*)?\/.*/$1/;
-	$gqlfile = "$path/$gqlfile";
-    }
-    $fh = new IO::File("<$gqlfile")
-	or die "$0: can't open GraphQL query file '$gqlfile': $!";
-    { local $/; $cfg->{graphql} = <$fh> };
-    $fh->close();
-
-    return $cfg;
-}
-
-
-sub _expand_variable_references {
-    my($obj) = @_;
-
-    foreach my $key (sort keys %$obj) {
-	$obj->{$key} = _expand_single_variable_reference($key, $obj->{$key});
-    }
-
-    return $obj;
-}
-
-sub _expand_single_variable_reference {
-    my($key, $val) = @_;
-
-    if (ref($val) eq 'HASH') {
-	return _expand_variable_references($val);
-    } elsif (ref($val) eq 'ARRAY') {
-	return [ map { _expand_single_variable_reference($key, $_) } @$val ];
-    } elsif (!ref($val)) {
-	return _expand_scalar_variable_reference($key, $val);
-    } else {
-	die "non-hash, non-array, non-scale configuration key '$key'";
-    }
-}
-
-sub _expand_scalar_variable_reference {
-    my ($key, $val) = @_;
-
-    my $orig = $val;
-    while ($val =~ /(.*?)\$\{(.*?)}(.*)/) {
-	my($pre, $inclusion, $post) = ($1, $2, $3);
-
-	my($name, $default);
-	if ($inclusion =~ /(.*?)-(.*)/) {
-	    $name = $1;
-	    $default = $2;
-	} else {
-	    $name = $inclusion;
-	    $default = undef;
-	}
-
-	my $env = $ENV{$name} || $default;
-	if (!defined $env) {
-	    warn "environment variable '$2' not defined for '$key'";
-	    $env = '';
-	}
-	$val = "$pre$env$post";
-    }
-
-    return $val;
+    $this->{cfg} = new Net::Z3950::FOLIO::Config($this->{cfgbase});
 }
 
 
