@@ -35,6 +35,7 @@ t/01-pqf-to-cql.t
 t/02-sortspec.t
 t/03-folio-to-opac.t
 t/04-stacking-config.t
+t/05-short-session.t
 t/data/expectedOutput1.xml
 t/data/expectedOutput2.xml
 t/data/input1.json
