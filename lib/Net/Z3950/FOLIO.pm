@@ -70,14 +70,10 @@ sub new {
 
     my $this = bless {
 	cfgbase => $cfgbase || 'config',
-	cfg => undef,
 	ua => new LWP::UserAgent(),
-	token => undef,
     }, $class;
 
     $this->{ua}->agent("z2folio $VERSION");
-    $this->_reload_config_file();
-
     $this->{server} = Net::Z3950::SimpleServer->new(
 	GHANDLE => $this,
 	INIT =>    \&_init_handler_wrapper,
