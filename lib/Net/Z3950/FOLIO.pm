@@ -88,13 +88,6 @@ sub new {
 }
 
 
-sub _reload_config_file {
-    my $this = shift();
-
-    $this->{cfg} = new Net::Z3950::FOLIO::Config($this->{cfgbase});
-}
-
-
 sub _init_handler_wrapper { _eval_wrapper(\&_init_handler, @_) }
 sub _search_handler_wrapper { _eval_wrapper(\&_search_handler, @_) }
 sub _fetch_handler_wrapper { _eval_wrapper(\&_fetch_handler, @_) }
@@ -132,13 +125,20 @@ sub _init_handler {
     $args->{IMP_ID} = '81';
     $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
     $args->{IMP_NAME} = 'z2folio gateway';
-    $args->{HANDLE} = {
+    $args->{HANDLE} = bless {
 	resultsets => {},  # result sets, indexed by setname
-    };
+    }, 'XXX::Session'; # Deal with this properly later
 
     my $ghandle = $args->{GHANDLE};
     $ghandle->_reload_config_file();
     $ghandle->_login($args->{USER}, $args->{PASS});
+}
+
+
+sub _reload_config_file {
+    my $this = shift();
+
+    $this->{cfg} = new Net::Z3950::FOLIO::Config($this->{cfgbase});
 }
 
 
