@@ -14,8 +14,7 @@ use XML::Simple;
 use Scalar::Util qw(blessed reftype);
 use Data::Dumper; $Data::Dumper::Indent = 1;
 
-use Net::Z3950::FOLIO::Config;
-use Net::Z3950::FOLIO::ResultSet;
+use Net::Z3950::FOLIO::Session;
 use Net::Z3950::FOLIO::OPACXMLRecord qw(makeOPACXMLRecord);
 
 our $VERSION = '1.3';
@@ -71,6 +70,7 @@ sub new {
     my $this = bless {
 	cfgbase => $cfgbase || 'config',
 	ua => new LWP::UserAgent(),
+	sessions => {}, # Maps database name to session object
     }, $class;
 
     $this->{ua}->agent("z2folio $VERSION");
@@ -86,6 +86,21 @@ sub new {
 
     return $this;
 }
+
+
+sub getSession {
+    my $this = shift();
+    my($name) = @_;
+
+    if (!$this->{sessions}->{$name}) {
+	my $session = new Net::Z3950::FOLIO::Session($this, $name);
+	$this->{sessions}->{$name} = $session;
+	$session->_reload_config_file();
+	$session->_login($this->{user}, $this->{pass});
+    }
+
+    return $this->{sessions}->{$name};
+}    
 
 
 sub _init_handler_wrapper { _eval_wrapper(\&_init_handler, @_) }
@@ -121,91 +136,44 @@ sub _eval_wrapper {
 
 sub _init_handler {
     my($args) = @_;
+    my $ghandle = $args->{GHANDLE};
 
     $args->{IMP_ID} = '81';
     $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
     $args->{IMP_NAME} = 'z2folio gateway';
-    $args->{HANDLE} = bless {
-	resultsets => {},  # result sets, indexed by setname
-    }, 'XXX::Session'; # Deal with this properly later
 
-    my $ghandle = $args->{GHANDLE};
-    $ghandle->_reload_config_file();
-    $ghandle->_login($args->{USER}, $args->{PASS});
-}
-
-
-sub _reload_config_file {
-    my $this = shift();
-
-    $this->{cfg} = new Net::Z3950::FOLIO::Config($this->{cfgbase});
-}
-
-
-sub _login {
-    my $this = shift();
-    my($user, $pass) = @_;
-
-    my $cfg = $this->{cfg};
-    my $login = $cfg->{login} || {};
-    my $username = $user || $login->{username};
-    my $password = $pass || $login->{password};
-    _throw(1014, "credentials not supplied")
-	if !defined $username || !defined $password;
-
-    my $url = $cfg->{okapi}->{url} . '/bl-users/login';
-    my $req = $this->_make_http_request(POST => $url);
-    $req->content(qq[{ "username": "$username", "password": "$password" }]);
-    # warn "req=", $req->content();
-    my $res = $this->{ua}->request($req);
-    # warn "res=", $res->content();
-    _throw(1014, $res->content())
-	if !$res->is_success();
-
-    $this->{token} = $res->header('X-Okapi-token');
+    $ghandle->{user} = $args->{USER};
+    $ghandle->{pass} = $args->{PASS};
+    # That's all we can do until we know the database name at search time
 }
 
 
 sub _search_handler {
     my($args) = @_;
     my $ghandle = $args->{GHANDLE};
-    my $session = $args->{HANDLE};
 
-    # For now, we ignore the dbname. In the future we will use this as
-    # the tenant ID, which will mean postponing the authentication
-    # call from the Init handler to now, when we first discover the
-    # dbname.
+    my $bases = $args->{DATABASES};
+    _throw(111, 1) if @$bases != 1; # Too many databases specified
+    my $base = $bases->[0];
+
+    my $session = $ghandle->getSession($base);
+    $args->{HANDLE} = $session;
 
     if ($args->{CQL}) {
-	$ghandle->{cql} = $args->{CQL}; ### move to session
+	$session->{cql} = $args->{CQL};
     } else {
 	my $type1 = $args->{RPN}->{query};
-	$ghandle->{cql} = $type1->_toCQL($args, $args->{RPN}->{attributeSet});
-	warn "search: translated '" . $args->{QUERY} . "' to '" . $ghandle->{cql} . "'\n";
+	$session->{cql} = $type1->_toCQL($session, $args->{RPN}->{attributeSet});
+	warn "search: translated '" . $args->{QUERY} . "' to '" . $session->{cql} . "'\n";
     }
 
-    $ghandle->{sortspec} = undef; ### move to session
-    $args->{HITS} = $ghandle->_rerun_search($session, $args->{SETNAME}, @_);
-}
-
-
-sub _rerun_search {
-    my $this = shift();
-    my($session, $setname) = @_;
-
-    my $cql = $this->{cql};
-    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
-    $session->{resultsets}->{$setname} = $rs;
-
-    my $chunkSize = $this->{cfg}->{chunkSize} || 10;
-    $this->_do_search($rs, 0, $chunkSize);
-    return $rs->total_count();
+    $session->{sortspec} = undef;
+    $args->{HITS} = $session->_rerun_search($args->{SETNAME});
 }
 
 
 sub _fetch_handler {
     my($args) = @_;
-    my $ghandle = $args->{GHANDLE};
     my $session = $args->{HANDLE};
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
@@ -221,9 +189,9 @@ sub _fetch_handler {
 	# chunks of the specified size, and fetching the one that
 	# contains the requested record.
 	my $index0 = $index1 - 1;
-	my $chunkSize = $ghandle->{cfg}->{chunkSize} || 10;
+	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
-	$ghandle->_do_search($rs, $chunk * $chunkSize, $chunkSize);
+	$session->_do_search($rs, $chunk * $chunkSize, $chunkSize);
 	$rec = $rs->record($index1-1);
 	_throw(1, "missing record") if !defined $rec;
     }
@@ -248,18 +216,18 @@ sub _fetch_handler {
 	$res = _xml_record($rec);
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
-	my $marc = $ghandle->_marc_record($rs, $index1);
+	my $marc = $session->marc_record($rs, $index1);
 	$res = $marc->as_xml_record();
     } elsif ($format eq FORMAT_XML && $comp eq 'opac') {
 	# OPAC-format XML
-	my $marc = $ghandle->_marc_record($rs, $index1);
+	my $marc = $session->marc_record($rs, $index1);
 	$res = makeOPACXMLRecord($rec, $marc);
     } elsif ($format eq FORMAT_XML) {
 	_throw(25, "XML records available in element-sets: raw, usmarc, opac");
 
     } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
-	my $marc = $ghandle->_marc_record($rs, $index1);
+	my $marc = $session->marc_record($rs, $index1);
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
 	_throw(25, "USMARC records available in element-sets: f, b");
@@ -272,28 +240,6 @@ sub _fetch_handler {
     return;
 }
 
-
-sub _marc_record {
-    my $this = shift();
-    my($rs, $index1) = @_;
-
-    my $rec = $rs->record($index1-1);
-    my $instanceId = $rec->{id};
-
-    my $marc = $rs->marcRecord($instanceId);
-    if (!defined $marc) {
-	# Fetch a chunk of records that contains the requested one.
-	# contains the requested record.
-	my $index0 = $index1 - 1;
-	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
-	my $chunk = int($index0 / $chunkSize);
-	$this->insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
-	$marc = $rs->marcRecord($instanceId);
-	_throw(1, "missing MARC record") if !defined $marc;
-    }
-
-    return $marc;
-}
 
 sub _xml_record {
     my($rec) = @_;
@@ -364,8 +310,8 @@ sub _sort_handler {
     my $cqlSort = $ghandle->_sortspecs2cql($args->{SEQUENCE});
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
-    $ghandle->{sortspec} = $cqlSort;
-    $ghandle->_rerun_search($session, $args->{OUTPUT}, @_);
+    $session->{sortspec} = $cqlSort;
+    $session->_rerun_search($args->{OUTPUT});
 }
 
 
@@ -452,127 +398,6 @@ sub _translateSortParam {
 }
 
 
-sub _do_search {
-    my $this = shift();
-    my($rs, $offset, $limit) = @_;
-
-    my $okapiCfg = $this->{cfg}->{okapi};
-    my $qf = $this->{cfg}->{queryFilter};
-    my $cql = $rs->{cql};
-    if ($qf) {
-	$cql = $cql ? "($cql) and ($qf)" : $qf;
-    }
-    my $sortspec = $this->{sortspec};
-    if ($sortspec) {
-	$cql = "($cql) sortby $sortspec";
-	warn "search: added sortspec, yielding '$cql'";
-    }
-
-    my $url = $okapiCfg->{url};
-    my $graphqlUrl = $okapiCfg->{graphqlUrl};
-    my $req = $this->_make_http_request(POST => ($graphqlUrl || $url) . '/graphql');
-    $req->header('X-Okapi-Url' => $url) if $graphqlUrl;
-
-    my %variables = ();
-    # warn "searching for $cql";
-    $variables{cql} = $cql if $cql;
-    $variables{offset} = $offset if $offset;
-    $variables{limit} = $limit if $limit;
-    my %body = (
-	query => $this->{cfg}->{graphql},
-	variables => \%variables,
-    );
-    $req->content(encode_json(\%body));
-    my $res = $this->{ua}->request($req);
-    _throw(3, $res->content()) if !$res->is_success();
-
-    my $obj = decode_json($res->content());
-    # warn "result: ", _pretty_json($obj);
-    my $data = $obj->{data} or _throw(1, "no data in response");
-    my $isi = $data->{instance_storage_instances};
-    if (!$isi) {
-	my $errors = $obj->{errors};
-	_throw(1, join(', ', map { $_->{message} } @$errors)) if $errors;
-	_throw(1, "no instance_storage_instances in response data");
-    }
-    $rs->total_count($isi->{totalRecords} + 0);
-    $rs->insert_records($offset, $isi->{instances});
-
-    return $rs;
-}
-
-
-sub insert_records_from_SRS {
-    my $this = shift();
-    my($rs, $offset, $limit) = @_;
-
-    my $okapiCfg = $this->{cfg}->{okapi};
-    my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
-    my @ids = ();
-    for (my $i = 0; $i < $limit && $offset + $i < $rs->total_count(); $i++) {
-	my $rec = $rs->record($offset + $i);
-	push @ids, $rec->{id};
-    }
-
-    $req->content(encode_json(\@ids));
-    my $res = $this->{ua}->request($req);
-    my $content = $res->content();
-    _throw(3, $content) if !$res->is_success();
-
-    # warn "got content ", $content;
-    my $json = decode_json($content);
-    my $srs = $json->{sourceRecords};
-    my $n = @$srs;
-
-    my %id2rec;
-    for (my $i = 0; $i < $n; $i++) {
-	my $sr = $srs->[$i];
-	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
-	$id2rec{$instanceId} = _JSON_to_MARC($sr->{parsedRecord}->{content});
-    }
-
-    $rs->insert_marcRecords(\%id2rec);
-}
-
-
-# We would like to use MARC::Record->new_from_json() for this (from
-# MARC::File::JSON), but that uses a different JSON encoding from the
-# one used for FOLIO's SRS records, so we have to do it by hand.
-#
-sub _JSON_to_MARC {
-    my($content) = shift();
-
-    my $marc = new MARC::Record();
-    $marc->leader($content->{leader});
-    my $fields = $content->{fields};
-    my $n = @$fields;
-    for (my $i = 0; $i < $n; $i++) {
-	my $field = $fields->[$i];
-	my @keys = keys %$field;
-	warn "field #", ($i+1), " of $n has ", scalar(@keys), " fields" if @keys != 1;
-	foreach my $key (@keys) {
-	    my $value = $field->{$key};
-	    if ($key =~ /^00/) {
-		$marc->append_fields(new MARC::Field($key, $value));
-	    } else {
-		# *sigh* I have to gather an array of single-key hashes into one hash
-		my @subfields;
-		for (my $j = 0; $j < @{$value->{subfields}}; $j++) {
-		    foreach my $k2 (keys %{ $value->{subfields}->[$j] }) {
-			push @subfields, $k2, $value->{subfields}->[$j]->{$k2};
-		    }
-		}
-		if (@subfields) {
-		    $marc->append_fields(new MARC::Field($key, $value->{ind1}, $value->{ind2}, @subfields));
-		}
-	    }
-	}
-    }
-
-    return $marc;
-}
-
-
 =head2 launch_server($label, @ARGV)
 
  $s2z->launch_server("someServer", @ARGV);
@@ -590,19 +415,6 @@ sub launch_server {
     my($label, @argv) = @_;
 
     return $this->{server}->launch_server($label, @argv);
-}
-
-
-sub _make_http_request() {
-    my $this = shift();
-    my(%args) = @_;
-
-    my $req = new HTTP::Request(%args);
-    $req->header('X-Okapi-tenant' => $this->{cfg}->{okapi}->{tenant});
-    $req->header('Content-type' => 'application/json');
-    $req->header('Accept' => 'application/json');
-    $req->header('X-Okapi-token' => $this->{token}) if $this->{token};
-    return $req;
 }
 
 
@@ -637,9 +449,8 @@ sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
 
 sub _toCQL {
     my $self = shift;
-    my($args, $defaultSet) = @_;
-    my $gh = $args->{GHANDLE};
-    my $indexMap = $gh->{cfg}->{indexMap};
+    my($session, $defaultSet) = @_;
+    my $indexMap = $session->{cfg}->{indexMap};
     my($field, $relation);
 
     my $attrs = $self->{attributes};
@@ -819,8 +630,7 @@ sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
 
 sub _toCQL {
     my $self = shift;
-    my($args, $defaultSet) = @_;
-    my $session = $args->{HANDLE};
+    my($session, $defaultSet) = @_;
 
     my $zid = $self->{id};
     my $rs = $session->{resultsets}->{$zid};
