@@ -265,94 +265,11 @@ sub _sort_handler {
     my $rs = $session->{resultsets}->{$setname};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
-    my $cqlSort = $ghandle->_sortspecs2cql($args->{SEQUENCE});
+    my $cqlSort = $session->sortspecs2cql($args->{SEQUENCE});
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
     $session->{sortspec} = $cqlSort;
     $session->_rerun_search($args->{OUTPUT});
-}
-
-
-sub _sortspecs2cql {
-    my $this = shift();
-    my($sequence) = @_;
-
-    my @res = ();
-    foreach my $item (@$sequence) {	
-	push @res, $this->_singleSortspecs2cql($item);
-    }
-
-    my $spec = join(' ', @res);
-    return $spec;
-}
-
-
-sub _singleSortspecs2cql {
-    my $this = shift();
-    my($item) = @_;
-    my $indexMap = $this->{cfg}->{indexMap};
-
-    my $set = $item->{ATTRSET};
-    if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 && lc($set) ne 'bib-1') {
-	# Unknown attribute set (anything except BIB-1)
-	_throw(121, $set);
-    }
-
-    my @modifiers = (
-	[ missing => _translateSortParam($item->{MISSING}, 213, {
-	    1 => 'missingFail',
-	    2 => 'missingLow',
-	})],
-	[ relation => _translateSortParam($item->{RELATION}, 214, {
-	    0 => 'ascending',
-	    1 => 'descending',
-	})],
-	[ case => _translateSortParam($item->{CASE}, 215, {
-	    0 => 'respectCase',
-	    1 => 'ignoreCase',
-        })],
-    );
-
-    my($accessPoint, $cqlIndex, $entry);
-    my $attrs = $item->{SORT_ATTR};
-    foreach my $attr (@$attrs) {
-	my $type = $attr->{ATTR_TYPE};
-	_throw(237, "sort-attribute of type $type (only 1 is supported)") if defined $type && $type != 1;
-
-	$accessPoint = $attr->{ATTR_VALUE};
-	$entry = $indexMap->{$accessPoint};
-	_throw(207, "undefined sort-index $accessPoint") if !defined $entry;
-	if (ref $entry) {
-	    $cqlIndex = $entry->{cql};
-	} else {
-	    $cqlIndex = $entry;
-	    $entry = undef;
-	}
-	last;
-    }
-
-    my $res = $cqlIndex;
-
-    my $omitList = $entry ? $entry->{omitSortIndexModifiers} : [];
-    foreach my $modifier (@modifiers) {
-	my($name, $value) = @$modifier;
-	if (!$omitList || ! grep { $_ eq $name } @$omitList) {
-	    $res .= "/sort.$value";
-	} else {
-	    # warn "omitting '$name' sort-modifier for access-point $accessPoint ($cqlIndex)";
-	}
-    };
-
-    return $res;
-}
-
-
-sub _translateSortParam {
-    my($zval, $diag, $map) = @_;
-
-    my $cqlVal = $map->{$zval};
-    _throw($diag, $zval) if !$cqlVal;
-    return $cqlVal;
 }
 
 
