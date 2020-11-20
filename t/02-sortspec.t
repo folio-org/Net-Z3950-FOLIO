@@ -50,13 +50,10 @@ ok(defined $session, 'made FOLIO session object');
 $session->_reload_config_file();
 ok(defined $session, 'loaded session config file');
 
-### gross hack until we fix the sort-spec API to be session-based
-$service->{cfg} = $session->{cfg};
-
 foreach my $test (@tests) {
     my($input, $output) = @$test;
 
-    my $result = $service->_sortspecs2cql($input);
+    my $result = $session->sortspecs2cql($input);
     ok(defined $result, "translated sort-spec");
     is($result, $output, "generated correct sortspec: $output");
 }
