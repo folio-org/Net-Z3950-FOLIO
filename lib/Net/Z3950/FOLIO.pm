@@ -81,7 +81,6 @@ sub new {
 	FETCH =>   \&_fetch_handler_wrapper,
 	DELETE =>  \&_delete_handler_wrapper,
 	SORT   =>  \&_sort_handler_wrapper,
-#	SCAN =>    \&_scan_handler_wrapper,
     );
 
     return $this;
