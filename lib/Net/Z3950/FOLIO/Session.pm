@@ -58,7 +58,7 @@ sub login {
 }
 
 
-sub _rerun_search {
+sub rerun_search {
     my $this = shift();
     my($setname) = @_;
 

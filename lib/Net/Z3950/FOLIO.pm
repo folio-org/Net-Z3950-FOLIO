@@ -169,7 +169,7 @@ sub _search_handler {
     }
 
     $session->{sortspec} = undef;
-    $args->{HITS} = $session->_rerun_search($args->{SETNAME});
+    $args->{HITS} = $session->rerun_search($args->{SETNAME});
 }
 
 
@@ -272,7 +272,7 @@ sub _sort_handler {
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
     $session->{sortspec} = $cqlSort;
-    $session->_rerun_search($args->{OUTPUT});
+    $session->rerun_search($args->{OUTPUT});
 }
 
 
