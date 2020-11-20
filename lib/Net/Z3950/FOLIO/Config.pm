@@ -33,7 +33,6 @@ sub compile_config {
 	my $extra = shift @extras;
 	my $overlay = compile_config_file("$cfgbase.$extra", $isFirst ? MISSING_ALLOW : MISSING_REPORT);
 	$isFirst = 0;
-	warn "new Config: extra '$extra': ", $overlay;
 	merge_config($cfg, $overlay);
     }
 
