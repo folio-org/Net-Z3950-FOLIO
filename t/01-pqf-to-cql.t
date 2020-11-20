@@ -75,7 +75,7 @@ BEGIN {
     );
 }
 
-use Test::More tests => 2*scalar(@tests) + 2;
+use Test::More tests => 2*scalar(@tests) + 4;
 
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 
@@ -84,7 +84,13 @@ $ENV{OKAPI_URL} = $ENV{OKAPI_TENANT} = $ENV{OKAPI_USER} = $ENV{OKAPI_PASSWORD} =
 
 my $service = new Net::Z3950::FOLIO('etc/config');
 ok(defined $service, 'made FOLIO service object');
+my $session = new Net::Z3950::FOLIO::Session($service, 'dummy');
+ok(defined $session, 'made FOLIO session object');
+$session->_reload_config_file();
+ok(defined $session, 'loaded session config file');
 my $parser = new Net::Z3950::PQF();
+
+$session->{resultsets} = { foo => { rsid => 'bar' } };
 
 foreach my $test (@tests) {
     my($input, $output) = @$test;
@@ -93,7 +99,6 @@ foreach my $test (@tests) {
     ok(defined $node, "parsed PQF: $input");
 
     my $ss = $node->toSimpleServer();
-    my $args = { GHANDLE => $service, HANDLE => { resultsets => { foo => { rsid => 'bar' } } } };
-    my $cql = $ss->_toCQL($args);
+    my $cql = $ss->_toCQL($session);
     is($cql, $output, "generated correct CQL: $output");
 }
