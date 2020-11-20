@@ -99,6 +99,6 @@ foreach my $test (@tests) {
     ok(defined $node, "parsed PQF: $input");
 
     my $ss = $node->toSimpleServer();
-    my $cql = $ss->_toCQL($session);
+    my $cql = $ss->toCQL($session);
     is($cql, $output, "generated correct CQL: $output");
 }

@@ -163,7 +163,7 @@ sub _search_handler {
 	$session->{cql} = $args->{CQL};
     } else {
 	my $type1 = $args->{RPN}->{query};
-	$session->{cql} = $type1->_toCQL($session, $args->{RPN}->{attributeSet});
+	$session->{cql} = $type1->toCQL($session, $args->{RPN}->{attributeSet});
 	warn "search: translated '" . $args->{QUERY} . "' to '" . $session->{cql} . "'\n";
     }
 

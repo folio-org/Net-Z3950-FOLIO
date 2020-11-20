@@ -1,11 +1,11 @@
 # The following code maps Z39.50 Type-1 queries to CQL by providing a
-# _toCQL() method on each query tree node type.
+# toCQL() method on each query tree node type.
 
 package Net::Z3950::RPN::Term;
 
 sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
 
-sub _toCQL {
+sub toCQL {
     my $self = shift;
     my($session, $defaultSet) = @_;
     my $indexMap = $session->{cfg}->{indexMap};
@@ -183,7 +183,7 @@ sub _ap2relation {
 
 
 package Net::Z3950::RPN::RSID;
-sub _toCQL {
+sub toCQL {
     my $self = shift;
     my($session, $defaultSet) = @_;
 
@@ -197,28 +197,28 @@ sub _toCQL {
 
 
 package Net::Z3950::RPN::And;
-sub _toCQL {
+sub toCQL {
     my $self = shift;
-    my $left = $self->[0]->_toCQL(@_);
-    my $right = $self->[1]->_toCQL(@_);
+    my $left = $self->[0]->toCQL(@_);
+    my $right = $self->[1]->toCQL(@_);
     return "($left and $right)";
 }
 
 
 package Net::Z3950::RPN::Or;
-sub _toCQL {
+sub toCQL {
     my $self = shift;
-    my $left = $self->[0]->_toCQL(@_);
-    my $right = $self->[1]->_toCQL(@_);
+    my $left = $self->[0]->toCQL(@_);
+    my $right = $self->[1]->toCQL(@_);
     return "($left or $right)";
 }
 
 
 package Net::Z3950::RPN::AndNot;
-sub _toCQL {
+sub toCQL {
     my $self = shift;
-    my $left = $self->[0]->_toCQL(@_);
-    my $right = $self->[1]->_toCQL(@_);
+    my $left = $self->[0]->toCQL(@_);
+    my $right = $self->[1]->toCQL(@_);
     return "($left not $right)";
 }
 
