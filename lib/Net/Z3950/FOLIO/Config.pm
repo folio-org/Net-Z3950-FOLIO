@@ -1,7 +1,3 @@
-use strict;
-use warnings;
-
-
 package Net::Z3950::FOLIO::Config;
 
 use 5.008000;
@@ -12,19 +8,35 @@ use IO::File;
 use Cpanel::JSON::XS qw(decode_json);
 
 
+# Possible values of $missingAction
+sub MISSING_ERROR { 0 }
+sub MISSING_ALLOW { 1 }
+sub MISSING_REPORT { 2 }
+
+
 sub new {
     my $class = shift();
-    my($cfgbase) = @_;
+    my($cfgbase, @extras) = @_;
 
-    my $cfg = compile_config($cfgbase);
+    my $cfg = compile_config($cfgbase, @extras);
     return bless $cfg, $class;
 }
 
 
 sub compile_config {
-    my($cfgbase) = @_;
+    my($cfgbase, @extras) = @_;
 
-    my $cfg = compile_config_file($cfgbase);
+    my $cfg = compile_config_file($cfgbase, MISSING_ERROR);
+
+    my $isFirst = 1;
+    while (@extras) {
+	my $extra = shift @extras;
+	my $overlay = compile_config_file("$cfgbase.$extra", $isFirst ? MISSING_ALLOW : MISSING_REPORT);
+	$isFirst = 0;
+	warn "new Config: extra '$extra': ", $overlay;
+	merge_config($cfg, $overlay);
+    }
+
     my $gqlfile = $cfg->{graphqlQuery}
         or die "$0: no GraphQL query file defined";
 
@@ -43,10 +55,18 @@ sub compile_config {
 
 
 sub compile_config_file {
-    my($cfgbase) = @_;
+    my($cfgname, $missingAction) = @_;
 
-    my $fh = new IO::File("<$cfgbase.json")
-	or die "$0: can't open config file '$cfgbase.json': $!";
+    my $fh = new IO::File("<$cfgname.json");
+    if (!$fh) {
+	if ($! == 2 && $missingAction == MISSING_ALLOW) {
+	    return {};
+	} elsif ($! == 2 && $missingAction == MISSING_REPORT) {
+	    Net::Z3950::FOLIO::_throw(1, "filter not configured: $cfgname");
+	}
+	die "$0: can't open config file '$cfgname.json': $!"
+    }
+
     my $json; { local $/; $json = <$fh> };
     $fh->close();
 
@@ -107,6 +127,30 @@ sub expand_scalar_variable_reference {
     return $val;
 }
 
+
+sub merge_config {
+    my($base, $overlay) = @_;
+
+    my @known_keys = qw(okapi login indexMap);
+    foreach my $key (@known_keys) {
+	merge_hash($base->{$key}, $overlay->{$key}) if defined $overlay->{$key};
+    }
+
+    foreach my $key (sort keys %$overlay) {
+	if (!grep { $key eq $_ } @known_keys) {
+	    $base->{$key} = $overlay->{$key};
+	}
+    }
+}
+
+
+sub merge_hash {
+    my($base, $overlay) = @_;
+
+    foreach my $key (sort keys %$overlay) {
+	$base->{$key} = $overlay->{$key};
+    }
+}
 
 =head1 NAME
 

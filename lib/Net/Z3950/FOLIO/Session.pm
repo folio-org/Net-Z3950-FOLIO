@@ -29,7 +29,7 @@ sub reload_config_file {
     my $this = shift();
     my $ghandle = $this->{ghandle};
 
-    $this->{cfg} = new Net::Z3950::FOLIO::Config($ghandle->{cfgbase});
+    $this->{cfg} = new Net::Z3950::FOLIO::Config($ghandle->{cfgbase}, split(/\|/, $this->{name}));
 }
 
 
@@ -345,7 +345,14 @@ sub _make_http_request() {
     my $this = shift();
     my(%args) = @_;
 
-    my $tenant = $this->{name} ne 'Default' ? $this->{name} : $this->{cfg}->{okapi}->{tenant};
+    my $tenant;
+    if ($this->{name} eq 'Default') {
+	$tenant = $this->{cfg}->{okapi}->{tenant};
+    } else {
+	$tenant = $this->{name};
+	$tenant =~ s/\|.*//;
+    }
+
     my $req = new HTTP::Request(%args);
     $req->header('X-Okapi-tenant' => $tenant);
     $req->header('Content-type' => 'application/json');
