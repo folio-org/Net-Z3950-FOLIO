@@ -1,4 +1,8 @@
 {
   "bar": 4,
-  "baz": "herring"
+  "baz": "herring",
+  "indexMap": {
+    "1": "contributors/@name",
+    "21": "subject"
+  }
 }
