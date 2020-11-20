@@ -21,6 +21,7 @@ doc/opac/supporting-opac-records.txt
 doc/opac/test-opac.xml
 doc/opac/z3950-opac-record-syntax.asn1
 doc/release-procedure.md
+doc/source-code-overview.md
 doc/srs/using-srs.md
 etc/config.json
 etc/folio2marcxml.xsl
