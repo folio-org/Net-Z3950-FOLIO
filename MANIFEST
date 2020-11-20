@@ -30,7 +30,9 @@ etc/yazgfs.xml
 lib/Net/Z3950/FOLIO.pm
 lib/Net/Z3950/FOLIO/Config.pm
 lib/Net/Z3950/FOLIO/OPACXMLRecord.pm
+lib/Net/Z3950/FOLIO/RPN.pm
 lib/Net/Z3950/FOLIO/ResultSet.pm
+lib/Net/Z3950/FOLIO/Session.pm
 t/01-pqf-to-cql.t
 t/02-sortspec.t
 t/03-folio-to-opac.t
