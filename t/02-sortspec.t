@@ -47,7 +47,7 @@ my $service = new Net::Z3950::FOLIO('etc/config');
 ok(defined $service, 'made FOLIO service object');
 my $session = new Net::Z3950::FOLIO::Session($service, 'dummy');
 ok(defined $session, 'made FOLIO session object');
-$session->_reload_config_file();
+$session->reload_config_file();
 ok(defined $session, 'loaded session config file');
 
 foreach my $test (@tests) {

@@ -25,7 +25,7 @@ sub new {
 }
 
 
-sub _reload_config_file {
+sub reload_config_file {
     my $this = shift();
     my $ghandle = $this->{ghandle};
 
@@ -33,7 +33,7 @@ sub _reload_config_file {
 }
 
 
-sub _login {
+sub login {
     my $this = shift(); 
     my $ghandle = $this->{ghandle};
     my($user, $pass) = @_;

@@ -94,8 +94,8 @@ sub getSession {
     if (!$this->{sessions}->{$name}) {
 	my $session = new Net::Z3950::FOLIO::Session($this, $name);
 	$this->{sessions}->{$name} = $session;
-	$session->_reload_config_file();
-	$session->_login($this->{user}, $this->{pass});
+	$session->reload_config_file();
+	$session->login($this->{user}, $this->{pass});
     }
 
     return $this->{sessions}->{$name};
