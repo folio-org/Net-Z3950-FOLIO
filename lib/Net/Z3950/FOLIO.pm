@@ -10,8 +10,6 @@ use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
 use MARC::Record;
 use MARC::File::XML (BinaryEncoding => 'utf8', RecordFormat => 'USMARC');
-use XML::Simple;
-use Scalar::Util qw(blessed reftype);
 use Data::Dumper; $Data::Dumper::Indent = 1;
 
 use Net::Z3950::FOLIO::Session;
@@ -213,7 +211,7 @@ sub _fetch_handler {
 
     } elsif ($format eq FORMAT_XML && $comp eq 'raw') {
 	# Mechanical XML translitation of the JSON response
-	$res = _xml_record($rec);
+	$res = $session->xml_record($rec);
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
 	my $marc = $session->marc_record($rs, $index1);
@@ -238,46 +236,6 @@ sub _fetch_handler {
 
     $args->{RECORD} = $res;
     return;
-}
-
-
-sub _xml_record {
-    my($rec) = @_;
-
-    my $xml;
-    {
-	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
-	_sanitize_tree($rec);
-
-	# I have no idea why this generates an "uninitialized value" warning
-	local $SIG{__WARN__} = sub {};
-	$xml = XMLout($rec, NoAttr => 1);
-    }
-    $xml =~ s/<@/<__/;
-    $xml =~ s/<\/@/<\/__/;
-    return $xml;
-}
-
-
-# This code modified from https://www.perlmonks.org/?node_id=773738
-sub _sanitize_tree {
-    for my $node (@_) {
-	if (!defined($node)) {
-	    next;
-	} elsif (ref($node) eq 'JSON::PP::Boolean') {
-            $node += 0;
-        } elsif (blessed($node)) {
-            die('_sanitize_tree: unexpected object');
-        } elsif (reftype($node)) {
-            if (ref($node) eq 'ARRAY') {
-                _sanitize_tree(@$node);
-            } elsif (ref($node) eq 'HASH') {
-                _sanitize_tree(values(%$node));
-            } else {
-                die('_sanitize_tree: unexpected reference type');
-            }
-        }
-    }
 }
 
 

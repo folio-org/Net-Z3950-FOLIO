@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 use Cpanel::JSON::XS qw(decode_json encode_json);
+use Scalar::Util qw(blessed reftype);
+use XML::Simple;
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
 
@@ -118,6 +120,47 @@ sub _do_search {
     $rs->insert_records($offset, $isi->{instances});
 
     return $rs;
+}
+
+
+sub xml_record {
+    my $this = shift();
+    my($rec) = @_;
+
+    my $xml;
+    {
+	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
+	_sanitize_tree($rec);
+
+	# I have no idea why this generates an "uninitialized value" warning
+	local $SIG{__WARN__} = sub {};
+	$xml = XMLout($rec, NoAttr => 1);
+    }
+    $xml =~ s/<@/<__/;
+    $xml =~ s/<\/@/<\/__/;
+    return $xml;
+}
+
+
+# This code modified from https://www.perlmonks.org/?node_id=773738
+sub _sanitize_tree {
+    for my $node (@_) {
+	if (!defined($node)) {
+	    next;
+	} elsif (ref($node) eq 'JSON::PP::Boolean') {
+            $node += 0;
+        } elsif (blessed($node)) {
+            die('_sanitize_tree: unexpected object');
+        } elsif (reftype($node)) {
+            if (ref($node) eq 'ARRAY') {
+                _sanitize_tree(@$node);
+            } elsif (ref($node) eq 'HASH') {
+                _sanitize_tree(values(%$node));
+            } else {
+                die('_sanitize_tree: unexpected reference type');
+            }
+        }
+    }
 }
 
 
