@@ -40,7 +40,11 @@ t/02-sortspec.t
 t/03-folio-to-opac.t
 t/04-stacking-config.t
 t/05-short-session.t
-t/data/expectedOutput1.xml
-t/data/expectedOutput2.xml
-t/data/input1.json
-t/data/input2.json
+t/data/config/dummy.graphql-query
+t/data/config/foo.bar.json
+t/data/config/foo.baz.json
+t/data/config/foo.json
+t/data/records/expectedOutput1.xml
+t/data/records/expectedOutput2.xml
+t/data/records/input1.json
+t/data/records/input2.json
