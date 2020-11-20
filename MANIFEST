@@ -23,6 +23,7 @@ doc/opac/z3950-opac-record-syntax.asn1
 doc/release-procedure.md
 doc/source-code-overview.md
 doc/srs/using-srs.md
+etc/config.foo.json
 etc/config.json
 etc/folio2marcxml.xsl
 etc/folio2opac.xsl
