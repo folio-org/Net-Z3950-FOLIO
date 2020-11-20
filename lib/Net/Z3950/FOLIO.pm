@@ -141,8 +141,10 @@ sub _init_handler {
     $args->{IMP_VER} = $Net::Z3950::FOLIO::VERSION;
     $args->{IMP_NAME} = 'z2folio gateway';
 
+    # Stash these for subsequent use in getSession when it invokes $session->login()
     $ghandle->{user} = $args->{USER};
     $ghandle->{pass} = $args->{PASS};
+
     # That's all we can do until we know the database name at search time
 }
 
