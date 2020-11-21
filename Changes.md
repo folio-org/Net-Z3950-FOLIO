@@ -5,7 +5,7 @@
 * Add support for searching by local barcode. Fixes ZF-23.
 * Add developer documentation with [an overview of the source code](doc/source-code-overview.md). Fixes ZF-28.
 * Use Z39.50 database name to indicate FOLIO tenant. Fixes ZF-2.
-* Implement stacking configurations: base, tenant, filters. Fixes ZF-27. XXX note that documentation for this feature is still to be updated.
+* Implement, test and document stacking configurations: base, tenant, filters. Fixes ZF-27.
 
 ## [1.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.3) (Thu Sep 24 20:16:12 BST 2020)
 

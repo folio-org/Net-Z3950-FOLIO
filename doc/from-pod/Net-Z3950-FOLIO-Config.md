@@ -36,19 +36,21 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
 
 # DESCRIPTION
 
-The FOLIO Z39.50 gateway `z2folio` is configured by a single file,
-named on the command-line, and expressed in JSON.  This file specifies
-how to connect to FOLIO, how to log in, and how to translate its
-instance records into MARC.
+The FOLIO Z39.50 gateway `z2folio` is configured by a stacking set of
+JSON files whose basename is specified on the command-line. These
+files specify how to connect to FOLIO, how to log in, and how to
+search.
 
-The structure of the file is pretty simple. There are several
-top-level section, each described in its own section below, and each
-of them an object with several keys that can exist in it.
+The structure of each of these file is the same, and the mechanism by
+which they are stacked is described below. The shared format is
+simple. There are several top-level sections, each described in its own
+section below, and each of them is an object with several keys that can
+exist in it.
 
 If any string value contains sequences of the form `${NAME}`, they
 are each replaced by the values of the corresponding environment
 variables `$NAME`, providing a mechanism for injecting values into
-the condfiguration. This is useful if, for example, it is necessary to
+the configuration. This is useful if, for example, it is necessary to
 avoid embedding authentication secrets in the configuration file.
 
 When substituting environment variables, the bash-like fallback syntax
@@ -163,6 +165,30 @@ every query submitted by the client, so it acts as a filter allowing
 through only records that satisfy it. This might be used, for example,
 to specify `source=marc` to limit search result to only to those
 FOLIO instance records that were translated from MARC imports.
+
+# CONFIGURATION STACKING
+
+To implement both multi-tenancy and per-database output tweaks that may be required for specific Z39.50 client application, it is necessary to allow flexibility in the configuration of the server, based both on tenant and on further specifications. Three levels of configuration are supported.
+
+1. A base configuration file is always used, and will typically provide the bulk of the configuraiton that is the same for all supported tenants and filters. Its base name is specified when the server is invoked -- for example, as the argument to the `-c` command-line option of `z2folio`: when the server is invoked as `z2folio -c etc/config` the base configuration file is found at `etc/config.json`.
+2. The Z39.50 database name provided in a search is used as a name of a sub-configuration specific to that database, and is also passed to FOLIO as the name of the tenant to be addressed. So for example, if a Z93.50 search request come in for the database `theo`, then the additional tenant-specific configuration file `etc/config.theo.json` is also consulted. It is acceptable for the file not to exist, in which case there is no tenant-specific configuration and the base configuration is used for that database.
+
+    Values provided in a tenant-specific configuration are added to those of the base configuration, overriding the base values when the same item is provided at both levels.
+
+3. One or more _filters_ may also be used to specify additional configuration. These are specified as part of the Z39.50 database name, separated from the main part of the name by pipe characters (`|`). For example, if the database name `theo|foo|bar` is used, the two additional filter-specific configuration files are also read, `etc/config.foo.json` and `etc/config.bar.json`. The values of filter-specific configurations override those of the base or tenant-specific configuration, and those of later filters override those of earlier filters.
+
+In the example used here, then, a server launched with `z2folio -c etc/config` and serving a search against the Z39.50 database `theo|foo|bar` will consult four configuration files:
+`etc/config.json`,
+`etc/config.theo.json` (if present),
+`etc/config.foo.json`
+and
+`etc/config.bar.json`.
+
+This scheme allows us to handle several scenarios in a uniform way:
+
+- Basic configuration all in one place
+- Tenant-specific overrides, such as the customer-specific definition of ISBN searching (see issue ZF-24) in the tenant configuration, leaving the standard definition to apply to other tenants.
+- Application-specific overrides, such as those needed by the ABLE client (see issue ZF-25), all specific only in a filter that is not used except when explicitly requested.
 
 # SEE ALSO
 
