@@ -340,11 +340,11 @@ To implement both multi-tenancy and per-database output tweaks that may be requi
 
 =item 1
 
-A base configuration file is always used, and will typically provide the bulk of the configuraiton that is the same for all supported tenants and filters. Its base name is specified when the server is invoked -- for example, as the argument to the C<-c> command-line option of C<z2folio>: when the server is invoked as C<z2folio -c etc/config> the base configuration file is found at C<etc/config.json>.
+A base configuration file is always used, and will typically provide the bulk of the configuration that is the same for all supported tenants and filters. Its base name is specified when the server is invoked -- for example, as the argument to the C<-c> command-line option of C<z2folio>: when the server is invoked as C<z2folio -c etc/config> the base configuration file is found at C<etc/config.json>.
 
 =item 2
 
-The Z39.50 database name provided in a search is used as a name of a sub-configuration specific to that database, and is also passed to FOLIO as the name of the tenant to be addressed. So for example, if a Z93.50 search request come in for the database C<theo>, then the additional tenant-specific configuration file C<etc/config.theo.json> is also consulted. It is acceptable for the file not to exist, in which case there is no tenant-specific configuration and the base configuration is used for that database.
+The Z39.50 database name provided in a search is used as a name of a sub-configuration specific to that database, and is also passed to FOLIO as the name of the tenant to be addressed. So for example, if a Z39.50 search request come in for the database C<theo>, then the additional tenant-specific configuration file C<etc/config.theo.json> is also consulted. It is acceptable for the file not to exist, in which case there is no tenant-specific configuration and the base configuration is used for that database.
 
 Values provided in a tenant-specific configuration are added to those of the base configuration, overriding the base values when the same item is provided at both levels.
 
