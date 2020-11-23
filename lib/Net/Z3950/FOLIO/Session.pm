@@ -345,16 +345,8 @@ sub _make_http_request() {
     my $this = shift();
     my(%args) = @_;
 
-    my $tenant;
-    if ($this->{name} eq 'Default') {
-	$tenant = $this->{cfg}->{okapi}->{tenant};
-    } else {
-	$tenant = $this->{name};
-	$tenant =~ s/\|.*//;
-    }
-
     my $req = new HTTP::Request(%args);
-    $req->header('X-Okapi-tenant' => $tenant);
+    $req->header('X-Okapi-tenant' => $this->{cfg}->{okapi}->{tenant});
     $req->header('Content-type' => 'application/json');
     $req->header('Accept' => 'application/json');
     $req->header('X-Okapi-token' => $this->{token}) if $this->{token};
