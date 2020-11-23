@@ -52,7 +52,7 @@ FOLIO ILS.  Because it relies on the C<Net::Z3950::SimpleServer>
 modules for the server functionality, because this module is based on
 the YAZ toolkit, and because YAZ transparently handles all three
 standard IR protocols (ANSI/NISO Z39.50, SRU and SRW), it can function
-as a support for all three of these protocols.
+as a server for all three of these protocols.
 
 The following command-line options govern how it functions:
 

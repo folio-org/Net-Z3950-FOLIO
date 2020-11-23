@@ -20,20 +20,20 @@ module. `mod-inventory-storage` defines the FOLIO inventory formats: one each fo
 and
 [item records](https://github.com/folio-org/mod-inventory-storage/blob/master/ramls/item.json).
 
-However, many libraries remain wedded to [MARC records](https://en.wikipedia.org/wiki/MARC_standards), a standard from the 1960s that has comfortably outlives many of the critics who have pronounced its death over the years. FOLIO therefore provides a Source Record Storage (SRS) facility. Using this, MARC records may be uploaded to a FOLIO service. When this upload is performed using
+However, many libraries remain wedded to [MARC records](https://en.wikipedia.org/wiki/MARC_standards), a standard from the 1960s that has comfortably outlived many of the citics who have pronounced its death over the years. FOLIO therefore provides a Source Record Storage (SRS) facility. Using this, MARC records may be uploaded to a FOLIO service. When this upload is performed using
 [`mod-data-import`](https://github.com/folio-org/mod-data-import),
-the records are automatically converted into instance records which are linked to the source records -- the latter being retained by the system and remaining the version of record.
+the records are automatically converted into instance records which are inked to the source records -- the latter being retained by the system and remaining the version of record.
 
 The MARC format also remains important as the principal form in which [Z39.50](https://en.wikipedia.org/wiki/Z39.50) servers provide records to clients. [The FOLIO Z39.50 server](https://github.com/folio-org/Net-Z3950-FOLIO) can return XML records that are a transliteration of the JSON format for instances, but it is also required to serve MARC records -- for example, so it can provide relevant information to ILL systems.
 
-[Issue ZF-05](https://issues.folio.org/browse/ZF-5) is to extend the Z39.50 server so that, when MARC records are requested, the server fetches the relevant records from SRS and returns them. To do this, it's necessary to locate a back-end service with sample SRS records, or create some; and to have the Z39.50 server issue requests to the SRS WSAPI. Both these steps are non-trivial.
+[Issue ZF-05](https://issues.folio.org/browse/ZF-5) is to extend the Z93.50 server so that, when MARC records are requested, the server fetches the relevant records from SRS and returns them. To do this, it's necessary to locate a back-end service with sample SRS records, or create some; and to have the Z39.50 server issue requests to the SRS WSAPI. Both these steps are non-trivial.
 
 
 ## Finding example SRS records
 
 It turns out that there are no SRS reference records, analogous to the reference records that are provided by `mod-inventory-storage` and which therefore turn up on each new build of reference environments such as [folio-snapshot](https://folio-snapshot.dev.folio.org/). That is unfortunate: such records would have been easy to work with, and to write test suites around.
 
-There are specific servers, mostly belonging to customers, that do contain SRS records, but we cannot depend on these to remain in any given state such that tests can be reliably run against them. Similarly, bugfest environments like [bugfest-goldenrod](https://bugfest-goldenrod.folio.ebsco.com/) may contain SRS records, but their content cannot be relied upon to stay constant for tests.
+There are specific servers, mostly beonging to customers, that do contain SRS records, but we cannot depend on these to remain in any given state such that tests can be reliably run against them. Similarly, bugfest environments like [bugfest-goldenrod](https://bugfest-goldenrod.folio.ebsco.com/) may contain SRS records, but their content cannot be relied upon to stay constant for tests.
 
 As a result, it seems we have little option but to obtain a set of MARC records and insert them into a reference environment ourselves. (Or perhaps once such records exist, they could fairly easily be added as reference data to
 [`mod-source-record-storage`](https://github.com/folio-org/mod-source-record-storage)
@@ -150,7 +150,7 @@ I have no idea why the front-end would care about any of this.
 
 7. GET `/data-import-profiles/jobProfiles` with `limit` 5000 and query `(dataType==("MARC")) sortby name`, also yielding an empty list.
 
-At this point, network requests cease until you choose **Load MARC bibliographic records** from the **Actions** button to top left. Then the following further operations happen:
+At this point, network request cease until you choose **Load MARC bibliographic records** from the **Actions** button to top left. Then the following further operations happen:
 
 8. GET `https://folio-snapshot-okapi.dev.folio.org/data-import/uploadDefinitions/83447cac-8dfc-45fa-8c70-a34f7082c57d`
 ```
