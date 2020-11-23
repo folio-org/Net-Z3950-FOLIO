@@ -9,7 +9,7 @@ exit 'Uh-oh! $!' if $pid < 0;
 if ($pid == 0) {
     # Child
     sleep 1; # Allow time for server to start up
-    exec 'zoomsh -e "open @:9996" "find water" "set preferredRecordSyntax usmarc" "show 1" quit';
+    exec 'zoomsh -e "open @:9996/dummy" "find water" "set preferredRecordSyntax usmarc" "show 1" quit';
 }
 
 $ENV{OKAPI_PASSWORD} = 'fameflowerID052020';
