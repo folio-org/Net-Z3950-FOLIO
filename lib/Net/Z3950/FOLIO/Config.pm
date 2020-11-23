@@ -10,8 +10,8 @@ use Cpanel::JSON::XS qw(decode_json);
 
 # Possible values of $missingAction
 sub MISSING_ERROR { 0 }
-sub MISSING_ALLOW { 1 }
-sub MISSING_REPORT { 2 }
+sub MISSING_TENANT { 1 }
+sub MISSING_FILTER { 2 }
 
 
 sub new {
@@ -26,12 +26,12 @@ sub new {
 sub compile_config {
     my($cfgbase, @extras) = @_;
 
-    my $cfg = compile_config_file($cfgbase, MISSING_ERROR);
+    my $cfg = compile_config_file($cfgbase, undef, MISSING_ERROR);
 
     my $isFirst = 1;
     while (@extras) {
 	my $extra = shift @extras;
-	my $overlay = compile_config_file("$cfgbase.$extra", $isFirst ? MISSING_ALLOW : MISSING_REPORT);
+	my $overlay = compile_config_file($cfgbase, $extra, $isFirst ? MISSING_TENANT : MISSING_FILTER);
 	$isFirst = 0;
 	merge_config($cfg, $overlay);
     }
@@ -54,16 +54,17 @@ sub compile_config {
 
 
 sub compile_config_file {
-    my($cfgname, $missingAction) = @_;
+    my($cfgbase, $cfgsub, $missingAction) = @_;
 
-    my $fh = new IO::File("<$cfgname.json");
+    my $cfgname = $cfgbase . ($cfgsub ? ".$cfgsub" : '') . '.json';
+    my $fh = new IO::File("<$cfgname");
     if (!$fh) {
-	if ($! == 2 && $missingAction == MISSING_ALLOW) {
-	    return {};
-	} elsif ($! == 2 && $missingAction == MISSING_REPORT) {
-	    Net::Z3950::FOLIO::_throw(1, "filter not configured: $cfgname");
+	if ($! == 2 && $missingAction == MISSING_TENANT) {
+	    Net::Z3950::FOLIO::_throw(109, "$cfgsub");
+	} elsif ($! == 2 && $missingAction == MISSING_FILTER) {
+	    Net::Z3950::FOLIO::_throw(1, "filter not configured: $cfgsub");
 	}
-	die "$0: can't open config file '$cfgname.json': $!"
+	die "$0: can't open config file '$cfgbase.json': $!"
     }
 
     my $json; { local $/; $json = <$fh> };
