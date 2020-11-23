@@ -9,7 +9,7 @@ Since this Z39.50 server is written as a Perl module, it adheres to Perl release
 
 * Formal releases are made via [CPAN](https://www.cpan.org/), the Comprehensive Perl Archive Network rather than via NPM or a Maven repository.
 
-* The master version number is held in the source-code itself -- specificially in [`Net/Z3950/FOLIO.pm`](../lib/Net/Z3950/FOLIO.pm) -- and is extracted by the package-building code invoked from [`Makefile.PL`](../Makefile.PL).
+* The master version number is held in the source-code itself -- specifically in [`Net/Z3950/FOLIO.pm`](../lib/Net/Z3950/FOLIO.pm) -- and is extracted by the package-building code invoked from [`Makefile.PL`](../Makefile.PL).
 
 * The change-log is [`Changes.md`](../Changes.md) rather than `CHANGELOG.md` or `NEWS.md`.
 

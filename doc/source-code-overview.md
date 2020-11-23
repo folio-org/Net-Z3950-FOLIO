@@ -15,7 +15,7 @@
 
 ## Introduction
 
-The FOLIO Z39.50 server is written in Perl, due to that language's excellent support for the Z39.50 protocol and particlarly [the `SimpleServer` module](https://metacpan.org/pod/Net::Z3950::SimpleServer).
+The FOLIO Z39.50 server is written in Perl, due to that language's excellent support for the Z39.50 protocol and particularly [the `SimpleServer` module](https://metacpan.org/pod/Net::Z3950::SimpleServer).
 
 The source code consists of three sets of files:
 
@@ -41,7 +41,7 @@ The top-level server class. [The public API](from-pod/Net-Z3950-FOLIO.md) consis
 
 The SimpleServer API provides two handles which can be initialized by constructors and handler functions, and which are passed back as part of the argument block given to every handler function. These are the global handle, called GHANDLE, and the session handle, just called HANDLE. The former is set in the constructor, and used as a pointer to the `Net::Z3950::FOLIO` server object itself. The latter is set in the search handler (see below), and points to the session object on which the search is invoked.
 
-Conceptually, sessions should be created by the init handler, but in the Z39.50 protocol the name of the database to be searched is not specified until a search is issued, so there is no name by which the session can be known at init-time. Since the database name is also used to determine which set on configuration files to load for the session, this too must be deferred until search time: the response to the Z39.50 init request, then, is fairly vacuous: all it says that the server is ready to receive searches -- but only when the first search comes in can the configuration be loaded.
+Conceptually, sessions should be created by the init handler, but in the Z39.50 protocol the name of the database to be searched is not specified until a search is issued, so there is no name by which the session can be known at init-time. Since the database name is also used to determine which set of configuration files to load for the session, this too must be deferred until search time: the response to the Z39.50 init request, then, is fairly vacuous: all it says that the server is ready to receive searches -- but only when the first search comes in can the configuration be loaded.
 
 
 ### `lib/Net/Z3950/FOLIO/Session.pm`
