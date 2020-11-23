@@ -133,7 +133,13 @@ sub merge_config {
 
     my @known_keys = qw(okapi login indexMap);
     foreach my $key (@known_keys) {
-	merge_hash($base->{$key}, $overlay->{$key}) if defined $overlay->{$key};
+	if (defined $overlay->{$key}) {
+	    if (ref $base->{$key} eq 'HASH') {
+		merge_hash($base->{$key}, $overlay->{$key});
+	    } else {
+		$base->{$key} = $overlay->{$key};
+	    }
+	}
     }
 
     foreach my $key (sort keys %$overlay) {
