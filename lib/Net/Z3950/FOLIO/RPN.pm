@@ -17,7 +17,7 @@ sub toCQL {
     # First we determine USE attribute
     foreach my $attr (@$attrs) {
 	my $set = $attr->{attributeSet} || $defaultSet;
-	if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1 &&
+	if ($set ne Net::Z3950::FOLIO::ATTRSET_BIB1() &&
 	    lc($set) ne 'bib-1') {
 	    # Unknown attribute set (anything except BIB-1)
 	    _throw(121, $set);
