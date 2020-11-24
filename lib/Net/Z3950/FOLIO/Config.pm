@@ -341,23 +341,23 @@ FOLIO instance records that were translated from MARC imports.
 
 =head1 CONFIGURATION STACKING
 
-To implement both multi-tenancy and per-database output tweaks that may be required for specific Z39.50 client application, it is necessary to allow flexibility in the configuration of the server, based both on tenant and on further specifications. Three levels of configuration are supported.
+To implement both multi-tenancy and per-database output tweaks that may be required for specific Z39.50 client application, it is necessary to allow flexibility in the configuration of the server, based both on Z39.50 database name and on further specifications. Three levels of configuration are therefore supported.
 
 =over 4
 
 =item 1
 
-A base configuration file is always used, and will typically provide the bulk of the configuration that is the same for all supported tenants and filters. Its base name is specified when the server is invoked -- for example, as the argument to the C<-c> command-line option of C<z2folio>: when the server is invoked as C<z2folio -c etc/config> the base configuration file is found at C<etc/config.json>.
+A base configuration file is always used, and will typically provide the bulk of the configuration that is the same for all supported databases. Its base name is specified when the server is invoked -- for example, as the argument to the C<-c> command-line option of C<z2folio>: when the server is invoked as C<z2folio -c etc/config> the base configuration file is found at C<etc/config.json>.
 
 =item 2
 
-The Z39.50 database name provided in a search is used as a name of a sub-configuration specific to that database, and is also passed to FOLIO as the name of the tenant to be addressed. So for example, if a Z39.50 search request come in for the database C<theo>, then the additional tenant-specific configuration file C<etc/config.theo.json> is also consulted. It is acceptable for the file not to exist, in which case there is no tenant-specific configuration and the base configuration is used for that database.
+The Z39.50 database name provided in a search is used as a name of a sub-configuration specific to that database. So for example, if a Z39.50 search request come in for the database C<theo>, then the additional database-specific configuration file C<etc/config.theo.json> is also consulted. Often this file will specify the FOLIO tenant to be used for this database.
 
-Values provided in a tenant-specific configuration are added to those of the base configuration, overriding the base values when the same item is provided at both levels.
+Values provided in a database-specific configuration are added to those of the base configuration, overriding the base values when the same item is provided at both levels.
 
 =item 3
 
-One or more I<filters> may also be used to specify additional configuration. These are specified as part of the Z39.50 database name, separated from the main part of the name by pipe characters (C<|>). For example, if the database name C<theo|foo|bar> is used, the two additional filter-specific configuration files are also read, C<etc/config.foo.json> and C<etc/config.bar.json>. The values of filter-specific configurations override those of the base or tenant-specific configuration, and those of later filters override those of earlier filters.
+One or more I<filters> may also be used to specify additional configuration. These are specified as part of the Z39.50 database name, separated from the main part of the name by pipe characters (C<|>). For example, if the database name C<theo|foo|bar> is used, then two additional filter-specific configuration files are also read, C<etc/config.foo.json> and C<etc/config.bar.json>. The values of filter-specific configurations override those of the base or database-specific configuration, and those of later filters override those of earlier filters.
 
 =back
 
@@ -378,11 +378,11 @@ Basic configuration all in one place
 
 =item *
 
-Tenant-specific overrides, such as the customer-specific definition of ISBN searching (see issue ZF-24) in the tenant configuration, leaving the standard definition to apply to other tenants.
+Database-specific overrides, such as the FOLIO tenant and any customer-specific definition of ISBN searching (see issue ZF-24) in the database configuration, leaving the standard definition to apply to other tenants.
 
 =item *
 
-Application-specific overrides, such as those needed by the ABLE client (see issue ZF-25), all specific only in a filter that is not used except when explicitly requested.
+Application-specific overrides, such as those needed by the ABLE client (see issue ZF-25), specified only in a filter that is not used except when explicitly requested.
 
 =back
 
