@@ -1,20 +1,9 @@
 {
-  "okapi": {
-    "url": "${OKAPI_URL-https://indexdata-test-okapi.folio.indexdata.com}",
-    "UNUSED-graphqlUrl": "http://localhost:3001",
-    "tenant": "${OKAPI_TENANT-indexdata}"
-  },
-  "login": {
-    "username": "${OKAPI_USER-id_admin}",
-    "password": "${OKAPI_PASSWORD}"
-  },
   "indexMap": {
     "default": "keyword",
     "1": "contributors/@name",
     "4": "title",
     "7": "identifiers/@value/@identifierTypeId=\"8261054f-be78-422d-bd51-4ed9f33c3422\"",
-    "7-CHICAGO": "identifiers/@value/@identifierTypeId=\"cf0a2485-22e9-5be4-ac5c-fe393fb964e4\"",
-    "7-ALTERNATIVE": "isbn,invalidIsbn",
     "8": "identifiers/@value/@identifierTypeId=\"913300b2-03ed-469a-8179-c1092c991227\"",
     "12": {
       "cql": "hrid",
