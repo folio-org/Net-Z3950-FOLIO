@@ -108,7 +108,7 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    # warn "result: ", _pretty_json($obj);
+    # warn "result: ", Net::Z3950::FOLIO::_pretty_json($obj);
     my $data = $obj->{data} or _throw(1, "no data in response");
     my $isi = $data->{instance_storage_instances};
     if (!$isi) {
