@@ -197,13 +197,6 @@ sub _fetch_handler {
 	_throw(1, "missing record") if !defined $rec;
     }
 
-    # Special case: when asking for MARC with element-set "dynamic", we generate it by XSLT
-    #
-    # XXX There seems to be a GFS bug in which if this code is invoked
-    # with format USMARC but no element-set specified, the first
-    # branch (correctly) runs, but the GFS tries to convert the MARC
-    # record from MARCXML to MARC. I will raise this with Adam later.
-
     my $comp = $args->{COMP} || '';
     my $format = $args->{REQ_FORM};
     warn "REQ_FORM=$format, COMP=$comp\n";
