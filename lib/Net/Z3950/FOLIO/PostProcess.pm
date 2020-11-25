@@ -67,8 +67,16 @@ sub applyRule {
 	my $from = $rule->{from};
 	my $to = $rule->{to};
 	my $flags = $rule->{flags};
-	### now what? See https://perlmonks.org/?node_id=11124218
-	return "[$value]";
+
+	# See advice on this next part at https://perlmonks.org/?node_id=11124218
+	# This solution more or less works, but does not support back-references $1 etc.
+	if ($flags =~ s/g//) {
+	    $value =~ s/(?$flags:$from)/$to/g;
+	} else {
+	    $value =~ s/(?$flags:$from)/$to/;
+	}
+
+	return $value;
     } else {
 	die "unknown post-processing op '$op'";
     }
