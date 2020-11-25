@@ -7,6 +7,7 @@
 * Use Z39.50 database name to indicate FOLIO tenant. Fixes ZF-2.
 * Implement, test and document stacking configurations: base, tenant, filters. Fixes ZF-27.
 * OPAC record now includes `availableThru` field, construed as the material-type of the item (provided that `mod-graphql` is running against a sufficiently new version of the mod-inventory-storage JSON schemas). Fixes ZF-26.
+* `z2folio` writes to both standard output and standard error in UTF-8 mode. Yes, like you, I assumed this would be the default behaviour in 2020, but apparently Perl never got the memo.
 
 ## [1.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.3) (Thu Sep 24 20:16:12 BST 2020)
 

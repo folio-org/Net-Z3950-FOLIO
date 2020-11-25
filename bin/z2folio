@@ -21,6 +21,10 @@ if (!getopts("c:", \%opts)) {
     exit 1;
 }
 
+# How is this not standard in 2020?
+binmode(STDOUT, "encoding(UTF-8)");
+binmode(STDERR, "encoding(UTF-8)");
+
 my $service = new Net::Z3950::FOLIO($opts{c});
 $service->launch_server('z2folio', @ARGV);
 
