@@ -9,5 +9,18 @@
   },
   "indexMap": {
     "7": "identifiers/@value/@identifierTypeId=\"cf0a2485-22e9-5be4-ac5c-fe393fb964e4\""
-  }
+  },
+  "postProcessing": {
+    "marc": {
+      "005": [
+        { "op": "regsub", "from": "[123]", "to": "X", "flags": "g" }
+      ],
+      "008": { "op": "regsub", "from": "([13579])", "to": "[$1]", "flags": "g" },
+      "245$a": [
+        { "op": "stripDiacritics" },
+        { "op": "regsub", "from": "[abc]", "to": "*", "flags": "g" }
+      ]
+    }
+  },
+  "chunkSize": 1
 }

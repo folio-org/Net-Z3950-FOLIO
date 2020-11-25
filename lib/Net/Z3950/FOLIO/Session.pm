@@ -8,6 +8,7 @@ use Scalar::Util qw(blessed reftype);
 use XML::Simple;
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
+use Net::Z3950::FOLIO::PostProcess qw(postProcess);
 
 
 sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
@@ -213,7 +214,8 @@ sub _insert_records_from_SRS {
     for (my $i = 0; $i < $n; $i++) {
 	my $sr = $srs->[$i];
 	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
-	$id2rec{$instanceId} = _JSON_to_MARC($sr->{parsedRecord}->{content});
+	my $record = postProcess(($this->{cfg}->{postProcessing} || {})->{marc}, $sr->{parsedRecord}->{content});
+	$id2rec{$instanceId} = _JSON_to_MARC($record);
     }
 
     $rs->insert_marcRecords(\%id2rec);

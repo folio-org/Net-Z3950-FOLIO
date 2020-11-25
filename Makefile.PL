@@ -15,6 +15,7 @@ WriteMakefile(
 	Net::Z3950::ZOOM => 1.30,
 	XML::Simple => 2.25,
 	Net::Z3950::PQF => 1.0,
+	Unicode::Diacritic::Strip => 0.13,
     },
     META_ADD => {
 	no_index => {
