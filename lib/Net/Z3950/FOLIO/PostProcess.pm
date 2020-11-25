@@ -79,12 +79,10 @@ sub applyRegsub {
     my $res = $value;
 
     # See advice on this next part at https://perlmonks.org/?node_id=11124218
-    # This solution more or less works, but does not support back-references $1 etc.
-    if ($flags =~ s/g//) {
-	$res =~ s/(?$flags:$from)/$to/g;
-    } else {
-	$res =~ s/(?$flags:$from)/$to/;
-    }
+    # In this approach, we construct some Perl code and evaluate it.
+    # This may leave some security holes, but we trust the people who write config files
+    $to =~ s/\\/\\\\/g;
+    eval "\$res =~ s/$from/$to/$flags";
 
     warn "regsub '$value' by s/$from/$to/$flags -> '$res'";
     return $res;
