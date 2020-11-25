@@ -64,6 +64,10 @@ sub applyRule {
 	return $result;
     } elsif ($op eq 'regsub') {
 	warn "transforming '$value' by ", Dumper($rule);
+	my $from = $rule->{from};
+	my $to = $rule->{to};
+	my $flags = $rule->{flags};
+	### now what? See https://perlmonks.org/?node_id=11124218
 	return "[$value]";
     } else {
 	die "unknown post-processing op '$op'";
