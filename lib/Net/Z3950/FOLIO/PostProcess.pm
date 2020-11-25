@@ -63,23 +63,31 @@ sub applyRule {
 	warn "stripping diacritics: '$value' -> '$result'";
 	return $result;
     } elsif ($op eq 'regsub') {
-	warn "transforming '$value' by ", Dumper($rule);
-	my $from = $rule->{from};
-	my $to = $rule->{to};
-	my $flags = $rule->{flags};
-
-	# See advice on this next part at https://perlmonks.org/?node_id=11124218
-	# This solution more or less works, but does not support back-references $1 etc.
-	if ($flags =~ s/g//) {
-	    $value =~ s/(?$flags:$from)/$to/g;
-	} else {
-	    $value =~ s/(?$flags:$from)/$to/;
-	}
-
-	return $value;
+	return applyRegsub($rule, $value);
     } else {
 	die "unknown post-processing op '$op'";
     }
+}
+
+
+sub applyRegsub {
+    my($rule, $value) = @_;
+
+    my $from = $rule->{from};
+    my $to = $rule->{to};
+    my $flags = $rule->{flags};
+    my $res = $value;
+
+    # See advice on this next part at https://perlmonks.org/?node_id=11124218
+    # This solution more or less works, but does not support back-references $1 etc.
+    if ($flags =~ s/g//) {
+	$res =~ s/(?$flags:$from)/$to/g;
+    } else {
+	$res =~ s/(?$flags:$from)/$to/;
+    }
+
+    warn "regsub '$value' by s/$from/$to/$flags -> '$res'";
+    return $res;
 }
 
 
