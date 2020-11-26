@@ -58,15 +58,21 @@ sub applyRule {
 
     my $op = $rule->{op};
     if ($op eq 'stripDiacritics') {
-	# It seems that the regular strip_diacritics function just plain no-ops, hence fast_strip instead
-	my $result = fast_strip($value);
-	warn "stripping diacritics: '$value' -> '$result'";
-	return $result;
+	return applyStripDiacritics($rule, $value);
     } elsif ($op eq 'regsub') {
 	return applyRegsub($rule, $value);
     } else {
 	die "unknown post-processing op '$op'";
     }
+}
+
+
+sub applyStripDiacritics {
+    my($_rule, $value) = @_;
+
+    # It seems that the regular strip_diacritics function just plain no-ops, hence fast_strip instead
+    my $result = fast_strip($value);
+    warn "stripping diacritics: '$value' -> '$result'";
 }
 
 
