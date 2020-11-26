@@ -39,7 +39,7 @@ BEGIN {
     );
 }
 
-use Test::More tests => 1 + scalar(@stripDiacriticsTests) + scalar(@regsubTests) + scalar(@applyRuleTests);
+use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests;
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
 use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcess);
