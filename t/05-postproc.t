@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 use utf8;
-binmode(STDOUT, "encoding(UTF-8)");
 
 BEGIN {
+    binmode(STDOUT, "encoding(UTF-8)");
     use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests);
     @stripDiacriticsTests = (
 	# value, expected, caption
