@@ -72,7 +72,7 @@ sub applyStripDiacritics {
 
     # it seems that the regular strip_diacritics function just plain no-ops, hence fast_strip instead
     my $result = fast_strip($value);
-    warn "stripping diacritics: '$value' -> '$result'";
+    # warn "stripping diacritics: '$value' -> '$result'";
     return $result;
 }
 
@@ -91,8 +91,7 @@ sub applyRegsub {
     $replacement =~ s/\\/\\\\/g;
     $replacement =~ s;/;\\/;g;
     eval "\$res =~ s/$pattern/$replacement/$flags";
-    warn "regsub '$value' by s/$pattern/$replacement/$flags -> '$res'";
-
+    # warn "regsub '$value' by s/$pattern/$replacement/$flags -> '$res'";
     return $res;
 }
 
