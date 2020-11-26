@@ -82,6 +82,8 @@ sub applyRegsub {
     # In this approach, we construct some Perl code and evaluate it.
     # This may leave some security holes, but we trust the people who write config files
     $to =~ s/\\/\\\\/g;
+    $to =~ s;/;\\/;g;
+    warn "to=$to";
     eval "\$res =~ s/$from/$to/$flags";
 
     warn "regsub '$value' by s/$from/$to/$flags -> '$res'";
