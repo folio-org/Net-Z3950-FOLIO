@@ -4,7 +4,7 @@ use utf8;
 binmode(STDOUT, "encoding(UTF-8)");
 
 BEGIN {
-    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests);
+    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests);
     @stripDiacriticsTests = (
 	# value, expected, caption
 	[ 'water', 'water', 'null transformation' ],
@@ -37,12 +37,25 @@ BEGIN {
 	    flags => 'g',
 	  }, '*xpér**nc*', 'regsub s/[aeiou]/*/g' ],
     );
+    @transformTests = (
+	# value, ruleset, expected, caption
+	@applyRuleTests, # Check that single rules also work as rulesets
+	[ 'expérience', [
+	    { op => 'stripDiacritics' },
+	    {
+		op => 'regsub',
+		pattern => '[aeiou]',
+		replacement => '*',
+		flags => 'g',
+	    },
+	], '*xp*r**nc*', 'stripDiacritics and regsub' ],
+    );
 }
 
-use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests;
+use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests;
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
-use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcess);
+use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
@@ -65,5 +78,11 @@ foreach my $applyRuleTest (@applyRuleTests) {
     my($value, $rule, $expected, $caption) = @$applyRuleTest;
     my $got = applyRule($rule, $value);
     is($got, $expected, "applyRule '$value' ($caption)");
+}
+
+foreach my $transformTest (@transformTests) {
+    my($value, $cfg, $expected, $caption) = @$transformTest;
+    my $got = transform($cfg, $value);
+    is($got, $expected, "transform '$value' ($caption)");
 }
 
