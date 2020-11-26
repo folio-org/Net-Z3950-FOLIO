@@ -185,12 +185,17 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
       "21": "subject",
       "1016": "author,title,hrid,subject"
     },
-    "graphqlQuery": "instances.graphql-query",
     "queryFilter": "source=marc",
-    "chunkSize": 5,
-    "fieldMap": {
-      "title": "245$a",
-      "author": "100$a"
+    "graphqlQuery": "instances.graphql-query",
+    "chunkSize": 5
+    "postProcessing": {
+      "marc": {
+	"008": { "op": "regsub", "pattern": "([13579])", "replacement": "[$1]", "flags": "g" },
+	"245$a": [
+	  { "op": "stripDiacritics" },
+	  { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
+	]
+      }
     }
   }
 
