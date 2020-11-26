@@ -4,7 +4,7 @@ use utf8;
 binmode(STDOUT, "encoding(UTF-8)");
 
 BEGIN {
-    use vars qw(@stripDiacriticsTests @regsubTests);
+    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests);
     @stripDiacriticsTests = (
 	# value, expected, caption
 	[ 'water', 'water', 'null transformation' ],
@@ -27,16 +27,25 @@ BEGIN {
 	[ 'foo/bar', '(.)/(.)', '$2/$1', 'g', 'fob/oar', 'pattern containing /' ],
 	[ 'foobar', '(.)\1', 'XXX', 'g', 'fXXXbar', 'back-reference in pattern' ],
     );
+    @applyRuleTests = (
+	# value, rule, expected, caption
+	[ 'expérience', { op => 'stripDiacritics' }, 'experience', 'stripDiacritics e-acute' ],
+	[ 'expérience', {
+	    op => 'regsub',
+	    pattern => '[aeiou]',
+	    replacement => '*',
+	    flags => 'g',
+	  }, '*xpér**nc*', 'regsub s/[aeiou]/*/g' ],
+    );
 }
 
-use Test::More tests => 1 + scalar(@stripDiacriticsTests) + scalar(@regsubTests);
+use Test::More tests => 1 + scalar(@stripDiacriticsTests) + scalar(@regsubTests) + scalar(@applyRuleTests);
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
 use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcess);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
-    # use Encode::Guess; my $enc = guess_encoding($value); warn "encoding for '$value' = ", $enc->name();
     my $got = applyStripDiacritics({}, $value);
     is($got, $expected, "stripDiacritics '$value' ($caption)");
 }
@@ -51,3 +60,10 @@ foreach my $regsubTest (@regsubTests) {
     my $got = applyRegsub($rule, $value);
     is($got, $expected, "s/$pattern/$replacement/$flags ($caption)");
 }
+
+foreach my $applyRuleTest (@applyRuleTests) {
+    my($value, $rule, $expected, $caption) = @$applyRuleTest;
+    my $got = applyRule($rule, $value);
+    is($got, $expected, "applyRule '$value' ($caption)");
+}
+
