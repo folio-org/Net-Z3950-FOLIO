@@ -13,12 +13,12 @@
   "postProcessing": {
     "marc": {
       "005": [
-        { "op": "regsub", "from": "[123]", "to": "X", "flags": "g" }
+        { "op": "regsub", "pattern": "[123]", "replacement": "X/Y", "flags": "g" }
       ],
-      "008": { "op": "regsub", "from": "([13579])", "to": "[$1]", "flags": "g" },
+      "008": { "op": "regsub", "pattern": "([13579])", "replacement": "[$1]", "flags": "g" },
       "245$a": [
         { "op": "stripDiacritics" },
-        { "op": "regsub", "from": "[abc]", "to": "*", "flags": "g" }
+        { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
       ]
     }
   },

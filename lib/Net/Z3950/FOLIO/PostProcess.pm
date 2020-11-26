@@ -70,35 +70,35 @@ sub applyRule {
 sub applyStripDiacritics {
     my($_rule, $value) = @_;
 
-    # It seems that the regular strip_diacritics function just plain no-ops, hence fast_strip instead
+    # it seems that the regular strip_diacritics function just plain no-ops, hence fast_strip instead
     my $result = fast_strip($value);
     warn "stripping diacritics: '$value' -> '$result'";
+    return $result;
 }
 
 
 sub applyRegsub {
     my($rule, $value) = @_;
 
-    my $from = $rule->{from};
-    my $to = $rule->{to};
+    my $pattern = $rule->{pattern};
+    my $replacement = $rule->{replacement};
     my $flags = $rule->{flags};
     my $res = $value;
 
     # See advice on this next part at https://perlmonks.org/?node_id=11124218
     # In this approach, we construct some Perl code and evaluate it.
     # This may leave some security holes, but we trust the people who write config files
-    $to =~ s/\\/\\\\/g;
-    $to =~ s;/;\\/;g;
-    warn "to=$to";
-    eval "\$res =~ s/$from/$to/$flags";
+    $replacement =~ s/\\/\\\\/g;
+    $replacement =~ s;/;\\/;g;
+    eval "\$res =~ s/$pattern/$replacement/$flags";
+    warn "regsub '$value' by s/$pattern/$replacement/$flags -> '$res'";
 
-    warn "regsub '$value' by s/$from/$to/$flags -> '$res'";
     return $res;
 }
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(postProcess);
+our @EXPORT_OK = qw(postProcess transform applyRule applyStripDiacritics applyRegsub);
 
 
 1;
