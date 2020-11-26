@@ -23,8 +23,13 @@ doc/opac/z3950-opac-record-syntax.asn1
 doc/release-procedure.md
 doc/source-code-overview.md
 doc/srs/using-srs.md
+etc/config.chicago.json
 etc/config.dummy.json
+etc/config.indexdata.json
+etc/config.invalidisbn.json
 etc/config.json
+etc/config.lehigh.json
+etc/config.localgql.json
 etc/folio2marcxml.xsl
 etc/folio2opac.xsl
 etc/instances.graphql-query
@@ -32,6 +37,7 @@ etc/yazgfs.xml
 lib/Net/Z3950/FOLIO.pm
 lib/Net/Z3950/FOLIO/Config.pm
 lib/Net/Z3950/FOLIO/OPACXMLRecord.pm
+lib/Net/Z3950/FOLIO/PostProcess.pm
 lib/Net/Z3950/FOLIO/RPN.pm
 lib/Net/Z3950/FOLIO/ResultSet.pm
 lib/Net/Z3950/FOLIO/Session.pm
