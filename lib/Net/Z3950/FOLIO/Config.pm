@@ -271,14 +271,6 @@ The corresponding password, unless overridden by authentication information in t
 
 =back
 
-=head2 C<chunkSize>
-
-An integer specifying how many records to fetch from FOLIO with each
-search. This can be tweaked to tune performance. Setting it too low
-will result in many requests with small numbers of records returned
-each time; setting it too high will result in fetching and decoding
-more records than are actually wanted.
-
 =head2 C<indexMap>
 
 Contains any number of elements. The keys are the numbers of BIB-1 use
@@ -329,13 +321,6 @@ index map contains
 Then a search for C<@attr 1=9 thrick> will be translated to the CQL
 query C<foo =/bar=quux thrick>.
 
-=head2 C<graphqlQuery>
-
-The name of a file, in the same directory as the main configuration
-file, which contains the text of the GraphQL query to be used to
-obtain the instance, holdings and item data pertaining to the records
-identified by the CQL query.
-
 =head2 C<queryFilter>
 
 If specified, this is a CQL query which is automatically C<and>ed with
@@ -343,6 +328,21 @@ every query submitted by the client, so it acts as a filter allowing
 through only records that satisfy it. This might be used, for example,
 to specify C<source=marc> to limit search result to only to those
 FOLIO instance records that were translated from MARC imports.
+
+=head2 C<graphqlQuery>
+
+The name of a file, in the same directory as the main configuration
+file, which contains the text of the GraphQL query to be used to
+obtain the instance, holdings and item data pertaining to the records
+identified by the CQL query.
+
+=head2 C<chunkSize>
+
+An integer specifying how many records to fetch from FOLIO with each
+search. This can be tweaked to tune performance. Setting it too low
+will result in many requests with small numbers of records returned
+each time; setting it too high will result in fetching and decoding
+more records than are actually wanted.
 
 =head1 CONFIGURATION STACKING
 
