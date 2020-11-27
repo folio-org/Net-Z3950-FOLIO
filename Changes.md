@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.4) (IN PROGRESS)
+## [1.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.4) (Fri Nov 27 00:49:05 GMT 2020)
 
 * Add support for searching by local barcode. Fixes ZF-23.
 * Add developer documentation with [an overview of the source code](doc/source-code-overview.md). Fixes ZF-28.
