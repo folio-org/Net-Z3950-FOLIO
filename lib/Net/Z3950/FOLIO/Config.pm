@@ -158,6 +158,8 @@ sub merge_hash {
     }
 }
 
+=encoding utf-8
+
 =head1 NAME
 
 Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
@@ -343,6 +345,79 @@ search. This can be tweaked to tune performance. Setting it too low
 will result in many requests with small numbers of records returned
 each time; setting it too high will result in fetching and decoding
 more records than are actually wanted.
+
+=head2 C<postProcessing>
+
+Specifies sets of transformations to be applied to the values of
+fields retrieved from the back-end. At present, the only supported key
+is C<marc>, which specifies transformations to be applied to MARC
+records (either standalone or as part of OPAC records); in the future,
+post-processing for JSON and XML records may also be supported.
+
+Within the C<marc> sections, keys are the names of simple MARC fields,
+such as C<008>; or of complex field$subfield combinations, such as
+C<245$a>. The corresponding values specify the transformations that
+should be applied to the values of these fields and subfields.
+
+Transformations are represented by objects with an C<op> key whose
+values specifies the required operation. Either single transformation
+or an array of transformations may be provided.
+
+The following transformation operations are supported:
+
+=over 4
+
+=item C<stripDiacritics>
+
+All diacritics are stripped from the value in the relevant field: for
+example, C<délétère> becomes C<deletere>.
+
+=item C<regsub>
+
+A regular expression substitution is performed on the value in the
+relevant field, as specified by the parameters in the transformation
+object:
+
+=over 4
+
+=item C<pattern>
+
+A regular expression intended to matching some part of the field
+value. This is Perl regular expression, as overviewed in
+L<perlretut|https://perldoc.perl.org/perlretut>
+and fully documented in
+L<perlre|https://perldoc.perl.org/perlre>
+and as such supports advanced facilities such as back-references.
+
+=item C<replacement>
+
+The string with which to replace the part of the field value that
+matches the pattern. This may include numbered references C<$1>,
+C<$2>, etc., to parenthesized sub-expressions in the pattern. (If this
+statement means nothing to you, you need to
+L<go and read about regular expressions|https://perldoc.perl.org/perlretut>.)
+
+=item C<flags>
+
+Optionally, a set of flags such as C<g> for global replacement, C<i>
+for case-insensitivity, etc. See
+L<Using regular expressions in Perl|https://perldoc.perl.org/perlretut#Using-regular-expressions-in-Perl>.
+
+=back
+
+=back
+
+For example, the MARC post-processing directive
+
+      "245$a": [
+        { "op": "stripDiacritics" },
+        { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
+      ]
+
+Says first to remove all diacritics from the C<245$a> (title) field of
+the MARC record (so that for example C<é> becomes C<e>), then to
+replace all vowels with asterisks.
+
 
 =head1 CONFIGURATION STACKING
 
