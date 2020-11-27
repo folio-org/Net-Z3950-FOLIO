@@ -25,12 +25,17 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
         "21": "subject",
         "1016": "author,title,hrid,subject"
       },
-      "graphqlQuery": "instances.graphql-query",
       "queryFilter": "source=marc",
-      "chunkSize": 5,
-      "fieldMap": {
-        "title": "245$a",
-        "author": "100$a"
+      "graphqlQuery": "instances.graphql-query",
+      "chunkSize": 5
+      "postProcessing": {
+        "marc": {
+          "008": { "op": "regsub", "pattern": "([13579])", "replacement": "[$1]", "flags": "g" },
+          "245$a": [
+            { "op": "stripDiacritics" },
+            { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
+          ]
+        }
       }
     }
 
@@ -97,14 +102,6 @@ Contains two elements, both with string values:
 
     The corresponding password, unless overridden by authentication information in the Z39.50 init request.
 
-## `chunkSize`
-
-An integer specifying how many records to fetch from FOLIO with each
-search. This can be tweaked to tune performance. Setting it too low
-will result in many requests with small numbers of records returned
-each time; setting it too high will result in fetching and decoding
-more records than are actually wanted.
-
 ## `indexMap`
 
 Contains any number of elements. The keys are the numbers of BIB-1 use
@@ -151,13 +148,6 @@ index map contains
 Then a search for `@attr 1=9 thrick` will be translated to the CQL
 query `foo =/bar=quux thrick`.
 
-## `graphqlQuery`
-
-The name of a file, in the same directory as the main configuration
-file, which contains the text of the GraphQL query to be used to
-obtain the instance, holdings and item data pertaining to the records
-identified by the CQL query.
-
 ## `queryFilter`
 
 If specified, this is a CQL query which is automatically `and`ed with
@@ -165,6 +155,85 @@ every query submitted by the client, so it acts as a filter allowing
 through only records that satisfy it. This might be used, for example,
 to specify `source=marc` to limit search result to only to those
 FOLIO instance records that were translated from MARC imports.
+
+## `graphqlQuery`
+
+The name of a file, in the same directory as the main configuration
+file, which contains the text of the GraphQL query to be used to
+obtain the instance, holdings and item data pertaining to the records
+identified by the CQL query.
+
+## `chunkSize`
+
+An integer specifying how many records to fetch from FOLIO with each
+search. This can be tweaked to tune performance. Setting it too low
+will result in many requests with small numbers of records returned
+each time; setting it too high will result in fetching and decoding
+more records than are actually wanted.
+
+## `postProcessing`
+
+Specifies sets of transformations to be applied to the values of
+fields retrieved from the back-end. At present, the only supported key
+is `marc`, which specifies transformations to be applied to MARC
+records (either standalone or as part of OPAC records); in the future,
+post-processing for JSON and XML records may also be supported.
+
+Within the `marc` sections, keys are the names of simple MARC fields,
+such as `008`; or of complex field$subfield combinations, such as
+`245$a`. The corresponding values specify the transformations that
+should be applied to the values of these fields and subfields.
+
+Transformations are represented by objects with an `op` key whose
+values specifies the required operation. Either single transformation
+or an array of transformations may be provided.
+
+The following transformation operations are supported:
+
+- `stripDiacritics`
+
+    All diacritics are stripped from the value in the relevant field: for
+    example, `délétère` becomes `deletere`.
+
+- `regsub`
+
+    A regular expression substitution is performed on the value in the
+    relevant field, as specified by the parameters in the transformation
+    object:
+
+    - `pattern`
+
+        A regular expression intended to matching some part of the field
+        value. This is Perl regular expression, as overviewed in
+        [perlretut](https://perldoc.perl.org/perlretut)
+        and fully documented in
+        [perlre](https://perldoc.perl.org/perlre)
+        and as such supports advanced facilities such as back-references.
+
+    - `replacement`
+
+        The string with which to replace the part of the field value that
+        matches the pattern. This may include numbered references `$1`,
+        `$2`, etc., to parenthesized sub-expressions in the pattern. (If this
+        statement means nothing to you, you need to
+        [go and read about regular expressions](https://perldoc.perl.org/perlretut).)
+
+    - `flags`
+
+        Optionally, a set of flags such as `g` for global replacement, `i`
+        for case-insensitivity, etc. See
+        [Using regular expressions in Perl](https://perldoc.perl.org/perlretut#Using-regular-expressions-in-Perl).
+
+For example, the MARC post-processing directive
+
+      "245$a": [
+        { "op": "stripDiacritics" },
+        { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
+      ]
+
+Says first to remove all diacritics from the `245$a` (title) field of
+the MARC record (so that for example `é` becomes `e`), then to
+replace all vowels with asterisks.
 
 # CONFIGURATION STACKING
 
