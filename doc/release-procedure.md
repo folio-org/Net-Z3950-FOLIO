@@ -35,6 +35,7 @@ The procedure therefore consists of the following steps:
 * Update the "IN PROGRESS" entry at the top of the change-log to include the present date-stamp the output of `date`.
 * Commit `FOLIO.pm`, `ModuleDescriptor.json` and `Changes.md` all together with the commit comment "Release vX.Y", for appropriate _X_ and _Y_ matching the `$VERSION` in `FOLIO.pm`.
 * Tag the source with `git tag vX.Y` and push the tag with `git push origin tag vX.Y`.
+* Find the new tag on [the Jenkins page](https://jenkins-aws.indexdata.com/job/folio-org/job/Net-Z3950-FOLIO/view/tags/), and check that it builds correctly. (If not, make the necessary changes, then re-issue and re-push the tag.)
 * Make the distribution tarball: `perl Makefile.PL; make dist`.
 * Upload that tarball to [PAUSE](https://pause.perl.org/pause/authenquery?ACTION=add_uri)
 * Wait several hours for the release processing to complete, in case something goes wrong. Your quest is complete when the new version appears at [the CPAN page](https://metacpan.org/release/Net-Z3950-FOLIO).
