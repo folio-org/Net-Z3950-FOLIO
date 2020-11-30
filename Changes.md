@@ -1,9 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.5) (Mon Nov 30 14:53:18 GMT 2020)
+## [1.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.5) (Mon Nov 30 15:07:08 GMT 2020)
 
 * Bring version-number in [`ModuleDescriptor.json`](ModuleDescriptor.json) up to date. I forgot to do this in v1.4, with the result that it wouldn't build in Jenkins.
-
+* Add a Jenkins build to [the release-procedure instructions](doc/release-procedure.md).
 
 ## [1.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.4) (Fri Nov 27 00:49:05 GMT 2020)
 
