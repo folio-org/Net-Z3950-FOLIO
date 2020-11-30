@@ -6,6 +6,10 @@ RUN cpan -f MARC::File::XML # Tests fail
 RUN cpan Cpanel::JSON::XS
 RUN cpan LWP::UserAgent
 RUN cpan LWP::Protocol::https
+RUN cpan Mozilla::CA
+RUN cpan MARC::Record
+RUN cpan Net::Z3950::PQF
+RUN cpan Unicode::Diacritic::Strip
 RUN apt-get update
 RUN apt-get -y install software-properties-common
 RUN wget http://ftp.indexdata.dk/debian/indexdata.asc
@@ -17,3 +21,4 @@ RUN cpan -T -f Net::Z3950::ZOOM # Tests are very very slow AND sometimes time ou
 RUN cpan Net::Z3950::SimpleServer
 EXPOSE 9997
 CMD perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml
+
