@@ -51,6 +51,8 @@ If you don't want to install, you can run directly from the development checkout
     Z> format opac
     Z> show 1
 
+Note: if running in Kubernetes, it may be useful to turn of session logging by adding the `-v-session` parameter to the arguments. For example, `perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml -v-session`. Session logs can be quite noisy on Kubernetes due to tcp healthchecks.
+
 ## Authentication
 
 Whichever approach to running the server you prefer, the [default configuration file](etc/config.json) specifies that the password used to authenticate onto the back-end FOLIO system must be specified in the `FOLIO_PASSWORD` environment variable. You can provide that however seems best to you -- e.g. injecting it into a Docker container with the `-e name=value` as above -- or indeed use a different configuration file that hardwires the credentials.
