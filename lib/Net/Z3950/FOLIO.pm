@@ -197,7 +197,7 @@ sub _fetch_handler {
 	_throw(1, "missing record") if !defined $rec;
     }
 
-    my $comp = $args->{COMP} || '';
+    my $comp = lc($args->{COMP} || '');
     my $format = $args->{REQ_FORM};
     warn "REQ_FORM=$format, COMP=$comp\n";
 
