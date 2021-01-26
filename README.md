@@ -39,7 +39,7 @@ On some platforms (e.g. my MacBook running MacOS 10.13.6 with YAZ and libxml2 in
 
 If you don't want to install, you can run directly from the development checkout as:
 
-    perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml
+    perl -I lib bin/z2folio -c etc/config -- -f etc/yazgfs.xml
 
 ## Building and running from Docker
 
@@ -51,7 +51,7 @@ If you don't want to install, you can run directly from the development checkout
     Z> format opac
     Z> show 1
 
-Note: if running in Kubernetes, it may be useful to turn of session logging by adding the `-v-session` parameter to the arguments. For example, `perl -I lib bin/z2folio -c etc/config.json -- -f etc/yazgfs.xml -v-session`. Session logs can be quite noisy on Kubernetes due to tcp healthchecks.
+Note: if running in Kubernetes, it may be useful to turn of session logging by adding the `-v-session` parameter to the arguments. For example, `perl -I lib bin/z2folio -c etc/config -- -f etc/yazgfs.xml -v-session`. Session logs can be quite noisy on Kubernetes due to tcp healthchecks.
 
 ## Authentication
 
