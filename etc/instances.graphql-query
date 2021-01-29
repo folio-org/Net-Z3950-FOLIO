@@ -99,11 +99,6 @@ query($cql: String, $offset: Int, $limit: Int) {
           itemLevelCallNumberSuffix
           itemLevelCallNumberTypeId
           materialTypeId
-          materialType {
-            id
-            name
-            source
-          }
           metadata {
             createdByUserId
             createdByUsername
