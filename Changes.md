@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [1.7](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.7) (IN PROGRESS)
+
+* The `stripDiacritics` post-processor handles additional special cases. Fixes ZF-31.
+
 ## [1.6](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.6) (Tue Jan 26 15:34:56 GMT 2021)
 
 * Element-set names are treated case-insensitively, meaning that (among other things) "F" and "B" are recognized as well as "f" and "b". Fixes ZF-29.
