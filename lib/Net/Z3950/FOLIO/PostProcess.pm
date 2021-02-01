@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
-use Unicode::Diacritic::Strip ':all';
+use Unicode::Diacritic::Strip 'fast_strip';
 
 
 sub postProcess {
