@@ -8,6 +8,6 @@
     "password": "${OKAPI_CHICAGO_PASSWORD}"
   },
   "indexMap": {
-    "7": "identifiers/@value/@identifierTypeId=\"cf0a2485-22e9-5be4-ac5c-fe393fb964e4\""
+    "obsolete-override-for-7": "identifiers/@value/@identifierTypeId=\"cf0a2485-22e9-5be4-ac5c-fe393fb964e4\""
   }
 }
