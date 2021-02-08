@@ -15,7 +15,8 @@ sub makeOPACXMLRecord {
     # Indent to fit into the record nicely
     $marcXML =~ s/^/    /gm;
 
-    my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
+    my $holdingsObjects = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
+    my $holdings = [ map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects ];
     my $holdingsRecords = join('\n', @$holdings);
 
     return _makeXMLElement(0, 'opacRecord', (
