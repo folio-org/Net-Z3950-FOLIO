@@ -73,7 +73,8 @@ sub _makeSingleHoldingsRecord {
 	$shelvingLocation = $location->{name};
     }
 
-    my $items = _makeItemRecords($holding->{bareHoldingsItems});
+    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems});
+    my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
 
     return _makeXMLElement(4, 'holding', (
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
@@ -184,7 +185,7 @@ sub _makeSingleItemRecord {
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = @tmp ? join(' ', @tmp) : undef;
 
-    return _makeXMLElement(8, 'circulation', (
+    return [
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
@@ -199,7 +200,7 @@ sub _makeSingleItemRecord {
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
         [ 'temporaryLocation', _makeLocation($item->{temporaryLocation}) ],
-    ));
+    ];
 }
 
 
