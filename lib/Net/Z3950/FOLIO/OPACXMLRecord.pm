@@ -15,21 +15,14 @@ sub makeOPACXMLRecord {
     # Indent to fit into the record nicely
     $marcXML =~ s/^/    /gm;
 
-    my $holdings = _makeHoldingsRecordsXml($ihi->{holdingsRecords2}, $marc);
-    my $holdingsRecords = join('\n', @$holdings);
+    my $holdingsObjects = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
+    my @holdingsXML = map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects;
+    my $holdingsRecords = join('\n', @holdingsXML);
 
     return _makeXMLElement(0, 'opacRecord', (
         [ 'bibliographicRecord', $marcXML, undef, 1 ],
         [ 'holdings', $holdingsRecords, undef, 1 ],
     ));
-}
-
-
-sub _makeHoldingsRecordsXml {
-    my($holdings, $marc) = @_;
-    my $holdingsObjects = _makeHoldingsRecords($holdings, $marc);
-
-    return [ map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects ];
 }
 
 
