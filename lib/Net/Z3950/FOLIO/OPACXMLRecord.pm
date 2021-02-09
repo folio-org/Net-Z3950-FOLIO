@@ -15,14 +15,43 @@ sub makeOPACXMLRecord {
     # Indent to fit into the record nicely
     $marcXML =~ s/^/    /gm;
 
-    my $holdings = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
-    my $holdingsRecords = join('\n', @$holdings);
+    my $holdingsObjects = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
+    my $holdingsRecords = _resolveHoldingsToXML($holdingsObjects);
 
     return _makeXMLElement(0, 'opacRecord', (
         [ 'bibliographicRecord', $marcXML, undef, 1 ],
         [ 'holdings', $holdingsRecords, undef, 1 ],
     ));
 }
+
+
+sub _resolveHoldingsToXML {
+    my($holdingsObjects) = @_;
+
+    foreach my $holding (@$holdingsObjects) {
+	for (my $i = 0; $i < @$holding; $i++) {
+	    my $elem = $holding->[$i];
+	    my($name, $value) = @$elem;
+	    if ($name eq 'circulations') {
+		my @acc;
+		for (my $j = 0; $j < @$value; $j++) {
+		    my $circulation = $value->[$j];
+		    push @acc, _makeXMLElement(8, 'circulation', @$circulation);
+		}
+		# XXX I am not ecstatic about overwriting this in place
+		$elem->[1] = join('', @acc);
+	    }
+	}
+    }
+
+    # my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
+    # [ 'circulations', join('\n', @$items), undef, 1 ],
+
+
+    my @holdingsXML = map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects;
+    return join('\n', @holdingsXML);
+}
+
 
 sub _makeHoldingsRecords {
     my($holdings, $marc) = @_;
@@ -73,9 +102,9 @@ sub _makeSingleHoldingsRecord {
 	$shelvingLocation = $location->{name};
     }
 
-    my $items = _makeItemRecords($holding->{bareHoldingsItems});
+    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems});
 
-    return _makeXMLElement(4, 'holding', (
+    return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
         [ 'encodingLevel', substr($marc->leader(), 16, 1) ], # LDR 017
         [ 'format', _format($holding, $marc) ],
@@ -93,8 +122,8 @@ sub _makeSingleHoldingsRecord {
         [ 'publicNote', _noteOfType($holding->{notes}, qr/public/i) ], # 852 $z
         [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
-        [ 'circulations', join('\n', @$items), undef, 1 ],
-    ));
+        [ 'circulations', $itemObjects, undef, 1 ],
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::holding';
 }
 
 
@@ -184,7 +213,7 @@ sub _makeSingleItemRecord {
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = @tmp ? join(' ', @tmp) : undef;
 
-    return _makeXMLElement(8, 'circulation', (
+    return bless [
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
@@ -199,7 +228,7 @@ sub _makeSingleItemRecord {
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
         [ 'temporaryLocation', _makeLocation($item->{temporaryLocation}) ],
-    ));
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::item';
 }
 
 
