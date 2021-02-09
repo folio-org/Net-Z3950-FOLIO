@@ -16,13 +16,40 @@ sub makeOPACXMLRecord {
     $marcXML =~ s/^/    /gm;
 
     my $holdingsObjects = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
-    my @holdingsXML = map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects;
-    my $holdingsRecords = join('\n', @holdingsXML);
+    my $holdingsRecords = _resolveHoldingsToXML($holdingsObjects);
 
     return _makeXMLElement(0, 'opacRecord', (
         [ 'bibliographicRecord', $marcXML, undef, 1 ],
         [ 'holdings', $holdingsRecords, undef, 1 ],
     ));
+}
+
+
+sub _resolveHoldingsToXML {
+    my($holdingsObjects) = @_;
+
+    foreach my $holding (@$holdingsObjects) {
+	for (my $i = 0; $i < @$holding; $i++) {
+	    my $elem = $holding->[$i];
+	    my($name, $value) = @$elem;
+	    if ($name eq 'circulations') {
+		my @acc;
+		for (my $j = 0; $j < @$value; $j++) {
+		    my $circulation = $value->[$j];
+		    push @acc, _makeXMLElement(8, 'circulation', @$circulation);
+		}
+		# XXX I am not ecstatic about overwriting this in place
+		$elem->[1] = join('', @acc);
+	    }
+	}
+    }
+
+    # my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
+    # [ 'circulations', join('\n', @$items), undef, 1 ],
+
+
+    my @holdingsXML = map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects;
+    return join('\n', @holdingsXML);
 }
 
 
@@ -76,7 +103,6 @@ sub _makeSingleHoldingsRecord {
     }
 
     my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems});
-    my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
 
     return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
@@ -96,7 +122,7 @@ sub _makeSingleHoldingsRecord {
         [ 'publicNote', _noteOfType($holding->{notes}, qr/public/i) ], # 852 $z
         [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
-        [ 'circulations', join('\n', @$items), undef, 1 ],
+        [ 'circulations', $itemObjects, undef, 1 ],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::holding';
 }
 
