@@ -85,7 +85,7 @@ sub _makeSingleHoldingsRecord {
     my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems});
     my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
 
-    return [
+    return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
         [ 'encodingLevel', substr($marc->leader(), 16, 1) ], # LDR 017
         [ 'format', _format($holding, $marc) ],
@@ -104,7 +104,7 @@ sub _makeSingleHoldingsRecord {
         [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
         [ 'circulations', join('\n', @$items), undef, 1 ],
-    ];
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::holding';
 }
 
 
@@ -194,7 +194,7 @@ sub _makeSingleItemRecord {
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = @tmp ? join(' ', @tmp) : undef;
 
-    return [
+    return bless [
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
@@ -209,7 +209,7 @@ sub _makeSingleItemRecord {
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
         [ 'temporaryLocation', _makeLocation($item->{temporaryLocation}) ],
-    ];
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::item';
 }
 
 
