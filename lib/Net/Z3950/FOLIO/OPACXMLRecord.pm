@@ -15,8 +15,7 @@ sub makeOPACXMLRecord {
     # Indent to fit into the record nicely
     $marcXML =~ s/^/    /gm;
 
-    my $holdingsObjects = _makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
-    my $holdings = [ map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects ];
+    my $holdings = _makeHoldingsRecordsXml($ihi->{holdingsRecords2}, $marc);
     my $holdingsRecords = join('\n', @$holdings);
 
     return _makeXMLElement(0, 'opacRecord', (
@@ -24,6 +23,15 @@ sub makeOPACXMLRecord {
         [ 'holdings', $holdingsRecords, undef, 1 ],
     ));
 }
+
+
+sub _makeHoldingsRecordsXml {
+    my($holdings, $marc) = @_;
+    my $holdingsObjects = _makeHoldingsRecords($holdings, $marc);
+
+    return [ map { _makeXMLElement(4, 'holding', @$_) } @$holdingsObjects ];
+}
+
 
 sub _makeHoldingsRecords {
     my($holdings, $marc) = @_;
@@ -77,7 +85,7 @@ sub _makeSingleHoldingsRecord {
     my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems});
     my $items = [ map { _makeXMLElement(8, 'circulation', @$_) } @$itemObjects ];
 
-    return _makeXMLElement(4, 'holding', (
+    return [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
         [ 'encodingLevel', substr($marc->leader(), 16, 1) ], # LDR 017
         [ 'format', _format($holding, $marc) ],
@@ -96,7 +104,7 @@ sub _makeSingleHoldingsRecord {
         [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
         [ 'circulations', join('\n', @$items), undef, 1 ],
-    ));
+    ];
 }
 
 
