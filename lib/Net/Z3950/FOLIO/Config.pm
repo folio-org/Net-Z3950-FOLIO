@@ -96,7 +96,7 @@ sub expand_single_variable_reference {
     } elsif (!ref($val)) {
 	return expand_scalar_variable_reference($key, $val);
     } else {
-	die "non-hash, non-array, non-scale configuration key '$key'";
+	die "non-hash, non-array, non-scalar configuration key '$key'";
     }
 }
 
