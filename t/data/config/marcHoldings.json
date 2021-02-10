@@ -1,0 +1,13 @@
+{
+  "graphqlQuery": "dummy.graphql-query",
+  "marcHoldings": {
+    "callNumberPrefix": 0,
+    "callNumber": "952__$h",
+    "callNumberSuffix": 0,
+    "volume": 0,
+    "enumAndChron": "952__$e",
+    "chronology": 0,
+    "yearCaption": 0,
+    "copyNumber": "952__$t"
+  }
+}
