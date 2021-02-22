@@ -31,7 +31,7 @@ But this issue contains a legion of issues. By laying them out here, I hope to e
 
 ZF-30 calls for effective call number prefix, effective call number and effective call number suffix each to be placed in their own subfields of field 953 (k, h and m respectively), but these granular fields are not present in the OPAC-record data structure -- only an aggregated `callNumber` field, since that's what's needed for the actual OPAC record.
 
-Granular call-number fields are in fact available in the FOLIO item schema, but at present [the GraphQL query used by the Z-server](etc/instances.graphql-query) does not pull these in, as they have not been needed.
+Granular call-number fields are in fact available in the FOLIO item schema, but at present [the GraphQL query used by the Z-server](../etc/instances.graphql-query) does not pull these in, as they have not been needed.
 
 ### Choice of granular call-number fields
 
