@@ -23,12 +23,7 @@ sub insertHoldingsInfo {
 	    # warn "considering key '$subfield' mapped to '$name' with value '$val'";
 	    next if !$val;
 
-	    if ($marcField) {
-		$marcField->add_subfields($subfield, $val);
-	    } else {
-		# Delayed creation
-		$marcField = MARC::Field->new($marcCfg->{field}, @{ $marcCfg->{indicators}}, $subfield, $val);
-	    }
+	    $marcField = _addSubfield($marcCfg, $marcField, $subfield, $val);
 	}
 
 	$marc->append_fields($marcField) if $marcField;
@@ -47,6 +42,19 @@ sub _listOfPairs2map {
     }
 
     return $map;
+}
+
+
+sub _addSubfield {
+    my($marcCfg, $marcField, $subfield, $val) = @_;
+
+    if ($marcField) {
+	$marcField->add_subfields($subfield, $val);
+    } else {
+	# Delayed creation
+	$marcField = MARC::Field->new($marcCfg->{field}, @{ $marcCfg->{indicators}}, $subfield, $val);
+    }
+    return $marcField;
 }
 
 
