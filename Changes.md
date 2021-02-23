@@ -6,6 +6,7 @@
 * [The sample `Dockerfile`](Dockerfile) now invokes the server with the `-v-session` command-line option. This disables logging of new and ended sessions, which is a practical neccesity when deployed using Kubernetes, AWS ECS or similar setups, as these frequently ping the server to check that it's alive, resulting in log-flooding.
 * Clarifications to the documentation.
 * We no longer need to use a configuration override for ISBN searching in the Chicago service. Completes ZF-24.
+* Towards providing MARC holdings data. Part of ZF-30.
 
 ## [1.6](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.6) (Tue Jan 26 15:34:56 GMT 2021)
 
