@@ -76,6 +76,10 @@ As noted above, each holdings record refers to many items. But the MARC holdings
 
 I don't have a good answer for this yet, either. Tod Olsen, in [a comment on ZF-30](https://issues.folio.org/browse/ZF-30?focusedCommentId=97640&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-97640), has suggested "for a barcode search, only insert the item information for the item that matches the barcode in the search" -- that doesn't help in the case of searches not by barcode.
 
+However, experiment shows that not only can a MARC record contain multiple instances of the same field, but a MARC field can contain multiple instances of subfield.
+
+So the solution here seems to be a separate MARC field for each holding, and a repeating set of subfields for each item in that holding.
+
 
 ### `marcHoldings` configuration documentions
 
