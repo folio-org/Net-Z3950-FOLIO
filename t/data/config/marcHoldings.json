@@ -4,14 +4,14 @@
     "field": "952",
     "indicators": [" ", " "],
     "elements": {
-      "callNumberPrefix": 0,
-      "callNumber": "h",
-      "callNumberSuffix": 0,
-      "volume": 0,
-      "enumAndChron": "e",
-      "chronology": 0,
-      "yearCaption": 0,
-      "copyNumber": "t"
+      "#1": "callNumberPrefix",
+      "h": "callNumber",
+      "#2": "callNumberSuffix",
+      "#3": "volume",
+      "e": "enumAndChron",
+      "#4": "chronology",
+      "#5": "yearCaption",
+      "t": "copyNumber"
     }
   }
 }
