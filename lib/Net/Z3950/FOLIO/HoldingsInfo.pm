@@ -13,6 +13,7 @@ sub insertHoldingsInfo {
 
     for (my $i = 0; $i < @$holdingsObjects; $i++) {
 	my $holdingsMap = _listOfPairs2map($holdingsObjects->[$i]);
+	# use Data::Dumper; warn Dumper($holdingsMap);
 	my $marcField; # Annoyingly, this can't be created with no subfields
 
 	my $elements = $marcCfg->{elements};
