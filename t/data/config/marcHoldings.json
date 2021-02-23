@@ -4,6 +4,7 @@
     "field": "952",
     "indicators": [" ", " "],
     "elements": {
+      "#0": "elements whose keys begin with # are ignored, as a lame way of commenting",
       "#1": "callNumberPrefix",
       "h": "callNumber",
       "#2": "callNumberSuffix",
