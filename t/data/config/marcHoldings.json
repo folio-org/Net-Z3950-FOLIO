@@ -3,7 +3,7 @@
   "marcHoldings": {
     "field": "952",
     "indicators": [" ", " "],
-    "elements": {
+    "holdingsElements": {
       "#0": "elements whose keys begin with # are ignored, as a lame way of commenting",
       "#1": "callNumberPrefix",
       "h": "callNumber",

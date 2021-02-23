@@ -16,10 +16,10 @@ sub insertHoldingsInfo {
 	# use Data::Dumper; warn Dumper($holdingsMap);
 	my $marcField; # Annoyingly, this can't be created with no subfields
 
-	my $elements = $marcCfg->{elements};
-	foreach my $subfield (sort keys %$elements) {
+	my $holdingsElements = $marcCfg->{holdingsElements};
+	foreach my $subfield (sort keys %$holdingsElements) {
 	    next if $subfield =~ /^#/;
-	    my $name = $elements->{$subfield};
+	    my $name = $holdingsElements->{$subfield};
 	    my $val = $holdingsMap->{$name};
 	    # warn "considering key '$subfield' mapped to '$name' with value '$val'";
 	    next if !$val;
