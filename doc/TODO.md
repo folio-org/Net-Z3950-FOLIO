@@ -47,7 +47,7 @@ The item-record schema actually provides _two_ sets of granular call-number fiel
 
 #### Candidate solution
 
-Someone on the inventory team will know the history here. I should start by asking around, and looking into the git history.
+Looking at the git histories of thw two approaches, it's apparent that [the top-level fields](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L42-L57) were [added on 28 November 2018](https://github.com/folio-org/mod-inventory-storage/commit/151e82a8428e96a832f07f45e191e244196a354a) but [the `effectiveCallNumberComponents` object](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L58-L85) was added [on 12 November 2019](https://github.com/folio-org/mod-inventory-storage/commit/e6d876a4cec831b83d5c8b58a98578d7f1592158) (and subsequently further specified by the addition of named subfields). Also, the object is called _effective) call-number, which is matches what's asked for in the Jira issue. So this is almost certainly the one to use.
 
 
 ### Applying post-processing to MARC records with holdings
