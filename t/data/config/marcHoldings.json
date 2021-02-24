@@ -4,7 +4,6 @@
     "field": "952",
     "indicators": [" ", " "],
     "holdingsElements": {
-      "h": "callNumber",
       "t": "copyNumber"
     },
     "itemElements": {
