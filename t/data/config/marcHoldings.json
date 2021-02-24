@@ -4,20 +4,17 @@
     "field": "952",
     "indicators": [" ", " "],
     "holdingsElements": {
-      "#0": "elements whose keys begin with # are ignored, as a lame way of commenting",
       "h": "callNumber",
-      "#3": "volume",
-      "#5": "yearCaption",
       "t": "copyNumber"
     },
     "itemElements": {
       "k": "_callNumberPrefix",
       "h": "_callNumber",
       "m": "_callNumberSuffix",
-      "#3": "volume",
+      "v": "_volume",
       "e": "_enumeration",
-      "c": "_chronology",
-      "#5": "yearCaption"
+      "y": "_yearCaption",
+      "c": "_chronology"
     }
   }
 }

@@ -234,6 +234,8 @@ sub _makeSingleItemRecord {
         [ '_callNumber', $ecnc->{callNumber} ],
         [ '_callNumberPrefix', $ecnc->{prefix} ],
         [ '_callNumberSuffix', $ecnc->{suffix} ],
+        [ '_volume', $item->{volume} ],
+        [ '_yearCaption', _makeYearCaption($item->{yearCaption}) ],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::item';
 }
 
@@ -329,6 +331,15 @@ sub _makeLocation {
 	push @tmp, $data->{$key}->{name} if $data->{$key};
     }
     return join('/', @tmp);
+}
+
+
+sub _makeYearCaption {
+    my($data) = @_;
+
+    return undef if !$data;
+    return join(', ', @$data) if (ref $data eq 'ARRAY');
+    return $data;
 }
 
 
