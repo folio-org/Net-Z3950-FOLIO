@@ -8,8 +8,7 @@ use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
 use Test::More tests => 2;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
-use Net::Z3950::FOLIO::OPACXMLRecord;
-use Net::Z3950::FOLIO::HoldingsInfo;
+use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 
 my $cfg = new Net::Z3950::FOLIO::Config('t/data/config/marcHoldings');
 
@@ -20,7 +19,7 @@ for (my $i = 1; $i <= 1; $i++) {
     my $expected = readFile("t/data/records/expectedMarc$i.marc");
     my $folioJson = readFile("t/data/records/input$i.json");
     my $folioHoldings = decode_json(qq[{ "holdingsRecords2": [ $folioJson ] }]);
-    Net::Z3950::FOLIO::HoldingsInfo::insertHoldingsInfo($folioHoldings, $dummyMarc, $cfg);
+    insertMARCHoldings($folioHoldings, $dummyMarc, $cfg);
     my $marcString = $dummyMarc->as_formatted() . "\n";
     is($marcString, $expected, "generated holdings $i match expected MARC");
 }

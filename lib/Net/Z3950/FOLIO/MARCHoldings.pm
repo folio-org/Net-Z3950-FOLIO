@@ -1,15 +1,15 @@
-package Net::Z3950::FOLIO::HoldingsInfo;
+package Net::Z3950::FOLIO::MARCHoldings;
 
 use strict;
 use warnings;
 
-use Net::Z3950::FOLIO::OPACXMLRecord;
+use Net::Z3950::FOLIO::HoldingsRecords qw(makeHoldingsRecords);
 
 
-sub insertHoldingsInfo {
+sub insertMARCHoldings {
     my($ihi, $marc, $cfg) = @_;
     my $marcCfg = $cfg->{marcHoldings} || {};
-    my $holdingsObjects = Net::Z3950::FOLIO::OPACXMLRecord::_makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
+    my $holdingsObjects = makeHoldingsRecords($ihi->{holdingsRecords2}, $marc);
 
     for (my $i = 0; $i < @$holdingsObjects; $i++) {
 	my $holdingsMap = _listOfPairs2map($holdingsObjects->[$i]);
@@ -74,7 +74,7 @@ sub _addSubfield {
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(insertHoldingsInfo);
+our @EXPORT_OK = qw(insertMARCHoldings);
 
 
 1;
