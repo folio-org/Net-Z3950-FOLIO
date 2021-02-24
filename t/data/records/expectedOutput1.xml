@@ -36,7 +36,7 @@
           <itemId>01234567890</itemId>
           <renewable value="" />
           <onHold value="" />
-          <enumAndChron>42</enumAndChron>
+          <enumAndChron>42 29</enumAndChron>
           <temporaryLocation>Online Library Resources</temporaryLocation>
         </circulation>
       </circulations>
