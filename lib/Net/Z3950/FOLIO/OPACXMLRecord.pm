@@ -350,7 +350,7 @@ sub _makeXMLElement {
     my $xml = "$indent<$elementName>\n";
     foreach my $element (@elements) {
 	my($name, $value, $attr, $isPreAssembledXML) = @$element;
-	next if !defined $value;
+	next if $name =~ /^_/ || !defined $value;
 
 	my $added;
 	if ($attr) {
