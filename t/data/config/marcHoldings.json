@@ -7,6 +7,7 @@
       "t": "copyNumber"
     },
     "itemElements": {
+      "b": "itemId",
       "k": "_callNumberPrefix",
       "h": "_callNumber",
       "m": "_callNumberSuffix",
