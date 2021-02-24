@@ -20,6 +20,7 @@ sub insertHoldingsInfo {
 	my $itemObjects = $holdingsMap->{circulations};
 	for (my $j = 0; $j < @$itemObjects; $j++) {
 	    my $itemMap = _listOfPairs2map($itemObjects->[$j]);
+	    # use Data::Dumper; warn Dumper($itemMap);
 	    $marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
 	}
 
