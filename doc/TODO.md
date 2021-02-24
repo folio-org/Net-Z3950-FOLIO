@@ -36,19 +36,20 @@ ZF-30 calls for effective call number prefix, effective call number and effectiv
 
 Granular call-number fields are in fact available in the FOLIO item schema, but at present [the GraphQL query used by the Z-server](../etc/instances.graphql-query) does not pull these in, as they have not been needed.
 
-#### Candidate solution
+#### Solution
 
-To make this work, we would need to add the granular call-number fields to the query and have `OPACRecord.js` gather those fields into the structures it builds, even though it doesn't need them itself. Then the code that copies fields from that structure into the MARC record would have access to them.
+I added the granular call-number fields to the query and extended `OPACRecord.js` gather those fields into the structures it builds, even though it doesn't need them itself. Now the code that copies fields from that structure into the MARC record has has access to them.
 
 
 ### Choice of granular call-number fields
 
 The item-record schema actually provides _two_ sets of granular call-number fields: [`itemLevelCallNumber`, `itemLevelCallNumberPrefix`, `itemLevelCallNumberSuffix` and `itemLevelCallNumberTypeId` at the top level](https://github.com/folio-org/mod-inventory-storage/blob/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L42-L57), and [`callNumber`, `prefix`, `suffix` and `typeId` within an `effectiveCallNumberComponents` subrecord](https://github.com/folio-org/mod-inventory-storage/blob/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L58-L85). It's not obvious which of these to use.
 
-#### Candidate solution
+#### Solution
 
-Looking at the git histories of thw two approaches, it's apparent that [the top-level fields](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L42-L57) were [added on 28 November 2018](https://github.com/folio-org/mod-inventory-storage/commit/151e82a8428e96a832f07f45e191e244196a354a) but [the `effectiveCallNumberComponents` object](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L58-L85) was added [on 12 November 2019](https://github.com/folio-org/mod-inventory-storage/commit/e6d876a4cec831b83d5c8b58a98578d7f1592158) (and subsequently further specified by the addition of named subfields). Also, the object is called _effective) call-number, which is matches what's asked for in the Jira issue. So this is almost certainly the one to use.
+Looking at the git histories of thw two approaches, it's apparent that [the top-level fields](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L42-L57) were [added on 28 November 2018](https://github.com/folio-org/mod-inventory-storage/commit/151e82a8428e96a832f07f45e191e244196a354a) but [the `effectiveCallNumberComponents` object](https://github.com/folio-org/mod-inventory-storage/blame/4e164c9c524b1fd002f1aebe50cf44dc8eb873fa/ramls/item.json#L58-L85) was added [on 12 November 2019](https://github.com/folio-org/mod-inventory-storage/commit/e6d876a4cec831b83d5c8b58a98578d7f1592158) (and subsequently further specified by the addition of named subfields). Also, the object is called _effective) call-number, which matches what's asked for in the Jira issue. So this is almost certainly the one to use.
 
+(Charlotte has subsequently verified that this is the correct choice.)
 
 ### Applying post-processing to MARC records with holdings
 
@@ -58,14 +59,16 @@ The Z39.50 server already includes facilities for applying post-processing trans
 
 There are at least two candidate solutions here: we could generate the holdings information right down inside `Session::_insert_records_from_SRS`; or we could postpone the post-processing until the high-level Z39.50 handling of the record. The former is more efficient, in that it only needs to be done once for each fetched record rather than once each time the record is fetched; but in practice it's probably rare for records to be fetched more than once, so this is not a very important consideration.
 
+There is actually no immediate need for this functionality -- I thought I might need to pull the prefix and suffix out of the call-number, but that's not the case. So we can shelve this for now.
+
 
 ### How to represent multiple holdings
 
 The difficulty here is that in general each instance has many holdings (and each holdings record refers to many items). But the MARC holdings specifications don't seem to directly address how this multiplicity should be represented.
 
-#### Candidate solution
+#### Solution
 
-Despite having raised this in [a comment on ZF-30](https://issues.folio.org/browse/ZF-30?focusedCommentId=97524&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-97524) I don't have a good answer. One obvious solution would be to use a separate 952 field for each holding.
+Despite having raised this in [a comment on ZF-30](https://issues.folio.org/browse/ZF-30?focusedCommentId=97524&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-97524) I wasn't able to get a good answer. The obvious solution is to use a separate 952 field for each holding, and this what I have done.
 
 
 ### How to represent multiple items within a holding
