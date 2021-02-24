@@ -212,6 +212,7 @@ sub _makeSingleItemRecord {
     push @tmp, $item->{enumeration} if $item->{enumeration};
     push @tmp, $item->{chronology} if $item->{chronology};
     my $enumAndChronForItem = @tmp ? join(' ', @tmp) : undef;
+    my $ecnc = $item->{effectiveCallNumberComponents} || {};
 
     return bless [
 	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
@@ -225,9 +226,14 @@ sub _makeSingleItemRecord {
 	# YAZ's OPACXML schema -- probably accidentally
         [ 'renewable', '', 'value' ],
         [ 'onHold', _makeOnHold($item), 'value' ],
+        [ '_enumeration', $item->{enumeration} ],
+        [ '_chronology', $item->{chronology} ],
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
         [ 'temporaryLocation', _makeLocation($item->{temporaryLocation}) ],
+        [ '_callNumber', $ecnc->{callNumber} ],
+        [ '_callNumberPrefix', $ecnc->{prefix} ],
+        [ '_callNumberSuffix', $ecnc->{suffix} ],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::item';
 }
 

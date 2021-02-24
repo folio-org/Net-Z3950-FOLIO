@@ -5,14 +5,19 @@
     "indicators": [" ", " "],
     "holdingsElements": {
       "#0": "elements whose keys begin with # are ignored, as a lame way of commenting",
-      "#1": "callNumberPrefix",
       "h": "callNumber",
-      "#2": "callNumberSuffix",
       "#3": "volume",
-      "e": "enumAndChron",
-      "#4": "chronology",
       "#5": "yearCaption",
       "t": "copyNumber"
+    },
+    "itemElements": {
+      "k": "_callNumberPrefix",
+      "h": "_callNumber",
+      "m": "_callNumberSuffix",
+      "#3": "volume",
+      "e": "_enumeration",
+      "c": "_chronology",
+      "#5": "yearCaption"
     }
   }
 }

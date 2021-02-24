@@ -13,18 +13,14 @@ sub insertHoldingsInfo {
 
     for (my $i = 0; $i < @$holdingsObjects; $i++) {
 	my $holdingsMap = _listOfPairs2map($holdingsObjects->[$i]);
-	# use Data::Dumper; warn Dumper($holdingsMap);
-	my $marcField; # Annoyingly, this can't be created with no subfields
 
-	my $holdingsElements = $marcCfg->{holdingsElements};
-	foreach my $subfield (sort keys %$holdingsElements) {
-	    next if $subfield =~ /^#/;
-	    my $name = $holdingsElements->{$subfield};
-	    my $val = $holdingsMap->{$name};
-	    # warn "considering key '$subfield' mapped to '$name' with value '$val'";
-	    next if !$val;
+	# Annoyingly, a field can't be created with no subfields, hence this "accumulator" approach
+	my $marcField = _addSubfields(undef, $marcCfg, $marcCfg->{holdingsElements}, $holdingsMap);
 
-	    $marcField = _addSubfield($marcCfg, $marcField, $subfield, $val);
+	my $itemObjects = $holdingsMap->{circulations};
+	for (my $j = 0; $j < @$itemObjects; $j++) {
+	    my $itemMap = _listOfPairs2map($itemObjects->[$j]);
+	    $marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
 	}
 
 	$marc->append_fields($marcField) if $marcField;
@@ -46,8 +42,25 @@ sub _listOfPairs2map {
 }
 
 
+sub _addSubfields {
+    my($marcField, $marcCfg, $elementsCfg, $data) = @_;
+
+    foreach my $subfield (sort keys %$elementsCfg) {
+	next if $subfield =~ /^#/;
+	my $name = $elementsCfg->{$subfield};
+	my $val = $data->{$name};
+	# warn "considering key '$subfield' mapped to '$name' with value '$val'";
+	if ($val) {
+	    $marcField = _addSubfield($marcField, $marcCfg, $subfield, $val);
+	}
+    }
+
+    return $marcField;
+}
+
+
 sub _addSubfield {
-    my($marcCfg, $marcField, $subfield, $val) = @_;
+    my($marcField, $marcCfg, $subfield, $val) = @_;
 
     if ($marcField) {
 	$marcField->add_subfields($subfield, $val);
