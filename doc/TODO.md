@@ -5,17 +5,17 @@
 * [Introduction](#introduction)
 * [Problems](#problems)
     * [Call-number sections](#call-number-sections)
-        * [Candidate solution](#candidate-solution)
+        * [Solution](#solution)
     * [Choice of granular call-number fields](#choice-of-granular-call-number-fields)
-        * [Candidate solution](#candidate-solution)
+        * [Solution](#solution)
     * [Applying post-processing to MARC records with holdings](#applying-post-processing-to-marc-records-with-holdings)
         * [Candidate solution](#candidate-solution)
     * [How to represent multiple holdings](#how-to-represent-multiple-holdings)
-        * [Candidate solution](#candidate-solution)
+        * [Solution](#solution)
     * [How to represent multiple items within a holding](#how-to-represent-multiple-items-within-a-holding)
-        * [Candidate solution](#candidate-solution)
+        * [Solution](#solution)
     * [`marcHoldings` configuration documentions](#marcholdings-configuration-documentions)
-        * [Candidate solution](#candidate-solution)
+        * [Solution](#solution)
 
 
 
@@ -75,21 +75,19 @@ Despite having raised this in [a comment on ZF-30](https://issues.folio.org/brow
 
 As noted above, each holdings record refers to many items. But the MARC holdings specifications don't seem to directly address how this multiplicity should be represented.
 
-#### Candidate solution
+#### Solution
 
-I don't have a good answer for this yet, either. Tod Olsen, in [a comment on ZF-30](https://issues.folio.org/browse/ZF-30?focusedCommentId=97640&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-97640), has suggested "for a barcode search, only insert the item information for the item that matches the barcode in the search" -- that doesn't help in the case of searches not by barcode.
+Experiment shows that not only can a MARC record contain multiple instances of the same field, but a MARC field can contain multiple instances of a subfield. So the solution here is a separate MARC field for each holding, and a repeating set of subfields for each item in that holding.
 
-However, experiment shows that not only can a MARC record contain multiple instances of the same field, but a MARC field can contain multiple instances of subfield.
-
-So the solution here seems to be a separate MARC field for each holding, and a repeating set of subfields for each item in that holding.
+Note that Tod Olsen, in [a comment on ZF-30](https://issues.folio.org/browse/ZF-30?focusedCommentId=97640&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-97640), has suggested "for a barcode search, only insert the item information for the item that matches the barcode in the search". We can come back and implement that later if necessary, but we have a more general solution that also works in the case of searches not by barcode.
 
 
 ### `marcHoldings` configuration documentions
 
 Needs to be written.
 
-#### Candidate solution
+#### Solution
 
-This should be simple enough -- in `lib/Net/Z3950/FOLIO/Config.pm` -- once we're confident that the configuration format has been laid down.
+Done in `lib/Net/Z3950/FOLIO/Config.pm`, and compiled into [an HTML version](from-pod/Net-Z3950-FOLIO-Config.md).
 
 
