@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [1.8](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.8) (IN PROGRESS)
+
+* Make `t/07-short-session.t` robust: skip this test if `zoomsh` is not available.
+
 ## [1.7](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.7) (Wed Feb 24 18:28:36 GMT 2021)
 
 * The `stripDiacritics` post-processor handles additional special cases. Fixes ZF-31.
