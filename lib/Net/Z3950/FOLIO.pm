@@ -18,7 +18,7 @@ use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 use Net::Z3950::FOLIO::RPN;;
 
 
-our $VERSION = '1.7';
+our $VERSION = '1.8';
 
 
 sub FORMAT_USMARC { '1.2.840.10003.5.10' }

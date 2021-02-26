@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.8](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.8) (IN PROGRESS)
+## [1.8](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.8) (Fri Feb 26 12:12:08 GMT 2021)
 
 * Optionally, restrict item-level MARC holdings info to item mentioned in barcode search. Fixes ZF-32.
 * Make `t/07-short-session.t` robust: skip this test if `zoomsh` is not available.
