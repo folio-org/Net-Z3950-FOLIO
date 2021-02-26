@@ -223,7 +223,7 @@ sub _fetch_handler {
     } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
 	my $marc = $session->marc_record($rs, $index1);
-	insertMARCHoldings($rec, $marc, $session->{cfg});
+	insertMARCHoldings($rec, $marc, $session->{cfg}, $rs->barcode());
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
 	_throw(25, "USMARC records available in element-sets: f, b");

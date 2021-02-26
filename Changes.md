@@ -2,6 +2,7 @@
 
 ## [1.8](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.8) (IN PROGRESS)
 
+* Optionally, restrict item-level MARC holdings info to item mentioned in barcode search. Fixes ZF-32.
 * Make `t/07-short-session.t` robust: skip this test if `zoomsh` is not available.
 
 ## [1.7](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.7) (Wed Feb 24 18:28:36 GMT 2021)
