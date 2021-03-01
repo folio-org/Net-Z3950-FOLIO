@@ -23,6 +23,5 @@
     "9999": "contributors/@name,title,hrid,subjects"
   },
   "graphqlQuery": "instances.graphql-query",
-  "queryFilter": "source=marc",
   "chunkSize": 5
 }
