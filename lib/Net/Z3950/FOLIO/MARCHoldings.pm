@@ -27,9 +27,9 @@ sub insertMARCHoldings {
                     $marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
                 }
             }
+            $marc->append_fields($marcField) if $marcField;
         }
         
-	$marc->append_fields($marcField) if $marcField;
     }
 }
 
