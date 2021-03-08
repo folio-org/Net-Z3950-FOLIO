@@ -204,9 +204,10 @@ be mapped into MARC fields. It contains up to five elements:
 
 - `field` (mandatory)
 
-    A string specifying which MARC field should be used for holdings
-    information. When a record contains multiple holdings, a separate
-    instance of this MARC field is created for each holding.
+    A string specifying which MARC field should be used for holdings and
+    item information. Each item record related to the FOLIO instance
+    will create an instance of this MARC field. A holdings record with
+    no related items will not create this field.
 
 - `indicators` (mandatory)
 
@@ -242,14 +243,6 @@ be mapped into MARC fields. It contains up to five elements:
     - `_callNumberSuffix`
     - `_volume`
     - `_yearCaption`
-
-    Since there may be multiple items in a single holding, sets of these
-    fields can repeat, e.g. for a holding with two items each specifying
-    data that is encoded in the `b`, `e` and `h` subfields, the field
-    would take the form
-
-        $b 46243154 $e 1994/95 v.1 $h
-        $b 46243072 $e 1994/95 v.2 $h TD224.I3I58b
 
 ## `postProcessing`
 

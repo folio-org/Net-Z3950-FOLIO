@@ -13,19 +13,22 @@ sub insertMARCHoldings {
 
     for (my $i = 0; $i < @$holdingsObjects; $i++) {
 	my $holdingsMap = _listOfPairs2map($holdingsObjects->[$i]);
-
-	# Annoyingly, a field can't be created with no subfields, hence this "accumulator" approach
-	my $marcField = _addSubfields(undef, $marcCfg, $marcCfg->{holdingsElements}, $holdingsMap);
-
 	my $itemObjects = $holdingsMap->{circulations};
-	for (my $j = 0; $j < @$itemObjects; $j++) {
-	    my $itemMap = _listOfPairs2map($itemObjects->[$j]);
-	    # use Data::Dumper; warn Dumper($itemMap);
-	    if (!$marcCfg->{restrictToItem} || !$barcode || $itemMap->{itemId} eq $barcode) {
-		$marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
-	    }
-	}
+        my $marcField;
 
+        for (my $j = 0; $j < @$itemObjects; $j++) {
+            my $itemMap = _listOfPairs2map($itemObjects->[$j]);
+            if (!$marcCfg->{restrictToItem} || !$barcode || $itemMap->{itemId} eq $barcode) {
+
+                # Annoyingly, a field can't be created with no subfields, hence this "accumulator" approach
+                $marcField = _addSubfields(undef, $marcCfg, $marcCfg->{holdingsElements}, $holdingsMap);
+            
+                if (!$marcCfg->{restrictToItem} || !$barcode || $itemMap->{itemId} eq $barcode) {
+                    $marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
+                }
+            }
+        }
+        
 	$marc->append_fields($marcField) if $marcField;
     }
 }
