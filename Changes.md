@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.9](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.9) (IN PROGRESS)
+## [1.9](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.9) (Tue Mar  9 16:51:24 GMT 2021)
 
 * Barcode Search in default connfiguration (use attribute 9998) now uses exact match (`==`) rather than the default string match operator (`=`). Fixes an issue raised in DEVOPS-558.
 
