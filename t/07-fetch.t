@@ -12,8 +12,6 @@ my $args = {
     HANDLE => $session,
     SETNAME => $SETNAME,
     OFFSET => 1,
-    REQ_FORM => Net::Z3950::FOLIO::FORMAT_JSON,
-    COMP => 'F',
 };
 
 run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', q[{
