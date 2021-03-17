@@ -200,7 +200,7 @@ sub _fetch_handler {
 
     my $comp = lc($args->{COMP} || '');
     my $format = $args->{REQ_FORM};
-    warn "REQ_FORM=$format, COMP=$comp\n";
+    # warn "REQ_FORM=$format, COMP=$comp\n";
 
     my $res;
     if ($format eq FORMAT_JSON) {
