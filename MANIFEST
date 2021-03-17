@@ -51,7 +51,7 @@ t/03-folio-to-opac.t
 t/04-stacking-config.t
 t/05-postproc.t
 t/06-marc-holdings.t
-t/07-short-session.t
+t/08-short-session.t
 t/data/config/dummy.graphql-query
 t/data/config/foo.bar.json
 t/data/config/foo.baz.json
