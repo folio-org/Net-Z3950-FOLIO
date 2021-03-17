@@ -291,6 +291,11 @@ The corresponding password, unless overridden by authentication information in t
 
 =back
 
+=head2 C<nologin>
+
+If specified and set to 1, then no login is performed, and the
+C<login> section need not be provided.
+
 =head2 C<indexMap>
 
 Contains any number of elements. The keys are the numbers of BIB-1 use
