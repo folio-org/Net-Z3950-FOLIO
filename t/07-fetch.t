@@ -4,7 +4,7 @@ use utf8;
 use IO::File;
 use Cpanel::JSON::XS qw(decode_json);
 
-use Test::More tests => 12;
+use Test::More tests => 16;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess', qw(postProcess)) };
 
@@ -20,7 +20,10 @@ my $args = {
 
 run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', qq[{\n   "id" : "123"\n}\n]);
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', qq[<opt>\n  <id>123</id>\n</opt>\n]);
+run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'usmarc', readFile('t/data/fetch/marc1.xml'));
+# run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'opac', '');
 run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', readFile('t/data/fetch/marc1.usmarc'));
+run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'b', readFile('t/data/fetch/marc1.usmarc'));
 
 
 sub run_test {
