@@ -4,7 +4,7 @@ use utf8;
 use IO::File;
 use Cpanel::JSON::XS qw(decode_json);
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess', qw(postProcess)) };
 
