@@ -18,14 +18,8 @@ my $args = {
     OFFSET => 1,
 };
 
-run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', q[{
-   "id" : "123"
-}
-]);
-run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', q[<opt>
-  <id>123</id>
-</opt>
-]);
+run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', qq[{\n   "id" : "123"\n}\n]);
+run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', qq[<opt>\n  <id>123</id>\n</opt>\n]);
 run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', readFile('t/data/fetch/marc1.usmarc'));
 
 
@@ -50,7 +44,7 @@ sub mock_session {
     my $server = new Net::Z3950::FOLIO('t/data/config/foo');
     ok(defined $server, 'created Net::Z3950::FOLIO server object');
 
-    my $session = $server->getSession('bar');
+    my $session = $server->getSession('marcHoldings');
     ok(defined $session, 'created session object');
 
     my $rs = mock_resultSet($session->{cfg});
