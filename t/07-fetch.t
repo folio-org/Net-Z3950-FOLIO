@@ -2,11 +2,12 @@ use strict;
 use warnings;
 use utf8;
 
-use Test::More tests => 7;
+use Test::More tests => 9;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 
 my $SETNAME = 'dummy';
 my $session = mock_session();
+ok(defined $session, 'mocked session');
 
 my $args = {
     HANDLE => $session,
@@ -22,6 +23,7 @@ run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', q[<opt>
   <id>123</id>
 </opt>
 ]);
+# run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', q[]);
 
 
 sub run_test {
@@ -48,12 +50,25 @@ sub mock_session {
   my $session = $server->getSession('bar');
   ok(defined $session, 'created session object');
 
-  my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
-  $rs->total_count(1);
-  $rs->insert_records(0, [{ id => '123' }]);
+  my $rs = mock_resultSet();
+  ok(defined $session, 'mocked result-set object');
 
   $session->{resultsets} = {};
   $session->{resultsets}->{$SETNAME} = $rs;
 
   return $session;
+}
+
+
+sub mock_resultSet {
+  my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
+  $rs->total_count(1);
+  $rs->insert_records(0, [{ id => '123' }]);
+
+  # XXX This is not good enough
+  my $marc = { title => 'The Lord of the Rings' };
+
+  $rs->insert_marcRecords({ 123 => $marc });
+
+  return $rs;
 }
