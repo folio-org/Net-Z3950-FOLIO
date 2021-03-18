@@ -10,7 +10,7 @@ use Test::More tests => 2;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 
-my $cfg = new Net::Z3950::FOLIO::Config('t/data/config/marcHoldings');
+my $cfg = new Net::Z3950::FOLIO::Config('t/data/config/foo.marcHoldings');
 
 # Values taken from some random USMARC record
 my $dummyMarc = makeDummyMarc();
