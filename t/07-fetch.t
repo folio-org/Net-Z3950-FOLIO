@@ -65,7 +65,7 @@ sub mock_resultSet {
 
     my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
     $rs->total_count(1);
-    my $inventoryRecord = decode_json(readFile('t/data/fetch/inventory1.json'));
+    my $inventoryRecord = decode_json(readFile('t/data/fetch/input-inventory1.json'));
     $rs->insert_records(0, [ $inventoryRecord ]);
 
     my $marc = mock_marcRecord($config);
@@ -78,7 +78,7 @@ sub mock_resultSet {
 sub mock_marcRecord {
     my ($config) = @_;
 
-    my $json = readFile('t/data/fetch/marc1.json');
+    my $json = readFile('t/data/fetch/input-marc1.json');
     my $sourceRecord = decode_json($json);
     my $record = postProcess(($config->{postProcessing} || {})->{marc}, $sourceRecord);
     return Net::Z3950::FOLIO::Session::_JSON_to_MARC($record);
