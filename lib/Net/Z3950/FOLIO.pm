@@ -307,7 +307,7 @@ sub _throw {
 sub _pretty_json {
     my($obj) = @_;
 
-    my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->sort_by;
+    my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->space_before(0)->indent_length(2)->sort_by;
     return $coder->encode($obj);
 }
 
