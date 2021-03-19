@@ -65,7 +65,7 @@ sub mock_resultSet {
 
     my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
     $rs->total_count(1);
-    $rs->insert_records(0, [{ id => '123' }]);
+    $rs->insert_records(0, [ decode_json(readFile('t/data/fetch/inventory1.json')) ]);
 
     my $marc = mock_marcRecord($config);
     $rs->insert_marcRecords({ 123 => $marc });
@@ -76,7 +76,6 @@ sub mock_resultSet {
 
 sub mock_marcRecord {
     my ($config) = @_;
-    # use Data::Dumper;warn Dumper($config);
 
     my $json = readFile('t/data/fetch/marc1.json');
     my $sourceRecord = decode_json($json);
