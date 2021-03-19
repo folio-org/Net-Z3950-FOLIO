@@ -18,8 +18,8 @@ my $args = {
     OFFSET => 1,
 };
 
-run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', qq[{\n   "id" : "123"\n}\n]);
-run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', qq[<opt>\n  <id>123</id>\n</opt>\n]);
+run_test($args, 'JSON', Net::Z3950::FOLIO::FORMAT_JSON, 'F', readFile('t/data/fetch/sorted1.json'));
+run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', readFile('t/data/fetch/inventory1.xml'));
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'usmarc', readFile('t/data/fetch/marc1.xml'));
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'opac', readFile('t/data/fetch/marc1.opac.xml'));
 run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', readFile('t/data/fetch/marc1.usmarc'));
@@ -65,10 +65,11 @@ sub mock_resultSet {
 
     my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
     $rs->total_count(1);
-    $rs->insert_records(0, [ decode_json(readFile('t/data/fetch/inventory1.json')) ]);
+    my $inventoryRecord = decode_json(readFile('t/data/fetch/inventory1.json'));
+    $rs->insert_records(0, [ $inventoryRecord ]);
 
     my $marc = mock_marcRecord($config);
-    $rs->insert_marcRecords({ 123 => $marc });
+    $rs->insert_marcRecords({ $inventoryRecord->{id}, $marc });
 
     return $rs;
 }

@@ -1,23 +1,6 @@
 {
   "acquisitionFormat": null,
   "acquisitionMethod": null,
-  "callNumber": "G1046.C3 .L56 2009eb",
-  "callNumberPrefix": null,
-  "callNumberSuffix": null,
-  "callNumberTypeId": "95467209-6d7b-468b-94df-0f5d7ad2747d",
-  "copyNumber": 3,
-  "digitizationPolicy": null,
-  "discoverySuppress": null,
-  "electronicAccess": [
-    {
-      "linkText": null,
-      "materialsSpecification": null,
-      "publicNote": "Access E-Book",
-      "relationshipId": "f5d0068e-6272-458e-8a81-b85e7b9a14aa",
-      "uri": "https://ezproxy.simmons.edu/login?url=http://www.jstor.org/stable/10.2307/j.ctt24hc08"
-    }
-  ],
-  "formerIds": [],
   "bareHoldingsItems": [
     {
       "accessionNumber": null,
@@ -26,6 +9,12 @@
       "copyNumber": "1",
       "descriptionOfPieces": null,
       "discoverySuppress": null,
+      "effectiveCallNumberComponents": {
+        "callNumber": "HD1131.S860 1989",
+        "prefix": "123",
+        "suffix": "abc",
+        "typeId": "95467209-6d7b-468b-94df-0f5d7ad2747d"
+      },
       "electronicAccess": [
         {
           "linkText": null,
@@ -35,12 +24,6 @@
           "uri": "https://ezproxy.simmons.edu/login?url=http://www.jstor.org/stable/10.2307/j.ctt24hc08"
         }
       ],
-      "effectiveCallNumberComponents": {
-        "callNumber": "HD1131.S860 1989",
-        "prefix": "123",
-        "suffix": "abc",
-        "typeId": "95467209-6d7b-468b-94df-0f5d7ad2747d"
-      },
       "enumeration": "42",
       "formerIds": [],
       "hrid": "item12345",
@@ -65,7 +48,6 @@
         "name": "Missing"
       },
       "temporaryLoanTypeId": null,
-      "temporaryLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
       "temporaryLocation": {
         "campus": {
           "code": "SIMC",
@@ -125,10 +107,31 @@
           }
         ]
       },
+      "temporaryLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
       "volume": "1",
-      "yearCaption": ["a", "b"]
+      "yearCaption": [
+        "a",
+        "b"
+      ]
     }
   ],
+  "callNumber": "G1046.C3 .L56 2009eb",
+  "callNumberPrefix": null,
+  "callNumberSuffix": null,
+  "callNumberTypeId": "95467209-6d7b-468b-94df-0f5d7ad2747d",
+  "copyNumber": 3,
+  "digitizationPolicy": null,
+  "discoverySuppress": null,
+  "electronicAccess": [
+    {
+      "linkText": null,
+      "materialsSpecification": null,
+      "publicNote": "Access E-Book",
+      "relationshipId": "f5d0068e-6272-458e-8a81-b85e7b9a14aa",
+      "uri": "https://ezproxy.simmons.edu/login?url=http://www.jstor.org/stable/10.2307/j.ctt24hc08"
+    }
+  ],
+  "formerIds": [],
   "holdingsStatements": [],
   "holdingsStatementsForIndexes": [],
   "holdingsStatementsForSupplements": [],
