@@ -3,6 +3,7 @@ use warnings;
 use utf8;
 use IO::File;
 use Cpanel::JSON::XS qw(decode_json);
+use MARC::Record;
 
 use Test::More tests => 18;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
@@ -23,7 +24,7 @@ run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', readFile('t/data/fe
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'usmarc', readFile('t/data/fetch/marc1.xml'));
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'opac', readFile('t/data/fetch/marc1.opac.xml'));
 run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', readFile('t/data/fetch/marc1.usmarc'));
-run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'b', readFile('t/data/fetch/marc1.usmarc'));
+run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'b', readFile('t/data/fetch/marc1-b.usmarc'));
 
 
 sub run_test {
@@ -39,6 +40,11 @@ sub run_test {
     ok(1, "called _fetch_handler with $format/$comp");
 
     my $res = $argsCopy->{RECORD};
+    if ($req_form eq Net::Z3950::FOLIO::FORMAT_USMARC) {
+	my $marc = new_from_usmarc MARC::Record($res);
+	$res = $marc->as_formatted() . "\n";
+    }
+
     is($res, $expected, "$format/$comp record matched expected value");
 }
 
@@ -66,10 +72,10 @@ sub mock_resultSet {
     my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
     $rs->total_count(1);
     my $inventoryRecord = decode_json(readFile('t/data/fetch/input-inventory1.json'));
-    $rs->insert_records(0, [ $inventoryRecord ]);
+    $rs->insert_records(0, [ { id => '123', holdingsRecords2 => [ $inventoryRecord ] } ]);
 
     my $marc = mock_marcRecord($config);
-    $rs->insert_marcRecords({ $inventoryRecord->{id}, $marc });
+    $rs->insert_marcRecords({ 123 => $marc });
 
     return $rs;
 }
