@@ -3,6 +3,7 @@
 ## [1.10](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.10) (IN PROGRESS)
 
 * Add and document boolean `nologin` configuration element, which prevents login. This is potentially useful for running against hypothetical unsecured FOLIO instances, but the real reason we need it is for testing.
+* Add [new test-suite script](t/07-fetch.t) that exercises the Z39.50 server's Fetch operation to get a higher-level entry into all the underlying mechanisms. Fixes ZF-37.
 * MARCXML output now includes the same generated holdings-and-items data as USMARC output. Fixes ZF-38.
 
 ## [1.9](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.9) (Tue Mar  9 16:51:24 GMT 2021)
