@@ -8,6 +8,7 @@ use Scalar::Util qw(blessed reftype);
 use XML::Simple;
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
+use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 use Net::Z3950::FOLIO::PostProcess qw(postProcess);
 
 
@@ -184,6 +185,7 @@ sub marc_record {
 	_throw(1, "missing MARC record") if !defined $marc;
     }
 
+    insertMARCHoldings($rec, $marc, $this->{cfg}, $rs->barcode());
     return $marc;
 }
 
