@@ -6,6 +6,9 @@ use Cpanel::JSON::XS qw(decode_json);
 use MARC::Record;
 
 use Test::More tests => 18;
+use Test::Differences;
+oldstyle_diff;
+
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess', qw(postProcess)) };
 
@@ -24,7 +27,7 @@ run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'raw', readFile('t/data/fe
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'usmarc', readFile('t/data/fetch/marc1.xml'));
 run_test($args, 'XML', Net::Z3950::FOLIO::FORMAT_XML, 'opac', readFile('t/data/fetch/marc1.opac.xml'));
 run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'F', readFile('t/data/fetch/marc1.usmarc'));
-run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'b', readFile('t/data/fetch/marc1-b.usmarc'));
+run_test($args, 'USMARC', Net::Z3950::FOLIO::FORMAT_USMARC, 'b', readFile('t/data/fetch/marc1.usmarc'));
 
 
 sub run_test {
@@ -45,7 +48,7 @@ sub run_test {
 	$res = $marc->as_formatted() . "\n";
     }
 
-    is($res, $expected, "$format/$comp record matched expected value");
+    eq_or_diff($res, $expected, "$format/$comp record matched expected value");
 }
 
 
