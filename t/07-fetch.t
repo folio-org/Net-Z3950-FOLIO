@@ -37,7 +37,7 @@ sub run_test {
     };
 
     Net::Z3950::FOLIO::_fetch_handler($argsCopy);
-    ok(1, "called _fetch_handler with $format/$comp");
+    pass("called _fetch_handler with $format/$comp");
 
     my $res = $argsCopy->{RECORD};
     if ($req_form eq Net::Z3950::FOLIO::FORMAT_USMARC) {
