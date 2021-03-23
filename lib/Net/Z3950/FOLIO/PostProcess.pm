@@ -38,6 +38,50 @@ sub postProcess {
 }
 
 
+# XXX It might be cleaner to make a brand new record instead of
+# mutating the old, especially as we need to make and insert a new
+# field for each complex field anyway.
+#
+sub postProcessMARCRecord {
+    my($cfg, $marc) = @_;
+
+    return $marc if !$cfg;
+
+    my @fields = $marc->fields(); # Cache since we will change this record
+    foreach my $field (@fields) {
+	my $tag = $field->tag();
+
+	if ($field->is_control_field())	{
+	    #warn 'simple field ', $tag;
+	    my $rules = $cfg->{$tag};
+	    next if !$rules;
+	    $field->update(transform($rules, $field->data()));
+	} else {
+	    #warn 'complex field ', $tag;
+	    my $newField; # Infuriatingly, we can't create it with no subfields
+	    foreach my $subfield ($field->subfields()) {
+		my($key, $value) = @$subfield;
+		#warn " subfield $tag\$$key=$value";
+		my $rules = $cfg->{"$tag\$$key"};
+		$value = transform($rules, $value) if $rules;
+
+		if (!$newField) {
+		    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $key, $value);
+		} else {
+		    $newField->add_subfields($key, $value);
+		}
+	    }
+
+	    die "can't transform empty field", $field if !$newField;
+	    $marc->insert_fields_before($field, $newField);
+	    $marc->delete_fields($field);
+	}
+    }
+
+    return $marc;
+}
+
+
 sub transform {
     my($cfg, $value) = @_;
 
@@ -113,7 +157,7 @@ sub applyRegsub {
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(postProcess transform applyRule applyStripDiacritics applyRegsub);
+our @EXPORT_OK = qw(postProcess postProcessMARCRecord transform applyRule applyStripDiacritics applyRegsub);
 
 
 1;
