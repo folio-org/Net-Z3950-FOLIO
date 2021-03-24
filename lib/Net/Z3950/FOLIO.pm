@@ -202,11 +202,12 @@ sub _fetch_handler {
 
     my $res;
     if ($format eq FORMAT_JSON) {
-	$res = _pretty_json($rec);
+	$res = $rec->prettyJSON();
 
     } elsif ($format eq FORMAT_XML && $comp eq 'raw') {
 	# Mechanical XML translitation of the JSON response
-	$res = $session->xml_record($rec);
+	$res = $rec->prettyXML();
+
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
 	my $marc = $session->marc_record($rs, $index1);
@@ -299,14 +300,6 @@ sub _throw {
     }
 
     die new ZOOM::Exception($code, undef, $addinfo, $diagset);
-}
-
-
-sub _pretty_json {
-    my($obj) = @_;
-
-    my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->space_before(0)->indent_length(2)->sort_by;
-    return $coder->encode($obj);
 }
 
 

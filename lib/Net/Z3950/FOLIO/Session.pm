@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use Cpanel::JSON::XS qw(decode_json encode_json);
-use Scalar::Util qw(blessed reftype);
-use XML::Simple;
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
@@ -110,7 +108,7 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    # warn "result: ", Net::Z3950::FOLIO::_pretty_json($obj);
+    # warn "result: ", Net::Z3950::FOLIO::Record::_format_json($obj);
     my $data = $obj->{data} or _throw(1, "no data in response");
     my $isi = $data->{instance_storage_instances};
     if (!$isi) {
@@ -125,53 +123,12 @@ sub _do_search {
 }
 
 
-sub xml_record {
-    my $this = shift();
-    my($rec) = @_;
-
-    my $xml;
-    {
-	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
-	_sanitize_tree($rec);
-
-	# I have no idea why this generates an "uninitialized value" warning
-	local $SIG{__WARN__} = sub {};
-	$xml = XMLout($rec, NoAttr => 1);
-    }
-    $xml =~ s/<@/<__/;
-    $xml =~ s/<\/@/<\/__/;
-    return $xml;
-}
-
-
-# This code modified from https://www.perlmonks.org/?node_id=773738
-sub _sanitize_tree {
-    for my $node (@_) {
-	if (!defined($node)) {
-	    next;
-	} elsif (ref($node) eq 'JSON::PP::Boolean') {
-            $node += 0;
-        } elsif (blessed($node)) {
-            die('_sanitize_tree: unexpected object');
-        } elsif (reftype($node)) {
-            if (ref($node) eq 'ARRAY') {
-                _sanitize_tree(@$node);
-            } elsif (ref($node) eq 'HASH') {
-                _sanitize_tree(values(%$node));
-            } else {
-                die('_sanitize_tree: unexpected reference type');
-            }
-        }
-    }
-}
-
-
 sub marc_record {
     my $this = shift();
     my($rs, $index1) = @_;
 
     my $rec = $rs->record($index1-1);
-    my $instanceId = $rec->{id};
+    my $instanceId = $rec->id();
 
     my $marc = $rs->marcRecord($instanceId);
     if (!defined $marc) {
@@ -186,7 +143,7 @@ sub marc_record {
     }
 
     if (!$rs->processed($instanceId)) {
-	insertMARCHoldings($rec, $marc, $this->{cfg}, $rs->barcode());
+	insertMARCHoldings($rec->jsonStructure(), $marc, $this->{cfg}, $rs->barcode());
 	postProcessMARCRecord(($this->{cfg}->{postProcessing} || {})->{marc}, $marc);
 	$rs->setProcessed($instanceId);
     }
@@ -204,7 +161,7 @@ sub _insert_records_from_SRS {
     my @ids = ();
     for (my $i = 0; $i < $limit && $offset + $i < $rs->total_count(); $i++) {
 	my $rec = $rs->record($offset + $i);
-	push @ids, $rec->{id};
+	push @ids, $rec->id();
     }
 
     $req->content(encode_json(\@ids));

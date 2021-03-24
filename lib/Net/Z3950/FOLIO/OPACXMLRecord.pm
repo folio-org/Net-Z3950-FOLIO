@@ -7,7 +7,8 @@ use Net::Z3950::FOLIO::HoldingsRecords qw(makeHoldingsRecords);
 
 
 sub makeOPACXMLRecord {
-    my($ihi, $marc) = @_;
+    my($rec, $marc) = @_;
+    my $ihi = $rec->jsonStructure();
     my $marcXML = $marc->as_xml_record();
 
     # The first line of $marcXML is an XML declaration, and there

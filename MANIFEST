@@ -43,6 +43,7 @@ lib/Net/Z3950/FOLIO/MARCHoldings.pm
 lib/Net/Z3950/FOLIO/OPACXMLRecord.pm
 lib/Net/Z3950/FOLIO/PostProcess.pm
 lib/Net/Z3950/FOLIO/RPN.pm
+lib/Net/Z3950/FOLIO/Record.pm
 lib/Net/Z3950/FOLIO/ResultSet.pm
 lib/Net/Z3950/FOLIO/Session.pm
 t/01-pqf-to-cql.t
@@ -58,10 +59,10 @@ t/data/config/foo.bar.json
 t/data/config/foo.baz.json
 t/data/config/foo.json
 t/data/config/foo.marcHoldings.json
+t/data/config/foo.postProcess.json
 t/data/fetch/input-inventory1.json
 t/data/fetch/input-marc1.json
 t/data/fetch/inventory1.xml
-t/data/fetch/marc1-b.usmarc
 t/data/fetch/marc1.opac.xml
 t/data/fetch/marc1.usmarc
 t/data/fetch/marc1.xml
@@ -71,4 +72,3 @@ t/data/records/expectedOutput1.xml
 t/data/records/expectedOutput2.xml
 t/data/records/input1.json
 t/data/records/input2.json
-

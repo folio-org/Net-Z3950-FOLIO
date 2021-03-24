@@ -3,6 +3,8 @@ package Net::Z3950::FOLIO::ResultSet;
 use strict;
 use warnings;
 
+use Net::Z3950::FOLIO::Record;
+
 sub new {
     my $class = shift();
     my($setname, $cql) = @_;
@@ -40,7 +42,7 @@ sub insert_records {
 
     for (my $i = 0; $i < @$records; $i++) {
 	# The records are data structures obtained by decoding the JSON
-	$this->{records}->[$offset + $i] = $records->[$i];
+	$this->{records}->[$offset + $i] = new Net::Z3950::FOLIO::Record($records->[$i]);
     }
 }
 
