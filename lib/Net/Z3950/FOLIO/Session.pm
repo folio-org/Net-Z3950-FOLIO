@@ -9,7 +9,7 @@ use XML::Simple;
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
-use Net::Z3950::FOLIO::PostProcess qw(postProcess);
+use Net::Z3950::FOLIO::PostProcess qw(postProcessMARCRecord);
 
 
 sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
@@ -185,7 +185,12 @@ sub marc_record {
 	_throw(1, "missing MARC record") if !defined $marc;
     }
 
-    insertMARCHoldings($rec, $marc, $this->{cfg}, $rs->barcode());
+    if (!$rs->processed($instanceId)) {
+	insertMARCHoldings($rec, $marc, $this->{cfg}, $rs->barcode());
+	postProcessMARCRecord(($this->{cfg}->{postProcessing} || {})->{marc}, $marc);
+	$rs->setProcessed($instanceId);
+    }
+
     return $marc;
 }
 
@@ -216,7 +221,7 @@ sub _insert_records_from_SRS {
     for (my $i = 0; $i < $n; $i++) {
 	my $sr = $srs->[$i];
 	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
-	my $record = postProcess(($this->{cfg}->{postProcessing} || {})->{marc}, $sr->{parsedRecord}->{content});
+	my $record = $sr->{parsedRecord}->{content};
 	$id2rec{$instanceId} = _JSON_to_MARC($record);
     }
 

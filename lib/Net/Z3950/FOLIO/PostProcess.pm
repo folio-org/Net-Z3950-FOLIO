@@ -9,6 +9,7 @@ use Unicode::Diacritic::Strip 'fast_strip';
 
 
 sub postProcess {
+    use Carp; confess "obsolete postProcess called";
     my($cfg, $json) = @_;
 
     return $json if !$cfg;

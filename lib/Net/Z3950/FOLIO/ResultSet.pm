@@ -15,7 +15,8 @@ sub new {
 	barcode => $barcode,
 	total_count => undef,
 	records => [],
-	marcRecords => {},
+	marcRecords => {}, # Maps instance IDs to MARC::Record objects
+	processed => {}, # Maps instance IDs to boolean: has MARC record been processed?
     }, $class;
 }
 
@@ -66,6 +67,20 @@ sub marcRecord {
 
     my $mr = $this->{marcRecords};
     return $mr->{$instanceId};
+}
+
+sub processed {
+    my $this = shift();
+    my($instanceId) = @_;
+
+    return $this->{processed}->{$instanceId};
+}
+
+sub setProcessed {
+    my $this = shift();
+    my($instanceId) = @_;
+
+    $this->{processed}->{$instanceId} = 1;
 }
 
 

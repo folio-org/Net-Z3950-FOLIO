@@ -7,8 +7,8 @@
   <leader>01936cas a2200457 a 4500</leader>
   <controlfield tag="001">1099086</controlfield>
   <controlfield tag="003">ICU</controlfield>
-  <controlfield tag="005">20180731172816.9</controlfield>
-  <controlfield tag="008">901016d1985200uilugr        s0    0eng u</controlfield>
+  <controlfield tag="005">X/Y0X/Y807X/YX/YX/Y7X/Y8X/Y6.9</controlfield>
+  <controlfield tag="008">[9]0[1]0[1]6d[1][9]8[5]200uilugr        s0    0eng u</controlfield>
   <datafield tag="010" ind1=" " ind2=" ">
     <subfield code="a">87644138</subfield>
   </datafield>
@@ -38,7 +38,7 @@
     <subfield code="2">19</subfield>
   </datafield>
   <datafield tag="245" ind1="0" ind2="0">
-    <subfield code="a">Illinois water quality report.</subfield>
+    <subfield code="a">Illinois w*ter qu*lity report.</subfield>
   </datafield>
   <datafield tag="260" ind1=" " ind2=" ">
     <subfield code="a">Springfield :</subfield>

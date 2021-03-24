@@ -57,7 +57,7 @@ sub mock_session {
     my $server = new Net::Z3950::FOLIO('t/data/config/foo');
     ok(defined $server, 'created Net::Z3950::FOLIO server object');
 
-    my $session = $server->getSession('marcHoldings');
+    my $session = $server->getSession('marcHoldings|postProcess');
     ok(defined $session, 'created session object');
 
     my $rs = mock_resultSet($session->{cfg});
@@ -90,8 +90,7 @@ sub mock_marcRecord {
 
     my $json = readFile('t/data/fetch/input-marc1.json');
     my $sourceRecord = decode_json($json);
-    my $record = postProcess(($config->{postProcessing} || {})->{marc}, $sourceRecord);
-    return Net::Z3950::FOLIO::Session::_JSON_to_MARC($record);
+    return Net::Z3950::FOLIO::Session::_JSON_to_MARC($sourceRecord);
 }
 
 

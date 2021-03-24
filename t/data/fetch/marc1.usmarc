@@ -1,8 +1,8 @@
-LDR 02061cas a2200457 a 4500
+LDR 02087cas a2200457 a 4500
 001     1099086
 003     ICU
-005     20180731172816.9
-008     901016d1985200uilugr        s0    0eng u
+005     X/Y0X/Y807X/YX/YX/Y7X/Y8X/Y6.9
+008     [9]0[1]0[1]6d[1][9]8[5]200uilugr        s0    0eng u
 010    _a87644138
 035    _a(ICU)BID13370939
 035    _a(OCoLC)16512509
@@ -15,7 +15,7 @@ LDR 02061cas a2200457 a 4500
        _bI58b
 082 00 _a363.7/39456/09773
        _219
-245 00 _aIllinois water quality report.
+245 00 _aIllinois w*ter qu*lity report.
 260    _aSpringfield :
        _bIllinois Environmental Protection Agency, Division of Water Pollution Control, Planning Section,
        _c1985-
