@@ -144,7 +144,8 @@ sub marc_record {
 
     if (!$rs->processed($instanceId)) {
 	insertMARCHoldings($rec->jsonStructure(), $marc, $this->{cfg}, $rs->barcode());
-	postProcessMARCRecord(($this->{cfg}->{postProcessing} || {})->{marc}, $marc);
+	$marc = postProcessMARCRecord(($this->{cfg}->{postProcessing} || {})->{marc}, $marc);
+	$rs->insert_marcRecords({ $instanceId, $marc }); # XXX this is clumsy
 	$rs->setProcessed($instanceId);
     }
 
