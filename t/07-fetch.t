@@ -49,7 +49,7 @@ sub run_test {
     }
 
     my $expected = readFile("t/data/fetch/$expectedFile");
-    eq_or_diff($res, $expected, "$format/$comp record matched expected value");
+    eq_or_diff($res, $expected, "$format/$comp record matched expected value ($expectedFile)");
 }
 
 
