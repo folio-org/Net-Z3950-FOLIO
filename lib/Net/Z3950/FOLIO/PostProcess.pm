@@ -39,33 +39,27 @@ sub postProcess {
 }
 
 
-# XXX It might be cleaner to make a brand new record instead of
-# mutating the old, especially as we need to make and insert a new
-# field for each complex field anyway.
-#
 sub postProcessMARCRecord {
     my($cfg, $marc) = @_;
 
     return $marc if !$cfg;
+    my $newMarc = new MARC::Record();
+    $newMarc->leader($marc->leader());
 
-    my @fields = $marc->fields(); # Cache since we will change this record
-    foreach my $field (@fields) {
+    foreach my $field ($marc->fields()) {
 	my $tag = $field->tag();
 
+	my $newField;
 	if ($field->is_control_field())	{
-	    #warn 'simple field ', $tag;
+	    my $value = $field->data();
 	    my $rules = $cfg->{$tag};
-	    next if !$rules;
-	    $field->update(transform($rules, $field->data()));
+	    $value = transform($rules, $value) if $rules;
+	    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $value);
 	} else {
-	    #warn 'complex field ', $tag;
-	    my $newField; # Infuriatingly, we can't create it with no subfields
 	    foreach my $subfield ($field->subfields()) {
 		my($key, $value) = @$subfield;
-		#warn " subfield $tag\$$key=$value";
 		my $rules = $cfg->{"$tag\$$key"};
 		$value = transform($rules, $value) if $rules;
-
 		if (!$newField) {
 		    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $key, $value);
 		} else {
@@ -74,12 +68,12 @@ sub postProcessMARCRecord {
 	    }
 
 	    die "can't transform empty field", $field if !$newField;
-	    $marc->insert_fields_before($field, $newField);
-	    $marc->delete_fields($field);
 	}
+
+	$newMarc->append_fields($newField);
     }
 
-    return $marc;
+    return $newMarc;
 }
 
 
