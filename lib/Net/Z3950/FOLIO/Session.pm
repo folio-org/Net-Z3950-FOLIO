@@ -6,8 +6,6 @@ use warnings;
 use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
-use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
-use Net::Z3950::FOLIO::PostProcess qw(postProcessMARCRecord);
 
 
 sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
@@ -63,7 +61,7 @@ sub rerun_search {
     my($setname) = @_;
 
     my $cql = $this->{cql};
-    my $rs = new Net::Z3950::FOLIO::ResultSet($setname, $cql);
+    my $rs = new Net::Z3950::FOLIO::ResultSet($this, $setname, $cql);
     $this->{resultsets}->{$setname} = $rs;
 
     my $chunkSize = $this->{cfg}->{chunkSize} || 10;
@@ -120,36 +118,6 @@ sub _do_search {
     $rs->insert_records($offset, $isi->{instances});
 
     return $rs;
-}
-
-
-sub marc_record {
-    my $this = shift();
-    my($rs, $index1) = @_;
-
-    my $rec = $rs->record($index1-1);
-    my $instanceId = $rec->id();
-
-    my $marc = $rs->marcRecord($instanceId);
-    if (!defined $marc) {
-	# Fetch a chunk of records that contains the requested one.
-	# contains the requested record.
-	my $index0 = $index1 - 1;
-	my $chunkSize = $this->{cfg}->{chunkSize} || 10;
-	my $chunk = int($index0 / $chunkSize);
-	$this->_insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
-	$marc = $rs->marcRecord($instanceId);
-	_throw(1, "missing MARC record") if !defined $marc;
-    }
-
-    if (!$rs->processed($instanceId)) {
-	insertMARCHoldings($rec->jsonStructure(), $marc, $this->{cfg}, $rs->barcode());
-	$marc = postProcessMARCRecord(($this->{cfg}->{postProcessing} || {})->{marc}, $marc);
-	$rs->insert_marcRecords({ $instanceId, $marc }); # XXX this is clumsy
-	$rs->setProcessed($instanceId);
-    }
-
-    return $marc;
 }
 
 

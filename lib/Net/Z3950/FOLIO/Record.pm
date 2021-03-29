@@ -6,19 +6,27 @@ use warnings;
 use Scalar::Util qw(blessed reftype);
 use XML::Simple;
 
+use Net::Z3950::FOLIO::HoldingsRecords qw(makeHoldingsRecords);
+use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
+use Net::Z3950::FOLIO::PostProcess qw(postProcessMARCRecord);
+
 
 sub new {
     my $class = shift();
-    my($json) = @_;
+    my($rs, $offset, $json) = @_;
 
     return bless {
+	rs => $rs, # back-reference
+	offset => $offset, # within rs
 	json => $json,
+	holdingsStructure => undef,
     }, $class;
 }
 
 sub id {
     my $this = shift();
-    return $this->{json}->{id};
+    my $id = $this->{json}->{id};
+    return $id;
 }
 
 sub jsonStructure {
@@ -36,6 +44,47 @@ sub prettyXML {
     return _format_xml($this->{json});
 }
 
+sub holdings {
+    my $this = shift();
+    my($marc) = @_;
+
+    if (!$this->{holdingsStructure}) {
+	$this->{holdingsStructure} = makeHoldingsRecords($this, $marc);
+    }
+
+    return $this->{holdingsStructure};
+}
+
+sub marc_record {
+    my $this = shift();
+    my $instanceId = $this->id();
+    my $rs = $this->{rs};
+    my $session = $rs->session();
+    my $marc = $rs->marcRecord($instanceId);
+
+    if (!defined $marc) {
+	# Fetch a chunk of records that contains the requested one.
+	# contains the requested record.
+	my $index0 = $this->{offset};
+	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
+	my $chunk = int($index0 / $chunkSize);
+	$session->_insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
+	$marc = $rs->marcRecord($instanceId);
+	_throw(1, "missing MARC record") if !defined $marc;
+    }
+
+    if (!$rs->processed($instanceId)) {
+	insertMARCHoldings($this, $marc, $session->{cfg}, $rs->barcode());
+	$marc = postProcessMARCRecord(($session->{cfg}->{postProcessing} || {})->{marc}, $marc);
+	$rs->insert_marcRecords({ $instanceId, $marc }); # XXX this is clumsy
+	$rs->setProcessed($instanceId);
+    }
+
+    return $marc;
+}
+
+
+# ----------------------------------------------------------------------------
 
 sub _format_json {
     my($obj) = @_;
@@ -81,7 +130,6 @@ sub _sanitize_tree {
         }
     }
 }
-
 
 
 1;

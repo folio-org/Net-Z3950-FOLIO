@@ -7,11 +7,12 @@ use Net::Z3950::FOLIO::Record;
 
 sub new {
     my $class = shift();
-    my($setname, $cql) = @_;
+    my($session, $setname, $cql) = @_;
 
     my $barcode = _extract_barcode($cql);
 
     return bless {
+	session => $session, # back-reference
 	setname => $setname,
 	cql => $cql,
 	barcode => $barcode,
@@ -20,6 +21,11 @@ sub new {
 	marcRecords => {}, # Maps instance IDs to MARC::Record objects
 	processed => {}, # Maps instance IDs to boolean: has MARC record been processed?
     }, $class;
+}
+
+sub session {
+    my $this = shift();
+    return $this->{session};
 }
 
 sub total_count {
@@ -41,8 +47,7 @@ sub insert_records {
     my($offset, $records) = @_;
 
     for (my $i = 0; $i < @$records; $i++) {
-	# The records are data structures obtained by decoding the JSON
-	$this->{records}->[$offset + $i] = new Net::Z3950::FOLIO::Record($records->[$i]);
+	$this->{records}->[$offset + $i] = new Net::Z3950::FOLIO::Record($this, $offset + $i, $records->[$i]);
     }
 }
 

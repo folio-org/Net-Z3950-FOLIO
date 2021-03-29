@@ -210,18 +210,17 @@ sub _fetch_handler {
 
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
-	my $marc = $session->marc_record($rs, $index1);
+	my $marc = $rec->marc_record();
 	$res = $marc->as_xml_record();
     } elsif ($format eq FORMAT_XML && $comp eq 'opac') {
 	# OPAC-format XML
-	my $marc = $session->marc_record($rs, $index1);
-	$res = makeOPACXMLRecord($rec, $marc);
+	$res = makeOPACXMLRecord($rec);
     } elsif ($format eq FORMAT_XML) {
 	_throw(25, "XML records available in element-sets: raw, usmarc, opac");
 
     } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
-	my $marc = $session->marc_record($rs, $index1);
+	my $marc = $rec->marc_record();
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
 	_throw(25, "USMARC records available in element-sets: f, b");

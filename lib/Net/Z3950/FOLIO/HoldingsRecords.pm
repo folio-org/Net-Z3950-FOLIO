@@ -5,7 +5,9 @@ use warnings;
 
 
 sub makeHoldingsRecords {
-    my($holdings, $marc) = @_;
+    my($rec, $marc) = @_;
+    my $holdings = $rec->jsonStructure()->{holdingsRecords2};
+
     return [ map { _makeSingleHoldingsRecord($_, $marc) } @$holdings ];
 }
 

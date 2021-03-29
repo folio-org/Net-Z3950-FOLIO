@@ -71,7 +71,7 @@ sub mock_session {
     my $session = $server->getSession('marcHoldings|postProcess');
     ok(defined $session, 'created session object');
 
-    my $rs = mock_resultSet($session->{cfg});
+    my $rs = mock_resultSet($session);
     ok(defined $session, 'mocked result-set object');
 
     $session->{resultsets} = {};
@@ -82,14 +82,14 @@ sub mock_session {
 
 
 sub mock_resultSet {
-    my ($config) = @_;
+    my ($session) = @_;
 
-    my $rs = new Net::Z3950::FOLIO::ResultSet($SETNAME, 'title=water');
+    my $rs = new Net::Z3950::FOLIO::ResultSet($session, $SETNAME, 'title=water');
     $rs->total_count(1);
     my $inventoryRecord = decode_json(readFile('t/data/fetch/input-inventory1.json'));
     $rs->insert_records(0, [ { id => '123', holdingsRecords2 => [ $inventoryRecord ] } ]);
 
-    my $marc = mock_marcRecord($config);
+    my $marc = mock_marcRecord();
     $rs->insert_marcRecords({ 123 => $marc });
 
     return $rs;
@@ -97,8 +97,6 @@ sub mock_resultSet {
 
 
 sub mock_marcRecord {
-    my ($config) = @_;
-
     my $json = readFile('t/data/fetch/input-marc1.json');
     my $sourceRecord = decode_json($json);
     return Net::Z3950::FOLIO::Session::_JSON_to_MARC($sourceRecord);
