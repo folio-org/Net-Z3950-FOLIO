@@ -90,7 +90,7 @@ sub mock_resultSet {
     $rs->insert_records(0, [ { id => '123', holdingsRecords2 => [ $inventoryRecord ] } ]);
 
     my $marc = mock_marcRecord();
-    $rs->insert_marcRecords({ 123 => $marc });
+    $rs->record(0)->{marc} = $marc;
 
     return $rs;
 }
