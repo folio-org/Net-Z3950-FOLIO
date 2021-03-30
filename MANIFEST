@@ -31,6 +31,7 @@ etc/config.invalidisbn.json
 etc/config.json
 etc/config.lehigh.json
 etc/config.localgql.json
+etc/config.marcHoldings.json
 etc/config.snapshot.json
 etc/folio2marcxml.xsl
 etc/folio2opac.xsl
