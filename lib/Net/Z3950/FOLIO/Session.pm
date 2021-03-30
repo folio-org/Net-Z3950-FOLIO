@@ -143,15 +143,11 @@ sub _insert_records_from_SRS {
     my $srs = $json->{sourceRecords};
     my $n = @$srs;
 
-    my %id2rec;
     for (my $i = 0; $i < $n; $i++) {
+	my $rec = $rs->record($offset + $i);
 	my $sr = $srs->[$i];
-	my $instanceId = $sr->{externalIdsHolder}->{instanceId};
-	my $record = $sr->{parsedRecord}->{content};
-	$id2rec{$instanceId} = _JSON_to_MARC($record);
+	$rec->{marc} = _JSON_to_MARC($sr->{parsedRecord}->{content});
     }
-
-    $rs->insert_marcRecords(\%id2rec);
 }
 
 
