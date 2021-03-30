@@ -61,7 +61,7 @@ sub marc_record {
     my $instanceId = $this->id();
     my $rs = $this->{rs};
     my $session = $rs->session();
-    my $marc = $rs->marcRecord($instanceId);
+    my $marc = $this->{marc};
 
     if (!defined $marc) {
 	# Fetch a chunk of records that contains the requested one.
@@ -70,14 +70,14 @@ sub marc_record {
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
 	$session->_insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
-	$marc = $rs->marcRecord($instanceId);
+	$marc = $this->{marc};
 	_throw(1, "missing MARC record") if !defined $marc;
     }
 
     if (!$this->{processed}) {
 	insertMARCHoldings($this, $marc, $session->{cfg}, $rs->barcode());
 	$marc = postProcessMARCRecord(($session->{cfg}->{postProcessing} || {})->{marc}, $marc);
-	$rs->insert_marcRecords({ $instanceId, $marc }); # XXX this is clumsy
+	$this->{marc} = $marc;
 	$this->{processed} = 1;
     }
 
@@ -119,7 +119,8 @@ sub _sanitize_tree {
 	} elsif (ref($node) eq 'JSON::PP::Boolean') {
             $node += 0;
         } elsif (blessed($node)) {
-            die('_sanitize_tree: unexpected object');
+	    use Data::Dumper;
+            die('_sanitize_tree: unexpected ', ref($node), ' object: ', Dumper($node));
         } elsif (reftype($node)) {
             if (ref($node) eq 'ARRAY') {
                 _sanitize_tree(@$node);
