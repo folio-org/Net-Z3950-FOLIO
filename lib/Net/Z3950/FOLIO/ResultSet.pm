@@ -18,7 +18,6 @@ sub new {
 	barcode => $barcode,
 	total_count => undef,
 	records => [],
-	marcRecords => {}, # Maps instance IDs to MARC::Record objects
     }, $class;
 }
 
@@ -55,24 +54,6 @@ sub record {
     my($index0) = @_;
 
     return $this->{records}->[$index0];
-}
-
-sub insert_marcRecords {
-    my $this = shift();
-    my($marcRecords) = @_;
-
-    foreach my $instanceId (keys %$marcRecords)  {
-	# The records are passed in and stored as MARC::Record objects
-	$this->{marcRecords}->{$instanceId} = $marcRecords->{$instanceId};
-    }
-}
-
-sub marcRecord {
-    my $this = shift();
-    my($instanceId) = @_;
-
-    my $mr = $this->{marcRecords};
-    return $mr->{$instanceId};
 }
 
 # If the $cql query is a search for a barcode, return that barcode;
