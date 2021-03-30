@@ -1,5 +1,7 @@
 # Overview of the FOLIO Z39.50 server source-code
 
+<font color="red">XXX WARNING. This is out of date.</font>
+
 <!-- md2toc -l 2 source-code-overview.md -->
 * [Introduction](#introduction)
 * [Source files](#source-files)
