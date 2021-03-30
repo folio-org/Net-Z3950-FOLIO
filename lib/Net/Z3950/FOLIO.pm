@@ -188,6 +188,7 @@ sub _fetch_handler {
 	# requested one. We'll do this by splitting the whole set into
 	# chunks of the specified size, and fetching the one that
 	# contains the requested record.
+	# XXX Perhaps this should happen inside $rs->record
 	my $index0 = $index1 - 1;
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
