@@ -20,6 +20,7 @@ sub new {
 	offset => $offset, # within rs
 	json => $json,
 	holdingsStructure => undef,
+	processed => 0,
     }, $class;
 }
 
@@ -73,11 +74,11 @@ sub marc_record {
 	_throw(1, "missing MARC record") if !defined $marc;
     }
 
-    if (!$rs->processed($instanceId)) {
+    if (!$this->{processed}) {
 	insertMARCHoldings($this, $marc, $session->{cfg}, $rs->barcode());
 	$marc = postProcessMARCRecord(($session->{cfg}->{postProcessing} || {})->{marc}, $marc);
 	$rs->insert_marcRecords({ $instanceId, $marc }); # XXX this is clumsy
-	$rs->setProcessed($instanceId);
+	$this->{processed} = 1;
     }
 
     return $marc;
