@@ -8,6 +8,7 @@
 * Refactor internals so each Record is responsible for its own MARC, etc. Fixes ZF-39.
 * Rename all snake-case methods to consistent camel-case. Fixes ZF-40.
 * Add higher-level test that exercises Z39.50 fetch handler. Fixes ZF-37.
+* Fetching a record more than once no longer repeatedly appends multiple sets of holdings/item information. Fixes ZF-36.
 
 ## [1.9](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.9) (Tue Mar  9 16:51:24 GMT 2021)
 
