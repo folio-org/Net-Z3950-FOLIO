@@ -121,18 +121,18 @@ sub _do_search {
 }
 
 
-sub _insert_records_from_SRS {
+sub _get_records_from_SRS {
     my $this = shift();
     my($rs, $offset, $limit) = @_;
 
     my $okapiCfg = $this->{cfg}->{okapi};
-    my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
     my @ids = ();
     for (my $i = 0; $i < $limit && $offset + $i < $rs->total_count(); $i++) {
 	my $rec = $rs->record($offset + $i);
 	push @ids, $rec->id();
     }
 
+    my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
     $req->content(encode_json(\@ids));
     my $res = $this->{ghandle}->{ua}->request($req);
     my $content = $res->content();
@@ -141,13 +141,7 @@ sub _insert_records_from_SRS {
     # warn "got content ", $content;
     my $json = decode_json($content);
     my $srs = $json->{sourceRecords};
-    my $n = @$srs;
-
-    for (my $i = 0; $i < $n; $i++) {
-	my $rec = $rs->record($offset + $i);
-	my $sr = $srs->[$i];
-	$rec->{marc} = _JSON_to_MARC($sr->{parsedRecord}->{content});
-    }
+    return map { _JSON_to_MARC($_->{parsedRecord}->{content}) } @$srs;
 }
 
 

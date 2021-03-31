@@ -66,9 +66,14 @@ sub marc_record {
 	# Fetch a chunk of records that contains the requested one.
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($this->{offset} / $chunkSize);
-	$session->_insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
+	my @marcRecords = $session->_get_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
+	for (my $i = 0; $i < @marcRecords; $i++) {
+	    my $rec = $rs->record($chunk * $chunkSize + $i);
+	    $rec->{marc} = $marcRecords[$i];
+	}
+
 	$marc = $this->{marc};
-	_throw(1, "missing MARC record") if !defined $marc;
+	Net::Z3950::FOLIO::_throw(1, "missing MARC record") if !defined $marc;
     }
 
     if (!$this->{processed}) {
