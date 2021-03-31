@@ -17,7 +17,7 @@ sub new {
 
     return bless {
 	rs => $rs, # back-reference
-	offset => $offset, # within rs
+	offset => $offset, # zero-based position within rs
 	json => $json,
 	holdingsStructure => undef,
 	processed => 0,
@@ -58,17 +58,14 @@ sub holdings {
 
 sub marc_record {
     my $this = shift();
-    my $instanceId = $this->id();
     my $rs = $this->{rs};
     my $session = $rs->session();
     my $marc = $this->{marc};
 
     if (!defined $marc) {
 	# Fetch a chunk of records that contains the requested one.
-	# contains the requested record.
-	my $index0 = $this->{offset};
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
-	my $chunk = int($index0 / $chunkSize);
+	my $chunk = int($this->{offset} / $chunkSize);
 	$session->_insert_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
 	$marc = $this->{marc};
 	_throw(1, "missing MARC record") if !defined $marc;
