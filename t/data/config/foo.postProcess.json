@@ -8,7 +8,8 @@
       "245$a": [
         { "op": "stripDiacritics" },
         { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
-      ]
+      ],
+      "952$h": { "op": "regsub", "pattern": "^", "replacement": "Main " }
     }
   },
   "chunkSize": 1

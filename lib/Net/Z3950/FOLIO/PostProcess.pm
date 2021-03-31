@@ -137,7 +137,7 @@ sub applyRegsub {
 
     my $pattern = $rule->{pattern};
     my $replacement = $rule->{replacement};
-    my $flags = $rule->{flags};
+    my $flags = $rule->{flags} || "";
     my $res = $value;
 
     # See advice on this next part at https://perlmonks.org/?node_id=11124218
