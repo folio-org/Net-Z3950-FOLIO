@@ -64,7 +64,7 @@ Also contains POD documentation of the configuration-file format.
 
 A very simple class used to store the results of searching: the result-set name, the query that was executed, the total count of matching records, and the records themselves so far as they have been loaded.
 
-Has a straightforward API, not documented in detail, consisting of a constructor and five methods: `total_count(int)`, `insert_records(offset, records*)`, `record(offset)`, `insert_marcRecords(marcRecords*)` and `marcRecord(id)`.
+Has a straightforward API, not documented in detail, consisting of a constructor and five methods: `totalCount(int)`, `insert_records(offset, records*)`, `record(offset)`, `insert_marcRecords(marcRecords*)` and `marcRecord(id)`.
 
 
 ### `lib/Net/Z3950/FOLIO/OPACXMLRecord.pm`

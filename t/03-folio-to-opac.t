@@ -79,7 +79,7 @@ sub new {
 }
 
 sub jsonStructure { return shift()->{folioHoldings} }
-sub marc_record { return shift()->{marc} }
+sub marcRecord { return shift()->{marc} }
 
 sub holdings {
     my $this = shift();

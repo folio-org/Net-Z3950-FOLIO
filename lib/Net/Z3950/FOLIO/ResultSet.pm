@@ -9,14 +9,14 @@ sub new {
     my $class = shift();
     my($session, $setname, $cql) = @_;
 
-    my $barcode = _extract_barcode($cql);
+    my $barcode = _extractBarcode($cql);
 
     return bless {
 	session => $session, # back-reference
 	setname => $setname,
 	cql => $cql,
 	barcode => $barcode,
-	total_count => undef,
+	totalCount => undef,
 	records => [],
     }, $class;
 }
@@ -26,12 +26,12 @@ sub session {
     return $this->{session};
 }
 
-sub total_count {
+sub totalCount {
     my $this = shift();
     my($newVal) = @_;
 
-    my $old = $this->{total_count};
-    $this->{total_count} = $newVal if defined $newVal;
+    my $old = $this->{totalCount};
+    $this->{totalCount} = $newVal if defined $newVal;
     return $old;
 }
 
@@ -40,7 +40,7 @@ sub barcode {
     return $this->{barcode};
 }
 
-sub insert_records {
+sub insertRecords {
     my $this = shift();
     my($offset, $records) = @_;
 
@@ -61,7 +61,7 @@ sub record {
 # by parsing the CQL and examing every node, but in practice it
 # probably suffices to do a simple string check.
 #
-sub _extract_barcode {
+sub _extractBarcode {
     my ($cql) = @_;
 
     if ($cql =~ /^item.barcode[\t ]*=+[\t ]*(.*)/) {

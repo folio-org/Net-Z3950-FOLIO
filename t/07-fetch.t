@@ -85,9 +85,9 @@ sub mock_resultSet {
     my ($session) = @_;
 
     my $rs = new Net::Z3950::FOLIO::ResultSet($session, $SETNAME, 'title=water');
-    $rs->total_count(1);
+    $rs->totalCount(1);
     my $inventoryRecord = decode_json(readFile('t/data/fetch/input-inventory1.json'));
-    $rs->insert_records(0, [ { id => '123', holdingsRecords2 => [ $inventoryRecord ] } ]);
+    $rs->insertRecords(0, [ { id => '123', holdingsRecords2 => [ $inventoryRecord ] } ]);
 
     my $marc = mock_marcRecord();
     $rs->record(0)->{marc} = $marc;
@@ -99,7 +99,7 @@ sub mock_resultSet {
 sub mock_marcRecord {
     my $json = readFile('t/data/fetch/input-marc1.json');
     my $sourceRecord = decode_json($json);
-    return Net::Z3950::FOLIO::Session::_JSON_to_MARC($sourceRecord);
+    return Net::Z3950::FOLIO::Session::_JSON2MARC($sourceRecord);
 }
 
 

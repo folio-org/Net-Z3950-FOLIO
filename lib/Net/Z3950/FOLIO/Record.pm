@@ -37,12 +37,12 @@ sub jsonStructure {
 
 sub prettyJSON {
     my $this = shift();
-    return _format_json($this->{json});
+    return _formatJSON($this->{json});
 }
 
 sub prettyXML {
     my $this = shift();
-    return _format_xml($this->{json});
+    return _formatXML($this->{json});
 }
 
 sub holdings {
@@ -56,7 +56,7 @@ sub holdings {
     return $this->{holdingsStructure};
 }
 
-sub marc_record {
+sub marcRecord {
     my $this = shift();
     my $rs = $this->{rs};
     my $session = $rs->session();
@@ -66,7 +66,7 @@ sub marc_record {
 	# Fetch a chunk of records that contains the requested one.
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($this->{offset} / $chunkSize);
-	my @marcRecords = $session->_get_records_from_SRS($rs, $chunk * $chunkSize, $chunkSize);
+	my @marcRecords = $session->_getSRSRecords($rs, $chunk * $chunkSize, $chunkSize);
 	for (my $i = 0; $i < @marcRecords; $i++) {
 	    my $rec = $rs->record($chunk * $chunkSize + $i);
 	    $rec->{marc} = $marcRecords[$i];
@@ -89,20 +89,20 @@ sub marc_record {
 
 # ----------------------------------------------------------------------------
 
-sub _format_json {
+sub _formatJSON {
     my($obj) = @_;
 
     my $coder = Cpanel::JSON::XS->new->ascii->pretty->allow_blessed->space_before(0)->indent_length(2)->sort_by;
     return $coder->encode($obj);
 }
 
-sub _format_xml {
+sub _formatXML {
     my($json) = @_;
 
     my $xml;
     {
 	# Sanitize output to remove JSON::PP::Boolean values, which XMLout can't handle
-	_sanitize_tree($json);
+	_sanitizeTree($json);
 
 	# I have no idea why this generates an "uninitialized value" warning
 	local $SIG{__WARN__} = sub {};
@@ -114,7 +114,7 @@ sub _format_xml {
 }
 
 # This code modified from https://www.perlmonks.org/?node_id=773738
-sub _sanitize_tree {
+sub _sanitizeTree {
     for my $node (@_) {
 	if (!defined($node)) {
 	    next;
@@ -122,14 +122,14 @@ sub _sanitize_tree {
             $node += 0;
         } elsif (blessed($node)) {
 	    use Data::Dumper;
-            die('_sanitize_tree: unexpected ', ref($node), ' object: ', Dumper($node));
+            die('_sanitizeTree: unexpected ', ref($node), ' object: ', Dumper($node));
         } elsif (reftype($node)) {
             if (ref($node) eq 'ARRAY') {
-                _sanitize_tree(@$node);
+                _sanitizeTree(@$node);
             } elsif (ref($node) eq 'HASH') {
-                _sanitize_tree(values(%$node));
+                _sanitizeTree(values(%$node));
             } else {
-                die('_sanitize_tree: unexpected reference type');
+                die('_sanitizeTree: unexpected reference type');
             }
         }
     }

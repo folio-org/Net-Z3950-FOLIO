@@ -6,7 +6,7 @@ use warnings;
 
 sub makeOPACXMLRecord {
     my($rec) = @_;
-    my $marc = $rec->marc_record();
+    my $marc = $rec->marcRecord();
     my $marcXML = $marc->as_xml_record();
 
     # The first line of $marcXML is an XML declaration, and there

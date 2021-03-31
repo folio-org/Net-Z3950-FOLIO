@@ -12,7 +12,7 @@ SKIP: {
     if ($pid == 0) {
 	# Child
 	sleep 1; # Allow time for server to start up
-	exec 'zoomsh -e "open @:9996/indexdata|marcHoldings" "find water" "set preferredRecordSyntax usmarc" "show 1" quit';
+	exec 'zoomsh -e "open @:9996/indexdata|marcHoldings" "find water" "set preferredRecordSyntax usmarc" "show 1" quit 1>&2';
     }
 
     $ENV{OKAPI_INDEXDATA_PASSWORD} = 'fameflowerID052020';

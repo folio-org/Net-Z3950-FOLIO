@@ -93,7 +93,7 @@ sub getSession {
     if (!$this->{sessions}->{$name}) {
 	my $session = new Net::Z3950::FOLIO::Session($this, $name);
 	$this->{sessions}->{$name} = $session;
-	$session->reload_config_file();
+	$session->reloadConfigFile();
 	$session->login($this->{user}, $this->{pass}) if !$session->{cfg}->{nologin};
     }
 
@@ -168,7 +168,7 @@ sub _search_handler {
     }
 
     $session->{sortspec} = undef;
-    $args->{HITS} = $session->rerun_search($args->{SETNAME});
+    $args->{HITS} = $session->rerunSearch($args->{SETNAME});
 }
 
 
@@ -180,7 +180,7 @@ sub _fetch_handler {
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
     my $index1 = $args->{OFFSET};
-    _throw(13, $index1) if $index1 < 1 || $index1 > $rs->total_count();
+    _throw(13, $index1) if $index1 < 1 || $index1 > $rs->totalCount();
 
     my $rec = $rs->record($index1-1);
     if (!defined $rec) {
@@ -192,7 +192,7 @@ sub _fetch_handler {
 	my $index0 = $index1 - 1;
 	my $chunkSize = $session->{cfg}->{chunkSize} || 10;
 	my $chunk = int($index0 / $chunkSize);
-	$session->_do_search($rs, $chunk * $chunkSize, $chunkSize);
+	$session->doSearch($rs, $chunk * $chunkSize, $chunkSize);
 	$rec = $rs->record($index1-1);
 	_throw(1, "missing record") if !defined $rec;
     }
@@ -211,7 +211,7 @@ sub _fetch_handler {
 
     } elsif ($format eq FORMAT_XML && $comp eq 'usmarc') {
 	# MARCXML made from SRS Marc record
-	my $marc = $rec->marc_record();
+	my $marc = $rec->marcRecord();
 	$res = $marc->as_xml_record();
     } elsif ($format eq FORMAT_XML && $comp eq 'opac') {
 	# OPAC-format XML
@@ -221,7 +221,7 @@ sub _fetch_handler {
 
     } elsif ($format eq FORMAT_USMARC && (!$comp || $comp eq 'f' || $comp eq 'b')) {
 	# Static USMARC from SRS
-	my $marc = $rec->marc_record();
+	my $marc = $rec->marcRecord();
 	$res = $marc->as_usmarc();
     } elsif ($format eq FORMAT_USMARC) {
 	_throw(25, "USMARC records available in element-sets: f, b");
@@ -261,11 +261,11 @@ sub _sort_handler {
     my $rs = $session->{resultsets}->{$setname};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
 
-    my $cqlSort = $session->sortspecs2cql($args->{SEQUENCE});
+    my $cqlSort = $session->sortSpecs2CQL($args->{SEQUENCE});
     _throw(207, Dumper($args->{SEQUENCE})) if !$cqlSort; # Cannot sort according to sequence
 
     $session->{sortspec} = $cqlSort;
-    $session->rerun_search($args->{OUTPUT});
+    $session->rerunSearch($args->{OUTPUT});
 }
 
 

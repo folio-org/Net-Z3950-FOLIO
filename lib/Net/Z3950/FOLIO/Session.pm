@@ -23,7 +23,7 @@ sub new {
 }
 
 
-sub reload_config_file {
+sub reloadConfigFile {
     my $this = shift();
     my $ghandle = $this->{ghandle};
 
@@ -44,7 +44,7 @@ sub login {
 	if !defined $username || !defined $password;
 
     my $url = $cfg->{okapi}->{url} . '/bl-users/login';
-    my $req = $this->_make_http_request(POST => $url);
+    my $req = $this->_makeHTTPRequest(POST => $url);
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
     my $res = $ghandle->{ua}->request($req);
@@ -56,7 +56,7 @@ sub login {
 }
 
 
-sub rerun_search {
+sub rerunSearch {
     my $this = shift();
     my($setname) = @_;
 
@@ -65,12 +65,12 @@ sub rerun_search {
     $this->{resultsets}->{$setname} = $rs;
 
     my $chunkSize = $this->{cfg}->{chunkSize} || 10;
-    $this->_do_search($rs, 0, $chunkSize);
-    return $rs->total_count();
+    $this->doSearch($rs, 0, $chunkSize);
+    return $rs->totalCount();
 }
 
 
-sub _do_search {
+sub doSearch {
     my $this = shift();
     my $ghandle = $this->{ghandle};
     my($rs, $offset, $limit) = @_;
@@ -89,7 +89,7 @@ sub _do_search {
 
     my $url = $okapiCfg->{url};
     my $graphqlUrl = $okapiCfg->{graphqlUrl};
-    my $req = $this->_make_http_request(POST => ($graphqlUrl || $url) . '/graphql');
+    my $req = $this->_makeHTTPRequest(POST => ($graphqlUrl || $url) . '/graphql');
     $req->header('X-Okapi-Url' => $url) if $graphqlUrl;
 
     my %variables = ();
@@ -106,7 +106,7 @@ sub _do_search {
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
-    # warn "result: ", Net::Z3950::FOLIO::Record::_format_json($obj);
+    # warn "result: ", Net::Z3950::FOLIO::Record::_formatJSON($obj);
     my $data = $obj->{data} or _throw(1, "no data in response");
     my $isi = $data->{instance_storage_instances};
     if (!$isi) {
@@ -114,25 +114,25 @@ sub _do_search {
 	_throw(1, join(', ', map { $_->{message} } @$errors)) if $errors;
 	_throw(1, "no instance_storage_instances in response data");
     }
-    $rs->total_count($isi->{totalRecords} + 0);
-    $rs->insert_records($offset, $isi->{instances});
+    $rs->totalCount($isi->{totalRecords} + 0);
+    $rs->insertRecords($offset, $isi->{instances});
 
     return $rs;
 }
 
 
-sub _get_records_from_SRS {
+sub _getSRSRecords {
     my $this = shift();
     my($rs, $offset, $limit) = @_;
 
     my $okapiCfg = $this->{cfg}->{okapi};
     my @ids = ();
-    for (my $i = 0; $i < $limit && $offset + $i < $rs->total_count(); $i++) {
+    for (my $i = 0; $i < $limit && $offset + $i < $rs->totalCount(); $i++) {
 	my $rec = $rs->record($offset + $i);
 	push @ids, $rec->id();
     }
 
-    my $req = $this->_make_http_request(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
+    my $req = $this->_makeHTTPRequest(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
     $req->content(encode_json(\@ids));
     my $res = $this->{ghandle}->{ua}->request($req);
     my $content = $res->content();
@@ -141,7 +141,7 @@ sub _get_records_from_SRS {
     # warn "got content ", $content;
     my $json = decode_json($content);
     my $srs = $json->{sourceRecords};
-    return map { _JSON_to_MARC($_->{parsedRecord}->{content}) } @$srs;
+    return map { _JSON2MARC($_->{parsedRecord}->{content}) } @$srs;
 }
 
 
@@ -149,7 +149,7 @@ sub _get_records_from_SRS {
 # MARC::File::JSON), but that uses a different JSON encoding from the
 # one used for FOLIO's SRS records, so we have to do it by hand.
 #
-sub _JSON_to_MARC {
+sub _JSON2MARC {
     my($content) = shift();
 
     my $marc = new MARC::Record();
@@ -183,13 +183,13 @@ sub _JSON_to_MARC {
 }
 
 
-sub sortspecs2cql {
+sub sortSpecs2CQL {
     my $this = shift();
     my($sequence) = @_;
 
     my @res = ();
     foreach my $item (@$sequence) {	
-	push @res, $this->_singleSortspecs2cql($item);
+	push @res, $this->_singleSortSpec2CQL($item);
     }
 
     my $spec = join(' ', @res);
@@ -197,7 +197,7 @@ sub sortspecs2cql {
 }
 
 
-sub _singleSortspecs2cql {
+sub _singleSortSpec2CQL {
     my $this = shift();
     my($item) = @_;
     my $indexMap = $this->{cfg}->{indexMap};
@@ -266,7 +266,7 @@ sub _translateSortParam {
 }
 
 
-sub _make_http_request() {
+sub _makeHTTPRequest() {
     my $this = shift();
     my(%args) = @_;
 
