@@ -151,8 +151,66 @@
     }
   ],
   "numberOfItems": null,
-  "permanentLocation": null,
-  "permanentLocationId": "b681f0f3-c5d3-434f-8c15-db3d8b074c43",
+  "permanentLocationId": "ca3135b3-8e56-55c4-aff7-5e75454df8da",
+  "permanentLocation": {
+    "campus": {
+      "code": "HP",
+      "id": "73ba8e58-e4d8-55d8-8689-8f2e783d826a",
+      "institutionId": "b89ebc30-fcd0-57c0-abcf-f460dc0697cf",
+      "name": "Hyde Park (HP)"
+    },
+    "campusId": "73ba8e58-e4d8-55d8-8689-8f2e783d826a",
+    "code": "UC/HP/ASR/SciASR",
+    "description": "Mansueto",
+    "discoveryDisplayName": "Mansueto",
+    "id": "ca3135b3-8e56-55c4-aff7-5e75454df8da",
+    "institution": {
+      "code": "UC",
+      "id": "b89ebc30-fcd0-57c0-abcf-f460dc0697cf",
+      "name": "University of Chicago (UC)"
+    },
+    "institutionId": "b89ebc30-fcd0-57c0-abcf-f460dc0697cf",
+    "isActive": true,
+    "library": {
+      "code": "ASR",
+      "id": "027e7793-3696-5341-b122-5dcfc81d5bc2",
+      "name": "Mansueto Library (ASR)"
+    },
+    "libraryId": "027e7793-3696-5341-b122-5dcfc81d5bc2",
+    "metadata": {
+      "createdByUserId": "20d7e268-242c-554b-805d-7e8a9b83920d",
+      "createdByUsername": null,
+      "createdDate": "2021-03-19T18:45:29.892+00:00",
+      "updatedByUserId": "20d7e268-242c-554b-805d-7e8a9b83920d",
+      "updatedByUsername": null,
+      "updatedDate": "2021-03-19T18:45:29.892+00:00"
+    },
+    "name": "UC/HP/ASR/SciASR",
+    "primaryServicePoint": "130d8bff-bdbd-4dc5-a4ac-6d970f4918ff",
+    "primaryServicePointObject": {
+      "code": "MANSUETO",
+      "description": null,
+      "discoveryDisplayName": "Mansueto Library",
+      "id": "130d8bff-bdbd-4dc5-a4ac-6d970f4918ff",
+      "name": "Mansueto Library",
+      "pickupLocation": true,
+      "shelvingLagTime": 1440
+    },
+    "servicePointIds": [
+      "130d8bff-bdbd-4dc5-a4ac-6d970f4918ff"
+    ],
+    "servicePoints": [
+      {
+        "code": "MANSUETO",
+        "description": null,
+        "discoveryDisplayName": "Mansueto Library",
+        "id": "130d8bff-bdbd-4dc5-a4ac-6d970f4918ff",
+        "name": "Mansueto Library",
+        "pickupLocation": true,
+        "shelvingLagTime": 1440
+      }
+    ]
+  },
   "receiptStatus": null,
   "receivingHistory": null,
   "retentionPolicy": null,

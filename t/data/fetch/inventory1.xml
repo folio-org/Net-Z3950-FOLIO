@@ -135,8 +135,62 @@
       <staffOnly>0</staffOnly>
     </notes>
     <numberOfItems></numberOfItems>
-    <permanentLocation></permanentLocation>
-    <permanentLocationId>b681f0f3-c5d3-434f-8c15-db3d8b074c43</permanentLocationId>
+    <permanentLocation>
+      <name>UC/HP/ASR/SciASR</name>
+      <campus>
+        <name>Hyde Park (HP)</name>
+        <code>HP</code>
+        <id>73ba8e58-e4d8-55d8-8689-8f2e783d826a</id>
+        <institutionId>b89ebc30-fcd0-57c0-abcf-f460dc0697cf</institutionId>
+      </campus>
+      <campusId>73ba8e58-e4d8-55d8-8689-8f2e783d826a</campusId>
+      <code>UC/HP/ASR/SciASR</code>
+      <description>Mansueto</description>
+      <discoveryDisplayName>Mansueto</discoveryDisplayName>
+      <id>ca3135b3-8e56-55c4-aff7-5e75454df8da</id>
+      <institution>
+        <name>University of Chicago (UC)</name>
+        <code>UC</code>
+        <id>b89ebc30-fcd0-57c0-abcf-f460dc0697cf</id>
+      </institution>
+      <institutionId>b89ebc30-fcd0-57c0-abcf-f460dc0697cf</institutionId>
+      <isActive>1</isActive>
+      <library>
+        <name>Mansueto Library (ASR)</name>
+        <code>ASR</code>
+        <id>027e7793-3696-5341-b122-5dcfc81d5bc2</id>
+      </library>
+      <libraryId>027e7793-3696-5341-b122-5dcfc81d5bc2</libraryId>
+      <metadata>
+        <createdByUserId>20d7e268-242c-554b-805d-7e8a9b83920d</createdByUserId>
+        <createdByUsername></createdByUsername>
+        <createdDate>2021-03-19T18:45:29.892+00:00</createdDate>
+        <updatedByUserId>20d7e268-242c-554b-805d-7e8a9b83920d</updatedByUserId>
+        <updatedByUsername></updatedByUsername>
+        <updatedDate>2021-03-19T18:45:29.892+00:00</updatedDate>
+      </metadata>
+      <primaryServicePoint>130d8bff-bdbd-4dc5-a4ac-6d970f4918ff</primaryServicePoint>
+      <primaryServicePointObject>
+        <name>Mansueto Library</name>
+        <code>MANSUETO</code>
+        <description></description>
+        <discoveryDisplayName>Mansueto Library</discoveryDisplayName>
+        <id>130d8bff-bdbd-4dc5-a4ac-6d970f4918ff</id>
+        <pickupLocation>1</pickupLocation>
+        <shelvingLagTime>1440</shelvingLagTime>
+      </primaryServicePointObject>
+      <servicePointIds>130d8bff-bdbd-4dc5-a4ac-6d970f4918ff</servicePointIds>
+      <servicePoints>
+        <name>Mansueto Library</name>
+        <code>MANSUETO</code>
+        <description></description>
+        <discoveryDisplayName>Mansueto Library</discoveryDisplayName>
+        <id>130d8bff-bdbd-4dc5-a4ac-6d970f4918ff</id>
+        <pickupLocation>1</pickupLocation>
+        <shelvingLagTime>1440</shelvingLagTime>
+      </servicePoints>
+    </permanentLocation>
+    <permanentLocationId>ca3135b3-8e56-55c4-aff7-5e75454df8da</permanentLocationId>
     <receiptStatus></receiptStatus>
     <receivingHistory></receivingHistory>
     <retentionPolicy></retentionPolicy>
