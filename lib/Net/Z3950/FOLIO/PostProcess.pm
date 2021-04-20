@@ -8,37 +8,6 @@ use Data::Dumper;
 use Unicode::Diacritic::Strip 'fast_strip';
 
 
-sub postProcess {
-    use Carp; confess "obsolete postProcess called";
-    my($cfg, $json) = @_;
-
-    return $json if !$cfg;
-
-    foreach my $field (@{ $json->{fields} }) {
-	# Silly data structure: each "field" is a single-element hash
-	foreach my $key (keys %$field) {
-	    my $val = $field->{$key};
-	    if (!ref $val) {
-		# Simple field
-		my $rules = $cfg->{$key};
-		$field->{$key} = transform($rules, $field->{$key}) if $rules;
-	    } else {
-		# Complex field with subfields
-		foreach my $subfield (@{ $val->{subfields} }) {
-		    # Silly data structure: each "subfield" is a single-element hash
-		    foreach my $key2 (keys %$subfield) {
-			my $rules = $cfg->{"$key\$$key2"};
-			$subfield->{$key2} = transform($rules, $subfield->{$key2}) if $rules;
-		    }
-		}
-	    }
-	}
-    }
-
-    return $json;
-}
-
-
 sub postProcessMARCRecord {
     my($cfg, $marc) = @_;
 
