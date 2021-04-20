@@ -10,6 +10,7 @@
 * Fetching a record more than once no longer repeatedly appends multiple sets of holdings/item information. Fixes ZF-36.
 * Post-processing is be applied to generated holdings and item fields. Fixes ZF-35.
 * Replicate holdings-level permanent location at the item level, whence it can be included in MARC records. Fixes ZF-34.
+* Update [source-code overview documentation](doc/source-code-overview.md). Fixes ZF-41.
 
 ## [1.9](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.9) (Tue Mar  9 16:51:24 GMT 2021)
 
