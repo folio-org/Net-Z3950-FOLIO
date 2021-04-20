@@ -109,7 +109,7 @@ Exports a single public function, `makeOPACXMLRecord(record)`. This takes the ho
 
 ### `lib/Net/Z3950/FOLIO/MARCHoldings.pm`
 
-Exports a single public function, `makeOPACXMLRecord(record, marc, cfg, barcode)`. This takes the holdings structure returned from `$record->holdings()` and uses it to generate and insert additional MARC fields that describe this information, in accordance with the `marcHoldings` configuration.
+Exports a single public function, `insertMARCHoldings(record, marc, cfg, barcode)`. This takes the holdings structure returned from `$record->holdings()` and uses it to generate and insert additional MARC fields that describe this information, in accordance with the `marcHoldings` configuration.
 
 
 ### `lib/Net/Z3950/FOLIO/PostProcess.pm`
