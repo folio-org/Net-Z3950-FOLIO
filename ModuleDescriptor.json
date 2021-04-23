@@ -4,7 +4,7 @@
   "provides": [
     {
       "id": "sru",
-      "version": "1.4.0",
+      "version": "1.4",
       "handlers" : [
         {
           "methods" : [ "GET" ],
@@ -17,7 +17,7 @@
   "requires": [
     {
       "id": "graphql",
-      "version": "1.0.0"
+      "version": "1.0"
     },
     {
       "id": "source-storage-source-records",
