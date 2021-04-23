@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [1.10](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.10) (IN PROGRESS)
+## [1.10](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.10) (Fri Apr 23 16:30:29 BST 2021)
 
 * Add and document boolean `nologin` configuration element, which prevents login. This is potentially useful for running against hypothetical unsecured FOLIO instances, but the real reason we need it is for testing.
 * Add [new test-suite script](t/07-fetch.t) that exercises the Z39.50 server's Fetch operation to get a higher-level entry into all the underlying mechanisms. Fixes ZF-37.
