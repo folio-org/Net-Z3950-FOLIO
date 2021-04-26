@@ -1,5 +1,11 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [2.0.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.0.0) (Mon Apr 26 12:19:40 BST 2021)
+
+* Change to three-facet version numbers, which it turns out Perl has supported for a long time. This is necessary (as well as desirable) because CPAN thinks version 1.10 is older than 1.9, which is why there is no version 1.10 there. Fixes ZF-46.
+* Update [the release-procedure document](doc/release-procedure.md) to mention FOLIO-standard handling of version-number in [the module descriptor](ModuleDescriptor.json). Fixes ZF-45.
+* Increase version number to 2.0.0, so CPAN will recognise this as newer. **NOTE.** No functional changes since v1.10.
+
 ## [1.10](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v1.10) (Fri Apr 23 16:30:29 BST 2021)
 
 * Add and document boolean `nologin` configuration element, which prevents login. This is potentially useful for running against hypothetical unsecured FOLIO instances, but the real reason we need it is for testing.
