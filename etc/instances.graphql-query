@@ -52,7 +52,7 @@ query($cql: String, $offset: Int, $limit: Int) {
         relationshipId
         uri
       }
-      holdingsRecords2 {
+      holdingsRecords2(limit: 100) {
         acquisitionFormat
         acquisitionMethod
         callNumber
@@ -71,7 +71,7 @@ query($cql: String, $offset: Int, $limit: Int) {
         }
         formerIds
         # No need to loop back to holdingsInstance
-        bareHoldingsItems {
+        bareHoldingsItems(limit: 100) {
           accessionNumber
           barcode
           chronology
