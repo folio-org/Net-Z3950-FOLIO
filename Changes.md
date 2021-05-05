@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## (IN PROGRESS)
+
+* Add missing virtual fields to the GraphQL query used to fetch instances with their holdings and items: holdings temporary location, and item permanent and temporary locations. When used with a suffiently recent mod-graphql, fixes ZF-43.
+
 ## [2.0.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.0.0) (Mon Apr 26 12:19:40 BST 2021)
 
 * Change to three-facet version numbers, which it turns out Perl has supported for a long time. This is necessary (as well as desirable) because CPAN thinks version 1.10 is older than 1.9, which is why there is no version 1.10 there. Fixes ZF-46.
