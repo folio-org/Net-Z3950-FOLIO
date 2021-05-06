@@ -55,7 +55,7 @@ sub _makeSingleHoldingsRecord {
 	$shelvingLocation = $location->{name};
     }
 
-    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems}, $holding->{permanentLocation});
+    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems}, $location);
 
     return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
