@@ -56,7 +56,6 @@ sub _makeSingleHoldingsRecord {
     }
 
     my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems}, $location, $holding->{permanentLocation});
-    use Data::Dumper; warn Dumper($itemObjects);
 
     return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
