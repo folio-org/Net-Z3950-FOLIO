@@ -245,9 +245,7 @@ be mapped into MARC fields. It contains up to five elements:
     - `_callNumber`
     - `_callNumberPrefix`
     - `_callNumberSuffix`
-
-        \-item `_permanentLocation`
-
+    - `_permanentLocation`
     - `_holdingsLocation`
     - `_volume`
     - `_yearCaption`
