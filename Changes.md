@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## (IN PROGRESS)
+
+* Add [documentation on using `queryFilter` to omit discovery-suppressed records](doc/from-pod/Net-Z3950-FOLIO-Config.md#configuring-filters). Explains how to deal with ZF-50.
+
 ## [2.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.1.0) (Thu May  6 16:17:03 BST 2021)
 
 * Add missing virtual fields to the GraphQL query used to fetch instances with their holdings and items: holdings temporary location, and item permanent and temporary locations. When used with a suffiently recent mod-graphql, fixes ZF-43.
