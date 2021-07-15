@@ -11,7 +11,7 @@ RUN cpan MARC::Record
 RUN cpan Net::Z3950::PQF
 RUN cpan Unicode::Diacritic::Strip
 RUN apt-get update
-RUN apt-get -y install software-properties-common
+RUN apt-get -y install software-properties-common apt-transport-https ca-certificates
 RUN wget http://ftp.indexdata.dk/debian/indexdata.asc
 RUN apt-key add indexdata.asc
 RUN add-apt-repository 'deb http://ftp.indexdata.dk/debian jessie main'
