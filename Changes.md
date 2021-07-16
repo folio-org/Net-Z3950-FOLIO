@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## (IN PROGRESS)
+## [2.2.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.2.0) (Fri Jul 16 12:21:00 BST 2021)
 
 * Change default configuration so `queryFilter` omits instances that are suppressed from discovery. Add [documentation on using `queryFilter` to omit discovery-suppressed records](doc/from-pod/Net-Z3950-FOLIO-Config.md#configuring-filters). Fixes ZF-50.
 
