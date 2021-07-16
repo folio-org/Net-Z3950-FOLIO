@@ -2,7 +2,7 @@
 
 ## (IN PROGRESS)
 
-* Add [documentation on using `queryFilter` to omit discovery-suppressed records](doc/from-pod/Net-Z3950-FOLIO-Config.md#configuring-filters). Explains how to deal with ZF-50.
+* Change default configuration so `queryFilter` omits instances that are suppressed from discovery. Add [documentation on using `queryFilter` to omit discovery-suppressed records](doc/from-pod/Net-Z3950-FOLIO-Config.md#configuring-filters). Fixes ZF-50.
 
 ## [2.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.1.0) (Thu May  6 16:17:03 BST 2021)
 
