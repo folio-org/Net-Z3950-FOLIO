@@ -1,8 +1,8 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## (IN PROGRESS)
+## [2.3.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.3.0) (Mon Jul 19 17:15:33 BST 2021)
 
-* Ensure that SRS MARC records are inserted into the result set in the right order, corresponding with the appropriate FOLIO inventory record. This ensures that MARC records have the correct holdings associated with them. Fixes ZF-52.
+* Insert SRS MARC records are into the result set in the right order, corresponding with the appropriate FOLIO inventory record. This ensures that MARC records have the correct holdings associated with them. Fixes ZF-52.
 
 ## [2.2.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.2.0) (Fri Jul 16 12:21:00 BST 2021)
 
