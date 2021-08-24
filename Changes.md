@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [2.4.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.4.0) (IN PROGRESS)
+## [2.4.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.4.0) (Tue Aug 24 15:33:57 BST 2021)
 
 * Upgrade `source-storage-source-records` interface dependency to v3.0. (This is what is used in Juniper, so the Z-server would not build against that release.) Fixes ZF-53.
 
