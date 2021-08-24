@@ -5,10 +5,10 @@
     {
       "id": "sru",
       "version": "1.4",
-      "handlers" : [
+      "handlers": [
         {
-          "methods" : [ "GET" ],
-          "pathPattern" : "/sru",
+          "methods": [ "GET" ],
+          "pathPattern": "/sru",
           "permissionsRequired": []
         }
       ]
@@ -21,7 +21,7 @@
     },
     {
       "id": "source-storage-source-records",
-      "version": "2.0"
+      "version": "3.0"
     }
   ],
   "launchDescriptor": {
