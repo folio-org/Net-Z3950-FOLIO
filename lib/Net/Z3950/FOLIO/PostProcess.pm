@@ -5,6 +5,7 @@ use warnings;
 use utf8;
 
 use Data::Dumper;
+use MARC::Record;
 use Unicode::Diacritic::Strip 'fast_strip';
 
 

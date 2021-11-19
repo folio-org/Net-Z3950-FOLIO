@@ -2,9 +2,22 @@ use strict;
 use warnings;
 use utf8;
 
+use MARC::Record;
+
+sub makeMarcRecord {
+    my $marc = new MARC::Record();
+    my $field = new MARC::Field('999','','','z' => 'water');
+    $marc->append_fields($field);
+    my $field2 = new MARC::Field('001','fire');
+    $marc->append_fields($field2);
+    # warn $marc->as_formatted();
+    return $marc;
+}
+
+
 BEGIN {
     binmode(STDOUT, "encoding(UTF-8)");
-    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests);
+    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests @postProcessTests);
     @stripDiacriticsTests = (
 	# value, expected, caption
 	[ 'water', 'water', 'null transformation' ],
@@ -65,12 +78,43 @@ BEGIN {
 	    },
 	], '*xp*r**nc*', 'stripDiacritics and regsub' ],
     );
+    my $marc = makeMarcRecord();
+    @postProcessTests = (
+	# MARC record, ruleset, field, expected, caption
+	[ $marc, {}, '001', 'fire', 'null transformation on control field' ],
+	[ $marc, {}, '999$z', 'water', 'null transformation on subfield' ],
+	[ $marc, {
+	    '999$z' => [
+		{
+		    op => 'regsub',
+		    pattern => 'a',
+		    replacement => 'A',
+		}
+	    ]
+	  }, '999$z', 'wAter', 'single transformation'
+	],
+	[ $marc, {
+	    '999$z' => [
+		{
+		    op => 'regsub',
+		    pattern => 'a',
+		    replacement => 'A',
+		},
+		{
+		    op => 'regsub',
+		    pattern => '(.*)',
+		    replacement => '$1/$1',
+		}
+	    ]
+	  }, '999$z', 'wAter/wAter', 'double transformation'
+	],
+    );
 }
 
-use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests;
+use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
-use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform);
+use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
@@ -99,5 +143,13 @@ foreach my $transformTest (@transformTests) {
     my($value, $cfg, $expected, $caption) = @$transformTest;
     my $got = transform($cfg, $value);
     is($got, $expected, "transform '$value' ($caption)");
+}
+
+foreach my $postProcessTest (@postProcessTests) {
+    my($marc, $cfg, $field, $expected, $caption) = @$postProcessTest;
+    my $newMarc = postProcessMARCRecord($cfg, $marc);
+    my($tag, $subtag) = ($field =~ /(\d+)\$?(.*)/);
+    my $got = $subtag ? $newMarc->subfield($tag, $subtag) : $newMarc->field($tag)->data();
+    is($got, $expected, "postProcessMARCRecord field $field ($caption)");
 }
 
