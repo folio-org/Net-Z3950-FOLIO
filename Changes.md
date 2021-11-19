@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [2.5.0-SNAPSHOT](https://github.com/folio-org/Net-Z3950-FOLIO/tree/master) (prerelease)
+
+* If restrictToItem is set, do not return a MARC holdings field for holdings records with no items. Fixes ZF-55.
+
 ## [2.4.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.4.0) (Tue Aug 24 15:33:57 BST 2021)
 
 * Upgrade `source-storage-source-records` interface dependency to v3.0. (This is what is used in Juniper, so the Z-server would not build against that release.) Fixes ZF-53.
@@ -115,4 +119,3 @@
 
 * Determine FOLIO tenant from database name, and postpone initialisation and authentication until we know that (ZF-2).
 * Automatic generation of MARC records (ZF-14). Thi will need a non-trivial version of `etc/folio2marcxml.xsl` (ZF-8).
-
