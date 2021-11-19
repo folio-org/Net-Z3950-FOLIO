@@ -439,6 +439,20 @@ Z39.50 record, assigned names that begin with underscores:
 
 =item C<_yearCaption>
 
+=item C<_accessionNumber>
+
+=item C<_copyNumber>
+
+=item C<_descriptionOfPieces>
+
+=item C<_discoverySuppress>
+
+=item C<_hrid>
+
+=item C<_id>
+
+=item C<_itemIdentifier>
+
 =back
 
 Since there may be multiple items in a single holding, sets of these

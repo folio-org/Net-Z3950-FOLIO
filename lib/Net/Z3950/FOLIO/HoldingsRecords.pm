@@ -191,6 +191,13 @@ sub _makeSingleItemRecord {
         [ '_callNumberSuffix', $ecnc->{suffix} ],
         [ '_volume', $item->{volume} ],
         [ '_yearCaption', _makeYearCaption($item->{yearCaption}) ],
+	[ '_accessionNumber', $item->{accessionNumber} ],
+	[ '_copyNumber', $item->{copyNumber} ],
+	[ '_descriptionOfPieces', $item->{descriptionOfPieces} ],
+	[ '_discoverySuppress', $item->{discoverySuppress} ],
+	[ '_hrid', $item->{hrid} ],
+	[ '_id', $item->{id} ],
+	[ '_itemIdentifier', $item->{itemIdentifier} ],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::item';
 }
 

@@ -251,6 +251,13 @@ be mapped into MARC fields. It contains up to five elements:
     - `_holdingsLocation`
     - `_volume`
     - `_yearCaption`
+    - `_accessionNumber`
+    - `_copyNumber`
+    - `_descriptionOfPieces`
+    - `_discoverySuppress`
+    - `_hrid`
+    - `_id`
+    - `_itemIdentifier`
 
     Since there may be multiple items in a single holding, sets of these
     fields can repeat, e.g. for a holding with two items each specifying
