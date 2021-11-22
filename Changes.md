@@ -4,6 +4,7 @@
 
 * If `restrictToItem` is set, do not return a MARC holdings field for holdings records with no items. Fixes ZF-55.
 * Add support for additional item-level fields (including `_copyNumber`) to be reported in MARC holdings. Fixes ZF-56.
+* Allow post-processing substitutions to interpolate field values. Documentation is in the `replacement` section of [the configuration-file manual](doc/from-pod/Net-Z3950-FOLIO-Config.md). Fixes ZF-57.
 
 ## [2.4.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.4.0) (Tue Aug 24 15:33:57 BST 2021)
 

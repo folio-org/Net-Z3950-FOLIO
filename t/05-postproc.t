@@ -92,6 +92,7 @@ BEGIN {
 		}
 	    ]
 	  }, '999$z', 'wAter', 'single transformation'
+
 	],
 	[ $marc, {
 	    '999$z' => [
@@ -108,13 +109,36 @@ BEGIN {
 	    ]
 	  }, '999$z', 'wAter/wAter', 'double transformation'
 	],
+	[ $marc, {
+	    '999$z' => [
+		{
+		    op => 'regsub',
+		    pattern => 'a',
+		    replacement => 'foo${001}bar',
+		}
+	    ]
+	  }, '999$z', 'wfoofirebarter', 'substituting field value'
+
+	],
+	[ $marc, {
+	    '001' => [
+		{
+		    op => 'regsub',
+		    pattern => '[aeiou]',
+		    replacement => '${999$z}',
+		    flags => 'g',
+		}
+	    ]
+	  }, '001', 'fwaterrwater', 'substituting multiple subfield values'
+
+	],
     );
 }
 
 use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
-use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord);
+use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord fieldOrSubfield);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
@@ -148,8 +172,7 @@ foreach my $transformTest (@transformTests) {
 foreach my $postProcessTest (@postProcessTests) {
     my($marc, $cfg, $field, $expected, $caption) = @$postProcessTest;
     my $newMarc = postProcessMARCRecord($cfg, $marc);
-    my($tag, $subtag) = ($field =~ /(\d+)\$?(.*)/);
-    my $got = $subtag ? $newMarc->subfield($tag, $subtag) : $newMarc->field($tag)->data();
+    my $got = fieldOrSubfield($newMarc, $field);
     is($got, $expected, "postProcessMARCRecord field $field ($caption)");
 }
 
