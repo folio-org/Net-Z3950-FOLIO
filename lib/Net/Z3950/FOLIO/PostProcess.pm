@@ -127,7 +127,7 @@ sub substituteReplacement {
     my($raw, $marc, $newMarc) = @_;
 
     my $res = '';
-    while ($raw =~ /(.*?)\$\{(.*?)\}(.*)/) {
+    while ($raw =~ /(.*?)\%\{(.*?)\}(.*)/) {
 	my($pre, $fieldname, $post) = ($1, $2, $3);
 	# warn "pre='$pre', fieldname='$fieldname', post='$post'";
 	$res .= $pre . insertField($fieldname, $marc, $newMarc);

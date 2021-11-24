@@ -9,7 +9,7 @@
         { "op": "stripDiacritics" },
         { "op": "regsub", "pattern": "[abc]", "replacement": "*", "flags": "g" }
       ],
-      "009": { "op": "regsub", "pattern": "([13579])", "replacement": "${245$a}", "flags": "g" }
+      "009": { "op": "regsub", "pattern": "([13579])", "replacement": "%{245$a}", "flags": "g" }
     }
   },
   "chunkSize": 1

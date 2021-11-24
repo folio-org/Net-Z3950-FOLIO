@@ -518,11 +518,11 @@ statement means nothing to you, you need to
 L<go and read about regular expressions|https://perldoc.perl.org/perlretut>.)
 
 Replacement strings may also include sequences of the form
-I<${fieldname}>, where I<fieldname> is either a simple control-field
+I<%{fieldname}>, where I<fieldname> is either a simple control-field
 tag such as C<001> or a field-and-subfield combination like
 C<245$a>. Such sequences cause the value of the specified field within
 the current record to be interpolated, so that for example a
-replacement string C<${001}/${245a}> will cause the text that matches
+replacement string C<%{001}/%{245a}> will cause the text that matches
 the regular expression to be replaced by the contents of the C<001>
 and C<245$a> fields separated by a slash.
 
@@ -535,14 +535,14 @@ item-level copy-number if that's present, but falling back to the
 holdings-level copy-number if not.)
 
   "952$2": [
-    { "op": "regsub", "pattern": "^$", "replacement": "${952$b}" }
+    { "op": "regsub", "pattern": "^$", "replacement": "%{952$b}" }
   ]
 
 Or a location string could be built in the C<$z> subfield from
 fragments in C<$1>, C<$2> and C<$2>:
 
   "952$z": [
-    { "op": "regsub", "pattern": ".*", "replacement": "${952$1}/${952$2}/${952$3}" }
+    { "op": "regsub", "pattern": ".*", "replacement": "%{952$1}/%{952$2}/%{952$3}" }
   ]
 
 

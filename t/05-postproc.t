@@ -114,7 +114,7 @@ BEGIN {
 		{
 		    op => 'regsub',
 		    pattern => 'a',
-		    replacement => 'foo${001}bar',
+		    replacement => 'foo%{001}bar',
 		}
 	    ]
 	  }, '999$z', 'wfoofirebarter', 'substituting field value'
@@ -125,7 +125,7 @@ BEGIN {
 		{
 		    op => 'regsub',
 		    pattern => '[aeiou]',
-		    replacement => '${999$z}',
+		    replacement => '%{999$z}',
 		    flags => 'g',
 		}
 	    ]
