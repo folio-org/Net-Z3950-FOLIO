@@ -1,3 +1,8 @@
+# Note that this test currently emits a harmless, though alarming, message:
+#	Unknown argument "limit" on field "T_instance.holdingsRecords2".
+# This is due to the Index Data FOLIO testing server being out of
+# date. It should be cleared up in early 2022.
+
 use strict;
 use warnings;
 use Test::More tests => 3;
