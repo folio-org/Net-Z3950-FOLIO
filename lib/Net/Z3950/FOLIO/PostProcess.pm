@@ -148,7 +148,8 @@ sub insertField {
     my($fieldname, $marc, $newMarc) = @_;
 
     return (fieldOrSubfield($newMarc, $fieldname) ||
-	    fieldOrSubfield($marc, $fieldname));
+	    fieldOrSubfield($marc, $fieldname) ||
+	    '');
 }
 
 
