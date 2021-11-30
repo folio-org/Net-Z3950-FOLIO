@@ -6,6 +6,7 @@
 * Add support for additional item-level fields (including `_copyNumber`) to be reported in MARC holdings. Fixes ZF-56.
 * Allow post-processing substitutions to interpolate field values using sequences of the form `%{245$a}`. Documentation is in the `replacement` section of [the configuration-file manual](doc/from-pod/Net-Z3950-FOLIO-Config.md). Fixes ZF-57.
 * New MARC fields/subfields come into existence when named in post-processing rules. Fixes ZF-59.
+* OPAC circulation-record `temporaryLocation` now reflects FOLIO "effective location" logic, including item-level permanent location as first fallback if item-level temporary location is absent. Fixes ZF-58.
 
 ## [2.4.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.4.0) (Tue Aug 24 15:33:57 BST 2021)
 

@@ -183,7 +183,7 @@ sub _makeSingleItemRecord {
         [ '_chronology', $item->{chronology} ],
         [ 'enumAndChron', $enumAndChronForItem ],
         [ 'midspine', undef ], # XXX Will be added in UIIN-220 but doesn't exist yet
-        [ 'temporaryLocation', _makeLocation($item->{temporaryLocation} || $defaultLocation) ],
+        [ 'temporaryLocation', _makeLocation($item->{temporaryLocation} || $item->{permanentLocation} || $defaultLocation) ],
 	[ '_permanentLocation', _makeLocation($item->{permanentLocation} || $defaultPermamentLocation) ],
         [ '_holdingsLocation', _makeLocation($defaultLocation) ],
         [ '_callNumber', $ecnc->{callNumber} ],
