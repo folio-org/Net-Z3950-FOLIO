@@ -130,7 +130,18 @@ BEGIN {
 		}
 	    ]
 	  }, '001', 'fwaterrwater', 'substituting multiple subfield values'
-
+	],
+	[ $marc, {
+	    '002' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
+	  }, '002', 'water', 'fallback for new control field'
+	],
+	[ $marc, {
+	    '999$y' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
+	  }, '999$y', 'water', 'fallback for subfield of existing field'
+	],
+	[ $marc, {
+	    '998$y' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
+	  }, '998$y', 'water', 'fallback for subfield of new field'
 	],
     );
 }

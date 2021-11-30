@@ -16,7 +16,8 @@ sub postProcessMARCRecord {
     my $newMarc = new MARC::Record();
     $newMarc->leader($marc->leader());
 
-    foreach my $field ($marc->fields()) {
+    my @fields = gatherFields($marc, $cfg);
+    foreach my $field (@fields) {
 	my $tag = $field->tag();
 
 	my $newField;
@@ -44,6 +45,47 @@ sub postProcessMARCRecord {
     }
 
     return $newMarc;
+}
+
+
+# For the new record we're creating, we need all the fields (with
+# their subfields) from the old record $marc, but also any that are
+# creates by the rules in $cfg. It's infuriating how we have to go all
+# about the houses to make this happen.
+#
+sub gatherFields {
+    my($marc, $cfg) = @_;
+
+    my %register;
+    foreach my $field ($marc->fields()) {
+	my $tag = $field->tag();
+	$register{$tag} = $field;
+    }
+
+    my @fields = $marc->fields();
+    foreach my $fieldname (sort keys %$cfg) {
+	my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
+	if (!$subtag) {
+	    if (!$register{$tag}) {
+		push @fields, new MARC::Field($tag, '');
+		#warn "added control-field $tag";
+	    }
+	} else {
+	    my $field = $register{$tag};
+	    if (!$field) {
+		$register{$tag} = new MARC::Field($tag, ' ', ' ', $subtag, '');
+		push @fields, $register{$tag};
+		#warn "added regular field $tag with empty $subtag";
+	    } else {
+		if (!$field->subfield($subtag)) {
+		    $field->add_subfields($subtag, '');
+		    #warn "added empty $subtag to regular field $tag";
+		}
+	    }
+	}
+    }
+
+    return @fields;
 }
 
 
