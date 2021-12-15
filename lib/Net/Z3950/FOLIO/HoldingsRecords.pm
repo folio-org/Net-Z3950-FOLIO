@@ -219,9 +219,16 @@ sub _format {
 }
 
 
+# Initially, the calculation here was just that an item is available
+# if it has a status and that status is 'Available'. But since there
+# is no way to directly represent item suppression in the Z39.50 OPAC
+# record, we also use this field for it: an item that is suppressed
+# from discovery is reported as unavailable. See ZF-60.
+#
 sub _makeAvailableNow {
     my($item) = @_;
 
+    return 0 if $item->{discoverySuppress};
     return $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
 }
 
