@@ -168,7 +168,7 @@ sub _makeSingleItemRecord {
     my $ecnc = $item->{effectiveCallNumberComponents} || {};
 
     return bless [
-	[ 'availableNow', $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0, 'value' ],
+	[ 'availableNow', _makeAvailableNow($item), 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
         [ 'availableThru', _makeAvailableThru($item) ],
         [ 'restrictions', _makeRestrictions($item) ],
@@ -216,6 +216,13 @@ sub _format {
     return undef if !defined $field007;
     my $data = $field007->data();
     return substr($data, 0, 2);
+}
+
+
+sub _makeAvailableNow {
+    my($item) = @_;
+
+    return $item->{status} && $item->{status}->{name} eq 'Available' ? 1 : 0;
 }
 
 
