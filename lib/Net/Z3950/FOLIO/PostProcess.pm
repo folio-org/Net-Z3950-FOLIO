@@ -25,23 +25,22 @@ sub postProcessMARCRecord {
 	    my $value = $field->data();
 	    my $rules = $cfg->{$tag};
 	    $value = transform($rules, $value, $marc, $newMarc) if $rules;
-	    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $value);
+	    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $value) if $value ne '';
 	} else {
 	    foreach my $subfield ($field->subfields()) {
 		my($key, $value) = @$subfield;
 		my $rules = $cfg->{"$tag\$$key"};
 		$value = transform($rules, $value, $marc, $newMarc) if $rules;
+		next if $value eq '';
 		if (!$newField) {
 		    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $key, $value);
 		} else {
 		    $newField->add_subfields($key, $value);
 		}
 	    }
-
-	    die "can't transform empty field", $field if !$newField;
 	}
 
-	$newMarc->append_fields($newField);
+	$newMarc->append_fields($newField) if $newField;
     }
 
     return $newMarc;

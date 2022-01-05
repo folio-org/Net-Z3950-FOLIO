@@ -133,15 +133,23 @@ BEGIN {
 	],
 	[ $marc, {
 	    '002' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
-	  }, '002', 'water', 'fallback for new control field'
+	  }, '002', 'water', 'creating new control field'
 	],
 	[ $marc, {
 	    '999$y' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
-	  }, '999$y', 'water', 'fallback for subfield of existing field'
+	  }, '999$y', 'water', 'creating subfield of existing field'
 	],
 	[ $marc, {
 	    '998$y' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$z}' } ]
-	  }, '998$y', 'water', 'fallback for subfield of new field'
+	  }, '998$y', 'water', 'creating subfield of new field'
+	],
+	[ $marc, {
+	    '002' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$x}' } ]
+	  }, '002', undef, 'not creating field by substituting empty value'
+	],
+	[ $marc, {
+	    '998$y' => [ { op => 'regsub', pattern => '^$', replacement => '%{999$x}' } ]
+	  }, '998$y', undef, 'not creating subfield by substituting empty value'
 	],
     );
 }
