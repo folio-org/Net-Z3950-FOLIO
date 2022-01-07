@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [2.5.0] (IN PROGRESS)
+## [2.5.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v2.5.0) (Fri  7 Jan 17:45:05 GMT 2022)
 
 * If `restrictToItem` is set, do not return a MARC holdings field for holdings records with no items. Fixes ZF-55.
 * Add support for additional item-level fields (including `_copyNumber`) to be reported in MARC holdings. Fixes ZF-56.
