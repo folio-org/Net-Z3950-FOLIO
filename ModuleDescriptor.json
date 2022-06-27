@@ -1,5 +1,5 @@
 {
-  "id": "mod-z3950-3.0.0",
+  "id": "mod-z3950-3.0.1",
   "name": "Z39.50/SRU/SRW server for FOLIO",
   "provides": [
     {
