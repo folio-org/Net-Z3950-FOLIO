@@ -1,2 +1,3 @@
-version=`perl -I lib -MNet::Z3950::FOLIO -e '$x = $Net::Z3950::FOLIO::VERSION; $x =~ s/.//; print $x'`
+set -ex
+version=`perl -ne 'if (/^our .VERSION = ..(.*).;$/) { print $1 }' lib/Net/Z3950/FOLIO.pm`;
 cat ${@+"$@"} | perl -npe 's/\${version}/'"$version"'/g; s/\${artifactId}/mod-z3950/g;'
