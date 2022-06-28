@@ -24,16 +24,19 @@ pipeline {
           script {
             def foliociLib = new org.folio.foliociCommands()
 
+            // create md
+            sh('./descriptors/transform-descriptor.pl descriptors/ModuleDescriptor-template.json > ModuleDescriptor.json')
+
             def mdJson = readJSON(file: env.modDescriptor)
             def modId = mdJson.id
-            env.name = sh(returnStdout: true, 
+            env.name = sh(returnStdout: true,
                  script: "echo ${modId} | cut -d '-' -f -2").trim()
-            env.bare_version = sh(returnStdout: true, 
+            env.bare_version = sh(returnStdout: true,
                  script: "echo ${modId} | cut -d '-' -f 3-").trim()
-        
-            // if release 
+
+            // if release
             if ( foliociLib.isRelease() ) {
-              env.isRelease = true 
+              env.isRelease = true
               env.dockerRepo = 'folioorg'
               env.version = env.bare_version
             }
@@ -43,10 +46,10 @@ pipeline {
             }
           }
         }
-        sendNotifications 'STARTED'  
+        sendNotifications 'STARTED'
       }
     }
-    
+
     stage('Build Docker') {
       steps {
         script {
@@ -55,12 +58,12 @@ pipeline {
             healthChk = 'no'
           }
         }
-      } 
+      }
     }
 
     stage('Publish Module Descriptor') {
       when {
-        anyOf { 
+        anyOf {
           branch 'master'
           expression { return env.isRelease }
         }
@@ -68,7 +71,7 @@ pipeline {
       steps {
         script {
           def foliociLib = new org.folio.foliociCommands()
-          foliociLib.updateModDescriptor(env.modDescriptor) 
+          foliociLib.updateModDescriptor(env.modDescriptor)
         }
         postModuleDescriptor(env.modDescriptor)
       }
@@ -79,8 +82,8 @@ pipeline {
   post {
     always {
       dockerCleanup()
-      sendNotifications currentBuild.result 
+      sendNotifications currentBuild.result
     }
   }
 }
-  
+
