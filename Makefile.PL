@@ -43,3 +43,20 @@ WriteMakefile(
          : ()
     ),
 );
+
+sub MY::postamble {
+    warn "VERSION=$VERSION, HOME=$HOME";
+    return qq[
+makemakerdflt: ModuleDescriptor.json
+
+ModuleDescriptor.json: descriptors/ModuleDescriptor-template.json
+	version=`sed -n "s/^our .VERSION = 'v\(.*\)';/\1/p" lib/Net/Z3950/FOLIO.pm`; echo $$version
+	echo HOME=$HOME VERSION=$VERSION PWD=$PWD
+	rm -rf $@; m4 $? > $@; chmod ugo-w $@
+
+clean :: removeModuleDescriptor
+
+removeModuleDescriptor:
+	rm -f ModuleDescriptor.json
+];
+}

@@ -1,5 +1,5 @@
 {
-  "id": "mod-z3950-3.0.1",
+  "id": "mod-z3950-${version}",
   "name": "Z39.50/SRU/SRW server for FOLIO",
   "provides": [
     {
@@ -17,11 +17,7 @@
   "requires": [
     {
       "id": "graphql",
-      "version": "1.2"
-    },
-    {
-      "id": "search",
-      "version": "0.8"
+      "version": "1.0"
     },
     {
       "id": "source-storage-source-records",
@@ -29,7 +25,7 @@
     }
   ],
   "launchDescriptor": {
-    "dockerImage": "mod-z3950:0.1.0",
+    "dockerImage": "mod-z3950:${version}",
     "dockerPull": false,
     "dockerArgs": {
       "HostConfig": {
