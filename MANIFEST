@@ -6,6 +6,8 @@ MANIFEST.SKIP
 Makefile.PL
 README.md
 bin/z2folio
+descriptors/ModuleDescriptor-template.json
+descriptors/transform-descriptor.pl
 doc/capabilities.md
 doc/from-pod/Makefile
 doc/from-pod/Net-Z3950-FOLIO-Config.md

@@ -43,3 +43,19 @@ WriteMakefile(
          : ()
     ),
 );
+
+sub MY::postamble {
+    return q[
+makemakerdflt: ModuleDescriptor.json
+
+ModuleDescriptor.json: descriptors/ModuleDescriptor-template.json ./descriptors/transform-descriptor.pl
+	rm -rf $@; 
+	./descriptors/transform-descriptor.pl $< > $@
+	chmod ugo-w $@
+
+clean :: removeModuleDescriptor
+
+removeModuleDescriptor:
+	rm -f ModuleDescriptor.json
+];
+}

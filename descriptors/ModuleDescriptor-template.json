@@ -1,5 +1,5 @@
 {
-  "id": "mod-z3950-3.0.1",
+  "id": "${artifactId}-${version}",
   "name": "Z39.50/SRU/SRW server for FOLIO",
   "provides": [
     {
@@ -29,7 +29,7 @@
     }
   ],
   "launchDescriptor": {
-    "dockerImage": "mod-z3950:0.1.0",
+    "dockerImage": "${artifactId}:${version}",
     "dockerPull": false,
     "dockerArgs": {
       "HostConfig": {
