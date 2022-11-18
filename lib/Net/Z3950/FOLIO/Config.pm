@@ -478,7 +478,7 @@ such as C<008>; or of complex field$subfield combinations, such as
 C<245$a>. The corresponding values specify the transformations that
 should be applied to the values of these fields and subfields: each
 value may be either a single transformation or an array zero or more
-=transformation which will be applied in the specified order.
+transformations which will be applied in the specified order.
 
 Transformations are represented by objects with an C<op> key whose
 values specifies the required operation.
