@@ -1,4 +1,4 @@
-FROM perl:5.20
+FROM perl:5.30
 WORKDIR /usr/src/app
 COPY . .
 RUN cpan XML::Simple
