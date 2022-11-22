@@ -16,6 +16,13 @@ sub postProcessMARCRecord {
     my $newMarc = new MARC::Record();
     $newMarc->leader($marc->leader());
 
+    my $getFieldFromRecord = sub {
+	my($fieldname) = @_;
+	return (fieldOrSubfield($newMarc, $fieldname) ||
+		fieldOrSubfield($marc, $fieldname) ||
+		'');
+    };
+
     my @fields = gatherFields($marc, $cfg);
     foreach my $field (@fields) {
 	my $tag = $field->tag();
@@ -24,13 +31,13 @@ sub postProcessMARCRecord {
 	if ($field->is_control_field())	{
 	    my $value = $field->data();
 	    my $rules = $cfg->{$tag};
-	    $value = transform($rules, $value, $marc, $newMarc) if $rules;
+	    $value = transform($rules, $value, $getFieldFromRecord) if $rules;
 	    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $value) if $value ne '';
 	} else {
 	    foreach my $subfield ($field->subfields()) {
 		my($key, $value) = @$subfield;
 		my $rules = $cfg->{"$tag\$$key"};
-		$value = transform($rules, $value, $marc, $newMarc) if $rules;
+		$value = transform($rules, $value, $getFieldFromRecord) if $rules;
 		next if $value eq '';
 		if (!$newField) {
 		    $newField = new MARC::Field($tag, $field->indicator(1), $field->indicator(2), $key, $value);
@@ -88,16 +95,29 @@ sub gatherFields {
 }
 
 
+sub fieldOrSubfield {
+    my($marc, $fieldname) = @_;
+
+    my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
+    if ($subtag) {
+	return $marc->subfield($tag, $subtag);
+    } else {
+	my $field = $marc->field($tag);
+	return $field ? $field->data() : undef;
+    }
+}
+
+
 sub transform {
-    my($cfg, $value, $marc, $newMarc) = @_;
+    my($cfg, $value, $getFieldFromRecord) = @_;
 
     if (ref $cfg eq 'HASH') {
 	# Single transformation
-	return applyRule($cfg, $value, $marc, $newMarc);
+	return applyRule($cfg, $value, $getFieldFromRecord);
     } else {
 	# List of transformations
 	foreach my $rule (@$cfg) {
-	    $value = applyRule($rule, $value, $marc, $newMarc);
+	    $value = applyRule($rule, $value, $getFieldFromRecord);
 	}
 	return $value;
     }
@@ -105,13 +125,13 @@ sub transform {
 
 
 sub applyRule {
-    my($rule, $value, $marc, $newMarc) = @_;
+    my($rule, $value, $getFieldFromRecord) = @_;
 
     my $op = $rule->{op};
     if ($op eq 'stripDiacritics') {
 	return applyStripDiacritics($rule, $value);
     } elsif ($op eq 'regsub') {
-	return applyRegsub($rule, $value, $marc, $newMarc);
+	return applyRegsub($rule, $value, $getFieldFromRecord);
     } else {
 	die "unknown post-processing op '$op'";
     }
@@ -144,14 +164,14 @@ sub applyStripDiacritics {
 
 
 sub applyRegsub {
-    my($rule, $value, $marc, $newMarc) = @_;
+    my($rule, $value, $getFieldFromRecord) = @_;
 
     my $pattern = $rule->{pattern};
     my $rawReplacement = $rule->{replacement};
     my $flags = $rule->{flags} || "";
     my $res = $value;
 
-    my $replacement = substituteReplacement($rawReplacement, $marc, $newMarc);
+    my $replacement = substituteReplacement($rawReplacement, $getFieldFromRecord);
 
     # See advice on this next part at https://perlmonks.org/?node_id=11124218
     # In this approach, we construct some Perl code and evaluate it.
@@ -165,45 +185,18 @@ sub applyRegsub {
 
 
 sub substituteReplacement {
-    my($raw, $marc, $newMarc) = @_;
+   my($raw, $getFieldFromRecord) = @_;
 
     my $res = '';
     while ($raw =~ /(.*?)\%\{(.*?)\}(.*)/) {
 	my($pre, $fieldname, $post) = ($1, $2, $3);
 	# warn "pre='$pre', fieldname='$fieldname', post='$post'";
-	$res .= $pre . insertField($fieldname, $marc, $newMarc);
+	$res .= $pre . &$getFieldFromRecord($fieldname);
 	$raw = $post;
     }
     $res .= $raw;
 
     return $res;
-}
-
-
-# As usual, we have to deal with the complication that $fieldname
-# might be simply of the form /\d\d\d/ for a control-field or
-# /\d\d\d\$./ for a subfield of a regular field. To make things more
-# complex still, we want the value of field-or-subfield from $newMarc
-# if it already exists there, and from the old $marc otherwise.
-sub insertField {
-    my($fieldname, $marc, $newMarc) = @_;
-
-    return (fieldOrSubfield($newMarc, $fieldname) ||
-	    fieldOrSubfield($marc, $fieldname) ||
-	    '');
-}
-
-
-sub fieldOrSubfield {
-    my($marc, $fieldname) = @_;
-
-    my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
-    if ($subtag) {
-	return $marc->subfield($tag, $subtag);
-    } else {
-	my $field = $marc->field($tag);
-	return $field ? $field->data() : undef;
-    }
 }
 
 
