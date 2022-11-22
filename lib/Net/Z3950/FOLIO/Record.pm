@@ -30,6 +30,11 @@ sub id {
     return $id;
 }
 
+sub rs {
+    my $this = shift();
+    return $this->{rs};
+}
+
 sub jsonStructure {
     my $this = shift();
     return $this->{json};
