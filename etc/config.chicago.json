@@ -4,7 +4,7 @@
     "tenant": "uchicago"
   },
   "login": {
-    "username": "${OKAPI_USER-uchicago_admin}",
+    "username": "${OKAPI_USER-edgeZ3950}",
     "password": "${OKAPI_CHICAGO_PASSWORD}"
   },
   "indexMap": {
