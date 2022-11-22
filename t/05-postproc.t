@@ -157,7 +157,7 @@ BEGIN {
 use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
-use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord fieldOrSubfield);
+use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord marcFieldOrSubfield);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
@@ -191,7 +191,7 @@ foreach my $transformTest (@transformTests) {
 foreach my $postProcessTest (@postProcessTests) {
     my($marc, $cfg, $field, $expected, $caption) = @$postProcessTest;
     my $newMarc = postProcessMARCRecord($cfg, $marc);
-    my $got = fieldOrSubfield($newMarc, $field);
+    my $got = marcFieldOrSubfield($newMarc, $field);
     is($got, $expected, "postProcessMARCRecord field $field ($caption)");
 }
 

@@ -18,12 +18,12 @@ sub postProcessMARCRecord {
 
     my $getFieldFromRecord = sub {
 	my($fieldname) = @_;
-	return (fieldOrSubfield($newMarc, $fieldname) ||
-		fieldOrSubfield($marc, $fieldname) ||
+	return (marcFieldOrSubfield($newMarc, $fieldname) ||
+		marcFieldOrSubfield($marc, $fieldname) ||
 		'');
     };
 
-    my @fields = gatherFields($marc, $cfg);
+    my @fields = gatherMarcFields($marc, $cfg);
     foreach my $field (@fields) {
 	my $tag = $field->tag();
 
@@ -56,10 +56,10 @@ sub postProcessMARCRecord {
 
 # For the new record we're creating, we need all the fields (with
 # their subfields) from the old record $marc, but also any that are
-# creates by the rules in $cfg. It's infuriating how we have to go all
+# created by the rules in $cfg. It's infuriating how we have to go all
 # about the houses to make this happen.
 #
-sub gatherFields {
+sub gatherMarcFields {
     my($marc, $cfg) = @_;
 
     my %register;
@@ -95,7 +95,7 @@ sub gatherFields {
 }
 
 
-sub fieldOrSubfield {
+sub marcFieldOrSubfield {
     my($marc, $fieldname) = @_;
 
     my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
@@ -201,7 +201,7 @@ sub substituteReplacement {
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(postProcess postProcessMARCRecord transform applyRule applyStripDiacritics applyRegsub fieldOrSubfield);
+our @EXPORT_OK = qw(postProcess postProcessMARCRecord transform applyRule applyStripDiacritics applyRegsub marcFieldOrSubfield);
 
 
 1;
