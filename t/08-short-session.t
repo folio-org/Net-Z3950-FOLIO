@@ -17,10 +17,10 @@ SKIP: {
     if ($pid == 0) {
 	# Child
 	sleep 1; # Allow time for server to start up
-	exec 'zoomsh -e "open @:9996/indexdata|marcHoldings" "find @attr 1=12 b1623923" "set preferredRecordSyntax usmarc" "show 1" quit 1>&2';
+	exec 'zoomsh -e "open @:9996/snapshot|marcHoldings" "find @attr 1=12 inst000000000024" "set preferredRecordSyntax usmarc" "show 1" quit 1>&2';
     }
 
-    $ENV{OKAPI_INDEXDATA_PASSWORD} = 'Mike92!test96';
+    $ENV{OKAPI_SNAPSHOT_PASSWORD} = 'admin';
     my $service = new Net::Z3950::FOLIO('etc/config');
     ok(defined $service, 'created service');
     $service->launch_server('z2folio', '-1', '@:9996');
