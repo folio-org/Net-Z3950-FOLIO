@@ -154,10 +154,12 @@ BEGIN {
     );
 }
 
-use Test::More tests => 1 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
+use Test::More tests => 2 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
 
-BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess') };
-use Net::Z3950::FOLIO::PostProcess qw(applyStripDiacritics applyRegsub applyRule transform postProcessMARCRecord marcFieldOrSubfield);
+BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess::Transform') };
+use Net::Z3950::FOLIO::PostProcess::Transform qw(applyStripDiacritics applyRegsub applyRule transform);
+BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess::MARC') };
+use Net::Z3950::FOLIO::PostProcess::MARC qw(postProcessMARCRecord marcFieldOrSubfield);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;

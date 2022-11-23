@@ -8,7 +8,7 @@ use XML::Simple;
 
 use Net::Z3950::FOLIO::HoldingsRecords qw(makeHoldingsRecords);
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
-use Net::Z3950::FOLIO::PostProcess qw(postProcessMARCRecord);
+use Net::Z3950::FOLIO::PostProcess::MARC qw(postProcessMARCRecord);
 
 
 sub new {
