@@ -59,9 +59,9 @@ removeModuleDescriptor:
 	rm -f ModuleDescriptor.json
 
 regen:
-	zoomsh 'open @:9997/chicago' 'find @attr 1=12 20890' 'set preferredRecordSyntax opac' 'show 0' quit > REGRESSION
+	zoomsh 'open @:9997/chicago' 'find @attr 1=12 6266559' 'set preferredRecordSyntax opac' 'show 0' quit > REGRESSION
 
 regress:
-	zoomsh 'open @:9997/chicago' 'find @attr 1=12 20890' 'set preferredRecordSyntax opac' 'show 0' quit | diff REGRESSION -
+	zoomsh 'open @:9997/chicago' 'find @attr 1=12 6266559' 'set preferredRecordSyntax opac' 'show 0' quit | diff REGRESSION -
 ];
 }
