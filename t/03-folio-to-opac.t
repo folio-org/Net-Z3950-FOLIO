@@ -23,6 +23,7 @@ use Cpanel::JSON::XS qw(decode_json);
 use Test::More tests => 3;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
+use DummyRecord;
 
 # Values taken from some random USMARC record
 my $dummyMarc = makeDummyMarc();
@@ -62,46 +63,3 @@ sub readFile {
     $fh->close();
     return $data;
 }
-
-
-package DummyResultSet;
-
-sub new {
-    my $class = shift();    
-    return bless {
-    }, $class;
-}
-
-sub session {
-    return {
-	cfg => {} # XXX fill this in
-    };
-}
-
-
-package DummyRecord;
-
-use Net::Z3950::FOLIO::HoldingsRecords qw(makeHoldingsRecords);
-
-sub new {
-    my $class = shift();
-    my($folioHoldings, $marc) = @_;
-
-    return bless {
-	rs => new DummyResultSet(),
-	folioHoldings => $folioHoldings,
-	marc => $marc,
-    }, $class;
-}
-
-sub rs { return shift()->{rs} }
-sub jsonStructure { return shift()->{folioHoldings} }
-sub marcRecord { return shift()->{marc} }
-
-sub holdings {
-    my $this = shift();
-    my($marc) = @_;
-
-    return makeHoldingsRecords($this, $marc)
-};
-
