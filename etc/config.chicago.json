@@ -36,7 +36,7 @@
         "callNumber": {
           "op": "regsub",
           "pattern": "(.*)",
-          "replacement": "%{nucCode}/$1/%{copyNumber}"
+          "replacement": "%{_callNumberPrefix}$1%{_callNumberSuffix}"
         }
       },
       "circulation": {
