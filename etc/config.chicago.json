@@ -29,5 +29,23 @@
       "y": "_yearCaption",
       "c": "_chronology"
     }
+  },
+  "postProcessing": {
+    "opac": {
+      "holding": {
+        "callNumber": {
+          "op": "regsub",
+          "pattern": "(.*)",
+          "replacement": "pre/$1/post"
+        }
+      },
+      "circulation": {
+        "itemId": {
+          "op": "regsub",
+          "pattern": "^",
+          "replacement": "item #"
+        }
+      }
+    }
   }
 }
