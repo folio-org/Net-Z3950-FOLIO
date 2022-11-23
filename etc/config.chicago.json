@@ -36,14 +36,14 @@
         "callNumber": {
           "op": "regsub",
           "pattern": "(.*)",
-          "replacement": "pre/$1/post"
+          "replacement": "%{nucCode}/$1/%{copyNumber}"
         }
       },
       "circulation": {
         "itemId": {
           "op": "regsub",
-          "pattern": "^",
-          "replacement": "item #"
+          "pattern": "$",
+          "replacement": "/%{_enumeration}"
         }
       }
     }
