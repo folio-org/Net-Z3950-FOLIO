@@ -44,12 +44,15 @@ etc/folio2opac.xsl
 etc/instances.graphql-query
 etc/mod-search.graphql-query
 etc/yazgfs.xml
+lib/DummyRecord.pm
 lib/Net/Z3950/FOLIO.pm
 lib/Net/Z3950/FOLIO/Config.pm
 lib/Net/Z3950/FOLIO/HoldingsRecords.pm
 lib/Net/Z3950/FOLIO/MARCHoldings.pm
 lib/Net/Z3950/FOLIO/OPACXMLRecord.pm
-lib/Net/Z3950/FOLIO/PostProcess.pm
+lib/Net/Z3950/FOLIO/PostProcess/MARC.pm
+lib/Net/Z3950/FOLIO/PostProcess/OPAC.pm
+lib/Net/Z3950/FOLIO/PostProcess/Transform.pm
 lib/Net/Z3950/FOLIO/RPN.pm
 lib/Net/Z3950/FOLIO/Record.pm
 lib/Net/Z3950/FOLIO/ResultSet.pm
