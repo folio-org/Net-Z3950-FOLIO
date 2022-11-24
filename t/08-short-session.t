@@ -21,9 +21,10 @@ SKIP: {
 	$service->launch_server('z2folio', '-1', '-f', 't/data/config/yazgfs-9996.xml');
     }
 
-    # Child
+    # Parent
     sleep 1; # Allow time for server to start up
     ok(1, 'waited for service');
-    system 'zoomsh -e "open @:9996/snapshot|marcHoldings" "find @attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 1>&2';
-    ok(1, 'run a session');
+    my $res = `zoomsh -e "open \@:9996/snapshot|marcHoldings" "find \@attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
+    ok(1, 'ran a session');
+    print qq[res=[$res]];
 }
