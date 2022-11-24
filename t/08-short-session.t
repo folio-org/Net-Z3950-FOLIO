@@ -16,13 +16,14 @@ SKIP: {
 
     if ($pid == 0) {
 	# Child
-	sleep 1; # Allow time for server to start up
-	exec 'zoomsh -e "open @:9996/snapshot|marcHoldings" "find @attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 1>&2';
+	$ENV{OKAPI_SNAPSHOT_PASSWORD} = 'admin';
+	my $service = new Net::Z3950::FOLIO('etc/config');
+	$service->launch_server('z2folio', '-1', '-f', 't/data/config/yazgfs-9996.xml');
     }
 
-    $ENV{OKAPI_SNAPSHOT_PASSWORD} = 'admin';
-    my $service = new Net::Z3950::FOLIO('etc/config');
-    ok(defined $service, 'created service');
-    $service->launch_server('z2folio', '-1', '-f', 't/data/config/yazgfs-9996.xml');
-    ok(1, 'served a session');
+    # Child
+    sleep 1; # Allow time for server to start up
+    ok(1, 'waited for service');
+    system 'zoomsh -e "open @:9996/snapshot|marcHoldings" "find @attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 1>&2';
+    ok(1, 'run a session');
 }
