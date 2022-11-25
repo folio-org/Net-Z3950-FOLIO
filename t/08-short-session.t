@@ -5,7 +5,10 @@
 
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 5;
+use Test::Differences;
+oldstyle_diff;
+
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 
 SKIP: {
@@ -26,5 +29,25 @@ SKIP: {
     ok(1, 'waited for service');
     my $res = `zoomsh -e "open \@:9996/snapshot|marcHoldings" "find \@attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
     ok(1, 'ran a session');
-    print qq[res=[$res]];
+    my @lines = split("\n", $res);
+    shift(@lines); # remove "@:9996/snapshot|marcHoldings: 1 hits"
+    shift(@lines); # remove "0 database= syntax=OPAC schema=unknown"
+    $res = join("\n", @lines) . "\n";
+    ok(1, 'extracted OPAC XML');
+
+    my $expectedFile = 'in00000000007-opac.xml';
+    my $expected = readFile("t/data/fetch/$expectedFile");
+    eq_or_diff($res, $expected, "OPAC record matches expected value ($expectedFile)");
+    exit;
+}
+
+
+sub readFile {
+    my($fileName) = @_;
+
+    my $fh = IO::File->new();
+    $fh->open("<$fileName") or die "can't read '$fileName': $!";
+    my $data = join('', <$fh>);
+    $fh->close();
+    return $data;
 }
