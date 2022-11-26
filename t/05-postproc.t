@@ -14,10 +14,52 @@ sub makeMarcRecord {
     return $marc;
 }
 
+sub makeHoldings {
+  return [
+    bless([
+      ['typeOfRecord', 'n'],
+      ['encodingLevel', '1'],
+      ['format', 'cr'],
+      ['receiptAcqStatus', '3'],
+      ['generalRetention', '|'],
+      ['completeness', 'a'],
+      ['nucCode', "xeno"],
+      ['localLocation', 'Online'],
+      ['shelvingLocation', 'Online'],
+      ['_callNumberPrefix', 'f'],
+      ['callNumber', '123.456'],
+      ['_callNumberSuffix', 'b'],
+      ['circulations', []],
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::holding'),
+    bless([
+      ['nucCode', "bronto"],
+    ], 'Net::z3950::FOLIO::OPACXMLRecord::holding'),
+  ];
+}
+
+sub opacFieldOrSubfield {
+    my($holdings, $field) = @_;
+
+    my($n, $rest) = split(/\./, $field);
+    my $holding = $holdings->[$n];
+    for (my $i = 0; $i < @$holding; $i++) {
+	my $entry = $holding->[$i];
+	my($name, $value) = @$entry;
+	return $value if $name eq $rest;
+    }
+
+    return undef;
+}
 
 BEGIN {
     binmode(STDOUT, "encoding(UTF-8)");
-    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests @postProcessTests);
+    use vars qw(@stripDiacriticsTests @regsubTests @applyRuleTests @transformTests @postProcessMarcTests @postProcessHoldingsTests);
+    my $censorVowels = {
+	op => 'regsub',
+	pattern => '[aeiou]',
+	replacement => '*',
+	flags => 'g',
+    };
     @stripDiacriticsTests = (
 	# value, expected, caption
 	[ 'water', 'water', 'null transformation' ],
@@ -58,28 +100,18 @@ BEGIN {
     @applyRuleTests = (
 	# value, rule, expected, caption
 	[ 'expérience', { op => 'stripDiacritics' }, 'experience', 'stripDiacritics e-acute' ],
-	[ 'expérience', {
-	    op => 'regsub',
-	    pattern => '[aeiou]',
-	    replacement => '*',
-	    flags => 'g',
-	  }, '*xpér**nc*', 'regsub s/[aeiou]/*/g' ],
+	[ 'expérience', $censorVowels, '*xpér**nc*', 'regsub s/[aeiou]/*/g' ],
     );
     @transformTests = (
 	# value, ruleset, expected, caption
 	@applyRuleTests, # Check that single rules also work as rulesets
 	[ 'expérience', [
 	    { op => 'stripDiacritics' },
-	    {
-		op => 'regsub',
-		pattern => '[aeiou]',
-		replacement => '*',
-		flags => 'g',
-	    },
+	      $censorVowels,
 	], '*xp*r**nc*', 'stripDiacritics and regsub' ],
     );
     my $marc = makeMarcRecord();
-    @postProcessTests = (
+    @postProcessMarcTests = (
 	# MARC record, ruleset, field, expected, caption
 	[ $marc, {}, '001', 'fire', 'null transformation on control field' ],
 	[ $marc, {}, '999$z', 'water', 'null transformation on subfield' ],
@@ -152,14 +184,44 @@ BEGIN {
 	  }, '998$y', undef, 'not creating subfield by substituting empty value'
 	],
     );
+    my $holdings = makeHoldings();
+    @postProcessHoldingsTests = (
+	# OPAC record, ruleset, field, expected, caption
+	[ $holdings, {}, '0.nucCode', 'xeno', 'null transformation on holdings field' ],
+	[ $holdings, {
+	    holding => { nucCode => $censorVowels }
+	  }, '0.nucCode', 'x*n*', 'substitution on holdings field'
+	],
+	[ $holdings, {
+	    holding => { nucCode => $censorVowels }
+	  }, '1.nucCode', 'br*nt*', 'substitition on second holding'
+	],
+	[ $holdings, {
+	    holding => {
+		callNumber => {
+		    op => 'regsub',
+		    pattern => '(.*)',
+		    replacement => '%{_callNumberPrefix}%{callNumber}%{_callNumberSuffix}',
+		}
+	    }
+	  }, '0.callNumber', 'f123.456b', 'add prefix/suffix to call-number'
+	],
+    );
 }
 
-use Test::More tests => 2 + @stripDiacriticsTests + @regsubTests + @applyRuleTests + @transformTests + @postProcessTests;
+use Test::More tests => 3 + (@stripDiacriticsTests +
+			     @regsubTests +
+			     @applyRuleTests +
+			     @transformTests +
+			     @postProcessMarcTests +
+			     @postProcessHoldingsTests);
 
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess::Transform') };
 use Net::Z3950::FOLIO::PostProcess::Transform qw(applyStripDiacritics applyRegsub applyRule transform);
 BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess::MARC') };
 use Net::Z3950::FOLIO::PostProcess::MARC qw(postProcessMARCRecord marcFieldOrSubfield);
+BEGIN { use_ok('Net::Z3950::FOLIO::PostProcess::OPAC') };
+use Net::Z3950::FOLIO::PostProcess::OPAC qw(postProcessHoldings);
 
 foreach my $stripDiacriticsTest (@stripDiacriticsTests) {
     my($value, $expected, $caption) = @$stripDiacriticsTest;
@@ -190,10 +252,16 @@ foreach my $transformTest (@transformTests) {
     is($got, $expected, "transform '$value' ($caption)");
 }
 
-foreach my $postProcessTest (@postProcessTests) {
-    my($marc, $cfg, $field, $expected, $caption) = @$postProcessTest;
+foreach my $postProcessMarcTest (@postProcessMarcTests) {
+    my($marc, $cfg, $field, $expected, $caption) = @$postProcessMarcTest;
     my $newMarc = postProcessMARCRecord($cfg, $marc);
     my $got = marcFieldOrSubfield($newMarc, $field);
     is($got, $expected, "postProcessMARCRecord field $field ($caption)");
 }
 
+foreach my $postProcessHoldingsTest (@postProcessHoldingsTests) {
+    my($holdings, $cfg, $field, $expected, $caption) = @$postProcessHoldingsTest;
+    my $newHoldings = postProcessHoldings($cfg, $holdings);
+    my $got = opacFieldOrSubfield($newHoldings, $field);
+    is($got, $expected, "postProcessHoldings field $field ($caption)");
+}
