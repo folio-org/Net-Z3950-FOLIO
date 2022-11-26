@@ -197,6 +197,13 @@ BEGIN {
 	  }, '1.nucCode', 'br*nt*', 'substitition on second holding'
 	],
 	[ $holdings, {
+	    holding => { localLocation => [
+		$censorVowels,
+		{ op => 'regsub', pattern => '(n.)', replacement => '$1$1' }
+            ] }
+	  }, '0.localLocation', 'Onlnl*n*', 'double substitition on holdings'
+	],
+	[ $holdings, {
 	    holding => {
 		callNumber => {
 		    op => 'regsub',
