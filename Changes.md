@@ -3,6 +3,7 @@
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (IN PROGRESS)
 
 * Generate ModuleDescriptor from template, avoiding the possibility of its version-number getting out of sync with that of `lib/Net/Z3950/FOLIO.pm`. Fixes ZF-64.
+* Use SSL for indexdata.asc to prevent supply-chain MitM attack. Fixes ZF-69.
 
 ## [3.0.1](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.0.1) (Mon 27 Jun 13:26:46 BST 2022)
 
