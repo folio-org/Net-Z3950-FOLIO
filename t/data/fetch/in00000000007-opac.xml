@@ -1,75 +1,53 @@
 <opacRecord>
   <bibliographicRecord>
-03209nam a2200565Ia 4500
+02961nas a22004215i 4500
 001 in00000000007
-006 m        d f      
-007 cr bn|||||||||
-008 081205r19851985dcuacf  sb   f001 0aeng d
-005 20221124094446.9
-040    $a GPO $c GPO $d MvI
-074    $a 0338-B-01 (online)
-086 0  $a D 103.43/2:4
-100 1  $a Owen, Thomas James.
-245 10 $a "Dear friends at home--." $h [electronic resource] : $b the letters and diary of Thomas James Owen, Fiftieth New York Volunteer Engineer Regiment, during the Civil War / $c edited and with an introduction by Dale E. Floyd.
-260    $a Washington, DC : $b Historical Division, Office of Administrative Services, Office of the Chief of Engineers, $c [1985]
-300    $a xvii, 124 p., [1] leaf of plates : $b ill., ports. ; $c 23 cm.
-490 1  $a Engineer historical studies ; $v no. 4
-490 1  $a EP ; $v 870-1-16test17
-538    $a Mode of access: Internet from the USACE web site. Address as of 12/04/2008: http://www.usace.army.mil/publications/eng-pamphlets/ep870-1-16/entire.pdf ; current access available via PURL.
-500    $a Title from title screen (viewed Dec. 4, 2008).
-500    $a "January 1985."
-504    $a Includes bibliographical references and index.
-600 10 $a Owen, Thomas James $v Correspondence.
-600 10 $a Owen, Thomas James $v Diaries.
-610 10 $a United States. $b Army. $b New York Infantry Regiment, 50th (1861)
-650  0 $a Soldiers $z New York (State) $v Biography.
-651  0 $a New York (State) $x History $y Civil War, 1861-1865 $v Personal narratives.
-651  0 $a United States $x History $y Civil War, 1861-1865 $v Personal narratives.
-600 17 $a Owen, Thomas James. $2 fast $0 http://id.worldcat.org/fast/fst00148314
-610 17 $a United States. $b Army. $b New York Infantry Regiment, 50th (1861) $2 fast $0 http://id.worldcat.org/fast/fst01899356
-611 27 $a American Civil War (1861-1865) $2 fast $0 http://id.worldcat.org/fast/fst01351658
-650  7 $a Soldiers. $2 fast $0 http://id.worldcat.org/fast/fst01125233
-651  7 $a New York (State) $2 fast $0 http://id.worldcat.org/fast/fst01210280
-651  7 $a United States. $2 fast $0 http://id.worldcat.org/fast/fst01204155
-648  7 $a 1861-1865 $2 fast
-655  7 $a Biography. $2 fast $0 http://id.worldcat.org/fast/fst01423686
-655  7 $a Diaries. $2 fast $0 http://id.worldcat.org/fast/fst01423794
-655  7 $a History. $2 fast $0 http://id.worldcat.org/fast/fst01411628
-655  7 $a Personal narratives. $2 fast $0 http://id.worldcat.org/fast/fst01423843
-655  7 $a Records and correspondence. $2 fast $0 http://id.worldcat.org/fast/fst01423917
-776 0  $a Owen, Thomas James. $t Dear friends at home $h xvii, 124 p., [1] leaf of plates $w (DLC) 85601539 $w (OCoLC)11797227
-700 1  $a Floyd, Dale E.
-710 1  $a United States. $b Army. $b Corps of Engineers. $b Historical Division.
-830  0 $a EP (Washingtopn, D.C.) ; $v 870-1-16.
-830  0 $a Engineer historical studies ; $v no. 4
-856 40 $u http://purl.access.gpo.gov/GPO/LPS106088
-903    $a GPO Documents w/o Shelves
-999 ff $s b9035ab9-9e0f-4cb9-8bdb-9f01b5498d93 $i 360cd564-51a2-42d6-968e-a22def93f4bb
-952    $2 22 $5 it00000000031 $6 ec3f06bd-796b-4eaf-882d-b570b7fa7697 $L Main Library $b 22 $l Main Library
+005 20200731144048.0
+007 cr nn 008mamaa
+008 150723s||||||||au uu poo||||||   b|EN |d
+022    $a 1436-5065
+024 7  $a 703 $2 local
+035    $a (DE-He213)1436-5065
+210 10 $a Meteorol Atmos Phys
+245 10 $a Meteorology and Atmospheric Physics $h [electronic resource] / $c edited by Clemens Simmer.
+247 00 $a Archives for meteorology, geophysics, and bioclimatology, Series A, Meteorology and atmospheric physics
+247 00 $a Meteorology and geophysics
+247 00 $a Archiv für Meteorologie, Geophysik und Bioklimatologie,Ser. A, Meteorologie und Geophysik
+247 00 $a Archives for meteorology, geophysics, and bioclimatology / A
+247 00 $a Meteorology and atmospheric physics
+264  1 $a Vienna : $b Springer Vienna : $b Imprint: Springer.
+300    $b online resource.
+520    $a Meteorology and Atmospheric Physics accepts original research papers for publication following the recommendations of a review panel. The emphasis lies with the following topic areas: - atmospheric dynamics and general circulation; - synoptic meteorology; - weather systems in specific regions, such as the tropics, the polar caps, the oceans; - atmospheric energetics; - numerical modeling and forecasting; - physical and chemical processes in the atmosphere, including radiation, optical effects, electricity, and atmospheric turbulence and transport processes; - mathematical and statistical techniques applied to meteorological data sets Meteorology and Atmospheric Physics discusses physical and chemical processes - in both clear and cloudy atmospheres - including radiation, optical and electrical effects, precipitation and cloud microphysics.
+650  0 $a Meteorology.
+650  0 $a Atmospheric sciences.
+650  0 $a Environmental sciences.
+650  0 $a Environmental pollution.
+650  0 $a Water pollution.
+650 14 $a Atmospheric Sciences. $0 https://scigraph.springernature.com/ontologies/product-market-codes/G36000
+650 24 $a Meteorology. $0 https://scigraph.springernature.com/ontologies/product-market-codes/312000
+650 24 $a Math. Appl. in Environmental Science. $0 https://scigraph.springernature.com/ontologies/product-market-codes/U24005
+650 24 $a Terrestrial Pollution. $0 https://scigraph.springernature.com/ontologies/product-market-codes/U35030
+650 24 $a Waste Water Technology / Water Pollution Control / Water Management / Aquatic Pollution. $0 https://scigraph.springernature.com/ontologies/product-market-codes/U35040
+700 1  $a Simmer, Clemens. $e editor. $4 edt $4 http://id.loc.gov/vocabulary/relators/edt
+710 2  $a SpringerLink (Online service)
+776 08 $i Printed version:  $x 0177-7971
+856 40 $u http://link.springer.com/journal/703 $z Hybrid
+950    $b Earth and Environmental Science
+999 ff $s 5859d725-5245-48b1-b6b9-941a0887635e $i f0491e38-10f4-45d4-9e77-81d4c062fc2e
 
   </bibliographicRecord>
 <holdings>
  <holding>
   <typeOfRecord>n</typeOfRecord>
-  <encodingLevel>3</encodingLevel>
+  <encodingLevel>1</encodingLevel>
   <format>cr</format>
-  <receiptAcqStatus>5</receiptAcqStatus>
-  <generalRetention>1</generalRetention>
-  <completeness>d</completeness>
-  <dateOfReport>   f00</dateOfReport>
+  <receiptAcqStatus>3</receiptAcqStatus>
+  <generalRetention>|</generalRetention>
+  <completeness>a</completeness>
+  <dateOfReport>||||| </dateOfReport>
   <nucCode>Københavns Universitet</nucCode>
-  <localLocation>Datalogisk Institut</localLocation>
-  <shelvingLocation>Main Library</shelvingLocation>
-  <circulations>
-   <circulation>
-    <availableNow value="0"/>
-    <restrictions>Missing</restrictions>
-    <itemId>22</itemId>
-    <renewable value="0"/>
-    <onHold value="0"/>
-    <temporaryLocation>Main Library</temporaryLocation>
-   </circulation>
-  </circulations>
+  <localLocation>Online</localLocation>
+  <shelvingLocation>Online</shelvingLocation>
  </holding>
 </holdings>
 </opacRecord>

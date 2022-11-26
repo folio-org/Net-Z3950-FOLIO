@@ -27,7 +27,7 @@ SKIP: {
     # Parent
     sleep 1; # Allow time for server to start up
     ok(1, 'waited for service');
-    my $res = `zoomsh -e "open \@:9996/indexdata|marcHoldings" "find \@attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
+    my $res = `zoomsh -e "open \@:9996/indexdata|marcHoldings" "find \@attr 1=12 in00000000007" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
     ok(1, 'ran a session');
     my @lines = split("\n", $res);
     shift(@lines); # remove "@:9996/snapshot|marcHoldings: 1 hits"
