@@ -19,7 +19,7 @@ SKIP: {
 
     if ($pid == 0) {
 	# Child
-	$ENV{OKAPI_SNAPSHOT_PASSWORD} = 'admin';
+	$ENV{OKAPI_INDEXDATA_PASSWORD} = 'swordfish';
 	my $service = new Net::Z3950::FOLIO('etc/config');
 	$service->launch_server('z2folio', '-1', '-f', 't/data/config/yazgfs-9996.xml');
     }
@@ -27,7 +27,7 @@ SKIP: {
     # Parent
     sleep 1; # Allow time for server to start up
     ok(1, 'waited for service');
-    my $res = `zoomsh -e "open \@:9996/snapshot|marcHoldings" "find \@attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
+    my $res = `zoomsh -e "open \@:9996/indexdata|marcHoldings" "find \@attr 1=12 in00000000006" "set preferredRecordSyntax opac" "show 0" quit 2>&1`;
     ok(1, 'ran a session');
     my @lines = split("\n", $res);
     shift(@lines); # remove "@:9996/snapshot|marcHoldings: 1 hits"
