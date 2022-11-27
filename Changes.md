@@ -3,6 +3,7 @@
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (IN PROGRESS)
 
 * Generate ModuleDescriptor from template, avoiding the possibility of its version-number getting out of sync with that of `lib/Net/Z3950/FOLIO.pm`. Fixes ZF-64.
+* Extend post-processing capabilities to OPACXML records. Fixes ZF-68.
 
 ## [3.0.1](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.0.1) (Mon 27 Jun 13:26:46 BST 2022)
 
