@@ -29,7 +29,12 @@ sub makeHoldings {
       ['_callNumberPrefix', 'f'],
       ['callNumber', '123.456'],
       ['_callNumberSuffix', 'b'],
-      ['circulations', []],
+      ['circulations', [
+	   bless([
+	       ['itemId', '1234567890'],
+	       ['enumAndChron', 'Spring edition'],
+	   ], 'Net::z3950::FOLIO::OPACXMLRecord::item'),
+      ]],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::holding'),
     bless([
       ['nucCode', "bronto"],
@@ -40,12 +45,14 @@ sub makeHoldings {
 sub opacFieldOrSubfield {
     my($holdings, $field) = @_;
 
-    my($n, $rest) = split(/\./, $field);
+    my($n, $wanted, $rest) = split(/\./, $field, 3);
     my $holding = $holdings->[$n];
     for (my $i = 0; $i < @$holding; $i++) {
 	my $entry = $holding->[$i];
 	my($name, $value) = @$entry;
-	return $value if $name eq $rest;
+	next if $name ne $wanted;
+	return $value if $name ne 'circulations';
+	return opacFieldOrSubfield($value, $rest)
     }
 
     return undef;
@@ -184,26 +191,25 @@ BEGIN {
 	  }, '998$y', undef, 'not creating subfield by substituting empty value'
 	],
     );
-    my $holdings = makeHoldings();
     @postProcessHoldingsTests = (
 	# OPAC record, ruleset, field, expected, caption
-	[ $holdings, {}, '0.nucCode', 'xeno', 'null transformation on holdings field' ],
-	[ $holdings, {
+	[ makeHoldings(), {}, '0.nucCode', 'xeno', 'null transformation on holdings field' ],
+	[ makeHoldings(), {
 	    holding => { nucCode => $censorVowels }
 	  }, '0.nucCode', 'x*n*', 'substitution on holdings field'
 	],
-	[ $holdings, {
+	[ makeHoldings(), {
 	    holding => { nucCode => $censorVowels }
 	  }, '1.nucCode', 'br*nt*', 'substitition on second holding'
 	],
-	[ $holdings, {
+	[ makeHoldings(), {
 	    holding => { localLocation => [
 		$censorVowels,
 		{ op => 'regsub', pattern => '(n.)', replacement => '$1$1' }
             ] }
 	  }, '0.localLocation', 'Onlnl*n*', 'double substitition on holdings'
 	],
-	[ $holdings, {
+	[ makeHoldings(), {
 	    holding => {
 		callNumber => {
 		    op => 'regsub',
@@ -212,6 +218,22 @@ BEGIN {
 		}
 	    }
 	  }, '0.callNumber', 'f123.456b', 'add prefix/suffix to call-number'
+	],
+	[ makeHoldings(), {
+	    circulation => {
+		enumAndChron => $censorVowels,
+	    }
+	  }, '0.circulations.0.enumAndChron', 'Spr*ng *d*t**n', 'substitute item-level field'
+	],
+	[ makeHoldings(), {
+	    circulation => {
+		itemId => {
+		    op => 'regsub',
+		    pattern => '$',
+		    replacement => ' (%{enumAndChron})',
+		}
+	    }
+	  }, '0.circulations.0.itemId', '1234567890 (Spring edition)', 'substitute item-level field'
 	],
     );
 }
