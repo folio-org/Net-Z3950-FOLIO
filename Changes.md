@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [In progress](https://github.com/folio-org/Net-Z3950-FOLIO/tree/master)
+
+* Loosen requirements for `search` interface to allow v0.7. Fixes ZF-71.
+
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (Sun Nov 27 08:36:08 GMT 2022)
 
 * Generate ModuleDescriptor from template, avoiding the possibility of its version-number getting out of sync with that of `lib/Net/Z3950/FOLIO.pm`. Fixes ZF-64.
