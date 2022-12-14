@@ -3,6 +3,7 @@
 ## [In progress](https://github.com/folio-org/Net-Z3950-FOLIO/tree/master)
 
 * Loosen requirements for `search` interface to allow v0.7. Fixes ZF-71.
+* Restructure Dockerfile to be more efficient and reliable. Fixes ZF-72.
 
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (Sun Nov 27 08:36:08 GMT 2022)
 
