@@ -1,6 +1,5 @@
-FROM perl:5
+FROM perl:5 as base
 WORKDIR /usr/src/app
-COPY . .
 RUN cpan XML::Simple
 RUN cpan -f MARC::File::XML # Tests fail
 RUN cpan Cpanel::JSON::XS
@@ -19,6 +18,18 @@ RUN apt-get update
 RUN apt-get -y install yaz libyaz5-dev
 RUN cpan -T -f Net::Z3950::ZOOM # Tests are very very slow AND sometimes time out
 RUN cpan Net::Z3950::SimpleServer
+
+FROM base as test
+RUN cpan Test::Differences
+COPY Makefile.PL .
+COPY etc/ etc/
+COPY lib/ lib/
+COPY t/ t/
+RUN perl Makefile.PL \
+ && make test
+
+FROM base as runtime
+COPY . .
 EXPOSE 9997
 # Since we often run under Kubernetes, which probes the port repeatedly, session-logging becomes noise, hence -v-session
 CMD perl -I lib bin/z2folio -c etc/config -- -f etc/yazgfs.xml -v-session
