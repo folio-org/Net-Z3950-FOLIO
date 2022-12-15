@@ -93,10 +93,13 @@ sub _expandSingleVariableReference {
 	return _expandVariableReferences($val);
     } elsif (ref($val) eq 'ARRAY') {
 	return [ map { _expandSingleVariableReference($key, $_) } @$val ];
+    } elsif (ref($val) eq 'JSON::PP::Boolean') {
+	return $val;
     } elsif (!ref($val)) {
 	return _expandScalarVariableReference($key, $val);
     } else {
-	die "non-hash, non-array, non-scalar configuration key '$key'";
+	use Data::Dumper;
+	die "non-hash, non-array, non-boolean, non-scalar configuration key '$key' = ", Dumper($val);
     }
 }
 
@@ -131,7 +134,7 @@ sub _expandScalarVariableReference {
 sub _mergeConfig {
     my($base, $overlay) = @_;
 
-    my @known_keys = qw(okapi login indexMap);
+    my @known_keys = qw(okapi login indexMap marcHoldings);
     foreach my $key (@known_keys) {
 	if (defined $overlay->{$key}) {
 	    if (ref $base->{$key} eq 'HASH') {
