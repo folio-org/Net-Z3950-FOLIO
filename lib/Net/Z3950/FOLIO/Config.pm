@@ -413,6 +413,18 @@ be specified as a single space.
 
 information.
 
+=item C<fieldPerItem>
+
+If specified and set to a true value, then a separate MARC field is
+generated for each item in each holding. When this is absent or set to
+a false value (the default), one MARC field is generated for each
+holding, and multiple items within each holding are represented by
+repeating sets of subfields within that field.
+
+This setting makes it simpler to access information about individual
+items, at the cost of losing information about how they are grouped
+into holdings.
+
 =item C<holdingsElements>
 
 An object specifying MARC subfields that should be set from
