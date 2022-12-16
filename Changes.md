@@ -1,9 +1,10 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [In progress](https://github.com/folio-org/Net-Z3950-FOLIO/tree/master)
+## [IN PROGRESS]
 
 * Loosen requirements for `search` interface to allow v0.7. Fixes ZF-71.
 * Restructure Dockerfile to be more efficient and reliable. Fixes ZF-72.
+* New `fieldPerItem` configuration entry allows each item to be placed in its own MARC holdings field rather than each item in a holding sharing the field. Fixes ZF-74.
 
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (Sun Nov 27 08:36:08 GMT 2022)
 
