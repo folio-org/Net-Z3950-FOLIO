@@ -1,23 +1,45 @@
-FROM perl:5 as base
+FROM perl:5-slim as base
+
 WORKDIR /usr/src/app
-RUN cpan XML::Simple
-RUN cpan -f MARC::File::XML # Tests fail
-RUN cpan Cpanel::JSON::XS
-RUN cpan LWP::UserAgent
-RUN cpan LWP::Protocol::https
-RUN cpan Mozilla::CA
-RUN cpan MARC::Record
-RUN cpan Net::Z3950::PQF
-RUN cpan Unicode::Diacritic::Strip
-RUN apt-get update
-RUN apt-get -y install software-properties-common apt-transport-https ca-certificates
-RUN wget https://ftp.indexdata.com/debian/indexdata.asc
-RUN apt-key add indexdata.asc
-RUN add-apt-repository 'deb http://ftp.indexdata.dk/debian bullseye main'
-RUN apt-get update
-RUN apt-get -y install yaz libyaz5-dev
-RUN cpan -T -f Net::Z3950::ZOOM # Tests are very very slow AND sometimes time out
-RUN cpan Net::Z3950::SimpleServer
+
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && apt-get install -y \
+      apt-transport-https \
+      build-essential \
+      ca-certificates \
+      gcc \
+      gnupg \
+      libexpat1-dev \
+      software-properties-common \
+      wget \
+ && mkdir /etc/apt/keyrings \
+ && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
+ && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian bullseye main' > /etc/apt/sources.list.d/indexdata.list \
+ && apt-get update \
+ && apt-get install -y \
+      libyaz5-dev \
+      yaz \
+ && cpan XML::Simple \
+# Tests fail
+ && cpan -f -i MARC::File::XML \
+ && cpan Cpanel::JSON::XS \
+ && cpan LWP::UserAgent \
+ && cpan LWP::Protocol::https \
+ && cpan Mozilla::CA \
+ && cpan MARC::Record \
+ && cpan Net::Z3950::PQF \
+ && cpan Unicode::Diacritic::Strip \
+# Tests are very very slow AND sometimes time out
+ && cpan -T -f -i Net::Z3950::ZOOM \
+ && cpan Net::Z3950::SimpleServer \
+ && apt-get autoremove -y --purge \
+      build-essential \
+      gcc \
+      gnupg \
+      software-properties-common \
+      wget \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm/
 
 FROM base as test
 RUN cpan Test::Differences
