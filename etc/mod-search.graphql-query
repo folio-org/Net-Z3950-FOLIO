@@ -390,6 +390,7 @@ query($cql: String, $offset: Int, $limit: Int) {
           updatedDate
         }
       }
+      instanceTypeId
       languages
       metadata {
         createdByUserId
