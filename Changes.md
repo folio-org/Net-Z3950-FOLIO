@@ -7,6 +7,7 @@
 * New `fieldPerItem` configuration entry allows each item to be placed in its own MARC holdings field rather than each item in a holding sharing the field. Fixes ZF-74.
 * Reinstate error-reporting for GraphQL errors (it seems that the way these are reported in the WSAPI response has changed). Fixes ZF-75.
 * Switch base image from perl:5 to perl:5-slim. Use signed-by indexdata.asc for apt. Fixes ZF-73.
+* Update definitions of access-points 7, 8 and 1211 (ISBN, ISSN and OCLC Number) for mod-search. Fixes ZF-77.
 
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (Sun Nov 27 08:36:08 GMT 2022)
 
