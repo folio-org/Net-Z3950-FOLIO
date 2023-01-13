@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 3.2.0 (IN PROGRESS)
+## [3.2.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.2.0) (Fri Jan 13 19:13:17 GMT 2023)
 
 * Loosen requirements for `search` interface to allow v0.7. Fixes ZF-71.
 * Restructure Dockerfile to be more efficient and reliable. Fixes ZF-72.
