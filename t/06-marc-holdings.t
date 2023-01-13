@@ -19,7 +19,7 @@ for (my $i = 1; $i <= 1; $i++) {
 	my $dummyMarc = makeDummyMarc();
 	my $expected = readFile("t/data/records/expectedMarc$i" . ($j == 2 ? 'byItem' : '') . ".marc");
 	my $folioJson = readFile("t/data/records/input$i.json");
-	my $folioHoldings = decode_json(qq[{ "holdingsRecords2": [ $folioJson ] }]);
+	my $folioHoldings = decode_json(qq[{ "holdingsRecords2": $folioJson }]);
 	my $rec = new DummyRecord($folioHoldings, $dummyMarc);
 	insertMARCHoldings($rec, $dummyMarc, $cfg);
 	my $marcString = $dummyMarc->as_formatted() . "\n";

@@ -31,7 +31,7 @@ my $dummyMarc = makeDummyMarc();
 for (my $i = 1; $i <= 2; $i++) {
     my $expected = readFile("t/data/records/expectedOutput$i.xml");
     my $folioJson = readFile("t/data/records/input$i.json");
-    my $folioHoldings = decode_json(qq[{ "holdingsRecords2": [ $folioJson ] }]);
+    my $folioHoldings = decode_json(qq[{ "holdingsRecords2": $folioJson }]);
     my $rec = new DummyRecord($folioHoldings, $dummyMarc);
     my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::makeOPACXMLRecord($rec, $dummyMarc);
     is($holdingsXml, $expected, "generated holdings $i match expected XML");
