@@ -20,7 +20,7 @@ use warnings;
 use IO::File;
 use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
-use Test::More tests => 3;
+use Test::More tests => 4;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
 use DummyRecord;
@@ -28,7 +28,7 @@ use DummyRecord;
 # Values taken from some random USMARC record
 my $dummyMarc = makeDummyMarc();
 
-for (my $i = 1; $i <= 2; $i++) {
+for (my $i = 1; $i <= 3; $i++) {
     my $expected = readFile("t/data/records/expectedOutput$i.xml");
     my $folioJson = readFile("t/data/records/input$i.json");
     my $folioHoldings = decode_json(qq[{ "holdingsRecords2": $folioJson }]);
