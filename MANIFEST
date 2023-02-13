@@ -26,6 +26,7 @@ doc/release-procedure.md
 doc/source-code-overview.md
 doc/srs/using-srs.md
 etc/config.able.json
+etc/config.bugfest_nolana.json
 etc/config.chicago.json
 etc/config.dummy.json
 etc/config.fieldPerItem.json
