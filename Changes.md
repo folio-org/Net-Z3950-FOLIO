@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 3.3.3 (IN PROGRESS)
+## 3.3.0 (IN PROGRESS)
 
 * MARC-holdings subfield values of "0" are now included in the record, unlike other falsy values. Allows `availableNow=0` and fixes ZF-80.
 
