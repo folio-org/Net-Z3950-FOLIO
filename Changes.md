@@ -1,8 +1,13 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 3.3.1 (IN PROGRESS)
+
+* Bump required version of graphql interface to v1.3. Fixes ZF-83.
+
 ## [3.3.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.0) (Fri Feb 24 18:53:17 GMT 2023)
 
 * MARC-holdings subfield values of "0" are now included in the record, unlike other falsy values. Allows `availableNow=0` and fixes ZF-80.
+* Completely new GraphQL query for `mod-search`, including all and only those fields actually needed to make holdings information for OPAC XML records and MARC holdings. Fixes ZF-48.
 
 ## [3.2.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.2.0) (Fri Jan 13 19:13:17 GMT 2023)
 
