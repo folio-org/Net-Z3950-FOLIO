@@ -105,6 +105,11 @@ query($cql: String, $offset: Int, $limit: Int) {
             typeId
           }
           materialTypeId
+          materialType {
+            id
+            name
+            source
+          }
           metadata {
             createdByUserId
             createdByUsername
@@ -355,6 +360,62 @@ query($cql: String, $offset: Int, $limit: Int) {
         shelvingTitle
         statisticalCodeIds
         temporaryLocationId
+        temporaryLocation {
+          campusId
+          campus {
+            code
+            id
+            institutionId # no need to resolve, it's redundant
+            name
+          }
+          code
+          description
+          # Nothing known about the details subrecord
+          discoveryDisplayName
+          id
+          institutionId
+          institution {
+            code
+            id
+            name
+          }
+          isActive
+          libraryId
+          library {
+            code
+            id
+            name
+          }
+          metadata {
+            createdByUserId
+            createdByUsername
+            createdDate
+            updatedByUserId
+            updatedByUsername
+            updatedDate
+          }
+          name
+          primaryServicePoint
+          primaryServicePointObject {
+            code
+            description
+            discoveryDisplayName
+            id
+            name
+            pickupLocation
+            shelvingLagTime
+          }
+          servicePointIds
+          servicePoints {
+            code
+            description
+            discoveryDisplayName
+            id
+            name
+            pickupLocation
+            shelvingLagTime
+          }
+        }
       }
       hrid
       id
@@ -390,6 +451,7 @@ query($cql: String, $offset: Int, $limit: Int) {
           updatedDate
         }
       }
+      instanceTypeId
       languages
       metadata {
         createdByUserId
@@ -415,6 +477,7 @@ query($cql: String, $offset: Int, $limit: Int) {
       publicationFrequency
       publicationRange
       series
+      source
       sourceRecordFormat
       staffSuppress
       statisticalCodeIds
