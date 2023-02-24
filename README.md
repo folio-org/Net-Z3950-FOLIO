@@ -5,6 +5,20 @@ Copyright (C) 2018-2021 The Open Library Foundation
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
+<!-- md2toc -l 2 README.md -->
+* [Introduction](#introduction)
+* [Dependencies](#dependencies)
+* [Installation](#installation)
+* [Running](#running)
+* [Building and running from Docker](#building-and-running-from-docker)
+* [Authentication](#authentication)
+* [Access via SRU](#access-via-sru)
+* [Troubleshooting](#troubleshooting)
+* [Additional information](#additional-information)
+    * [Other documentation](#other-documentation)
+    * [Issue tracker](#issue-tracker)
+
+
 ## Introduction
 
 [`z2folio`](bin/z2folio) is a Z39.50 server for FOLIO bibliographic and holdings data, supporting record retrieval in USMARC, OPAC, XML and JSON formats. The functionality is all provided by [the `Net::Z3950::FOLIO` library](lib/Net/Z3950/FOLIO.pm), which is also part of this distribution. It is written in Perl, and follows standard Perl-module conventions.
