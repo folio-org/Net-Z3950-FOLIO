@@ -13,6 +13,7 @@
 * Switch base image from perl:5 to perl:5-slim. Use signed-by indexdata.asc for apt. Fixes ZF-73.
 * Update definitions of access-points 7, 8 and 1211 (ISBN, ISSN and OCLC Number) for mod-search. Fixes ZF-77.
 * Remove literal '\n' sequence from between consecutive `<holding>` entries in OPAC XML records. Fixes ZF-78.
+* Complete rewrite of `mod-search.graphql-query` so it now requests all and only the fields used to generate information for OPAC XML records and MARC holdings. Fixes ZF-48.
 
 ## [3.1.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.1.0) (Sun Nov 27 08:36:08 GMT 2022)
 
