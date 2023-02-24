@@ -39,8 +39,8 @@ The `_makeSingleHoldingsRecord` function (and its subfunctions) show that the fo
 | `_callNumberSuffix`    | `callNumberSuffix`
 | `shelvingData`         | `shelvingTitle`
 | `copyNumber`           | `copyNumber`
-| `publicNote`           | `notes->holdingsNoteType->name`,<br />`notes->node`
-| `reproductionNote`     | `notes->holdingsNoteType->name`,<br />`notes->node`
+| `publicNote`           | `notes->holdingsNoteType->name`,<br />`notes->note`
+| `reproductionNote`     | `notes->holdingsNoteType->name`,<br />`notes->note`
 | `circulations`         | `bareHoldingsItems`           | See below
 
 
