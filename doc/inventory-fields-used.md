@@ -4,6 +4,7 @@
 * [Introduction](#introduction)
 * [Instance level](#instance-level)
 * [Holdings level](#holdings-level)
+* [Summary](#summary)
 * [Caveat](#caveat)
 
 
@@ -82,6 +83,75 @@ Location calculation is complex. It uses `location->name` when that exists, and 
 and
 `location->primaryServicePointObject->name`.
 
+
+## Summary
+
+The following FOLIO-inventory fields are used in creating the Z39.50 holdings information for the OPAC record and MARC holdings:
+
+```
+holdingsRecords2
+  temporaryLocation
+    institution
+      name
+    library
+      name
+  permanentLocation
+    institution
+      name
+    library
+      name
+  name
+  callNumberPrefix
+  callNumber
+  callNumberSuffix
+  shelvingTitle
+  copyNumber
+  notes
+    holdingsNoteType
+      name
+    note
+  bareHoldingsItems
+    discoverySuppress
+    status
+      name
+    materialType
+      name
+    barcode
+    enumeration
+    chronology
+    temporaryLocation
+      name
+      institution
+        name
+      campus
+        name
+      library
+        name
+      primaryServicePointObject
+        name
+    permanentLocation
+      name
+      institution
+        name
+      campus
+        name
+      library
+        name
+      primaryServicePointObject
+        name
+    effectiveCallNumberComponents
+      callNumber
+      prefix
+      suffix
+    volume
+    yearCaption
+    accessionNumber
+    copyNumber
+    descriptionOfPieces
+    hrid
+    id
+    itemIdentifier
+```
 
 ## Caveat
 
