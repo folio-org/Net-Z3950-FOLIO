@@ -8,6 +8,7 @@
 
 * MARC-holdings subfield values of "0" are now included in the record, unlike other falsy values. Allows `availableNow=0` and fixes ZF-80.
 * Completely new GraphQL query for `mod-search`, including all and only those fields actually needed to make holdings information for OPAC XML records and MARC holdings. Fixes ZF-48.
+* Analyze the impact of missing fields in Morning Glory: we do not use `instanceTypeId` or `source`, and by v3.3.0, `holdingsRecords2.temporaryLocation` and `bareHoldingsItems.materialType` are both once more available. Fixes ZF-66.
 
 ## [3.2.0](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.2.0) (Fri Jan 13 19:13:17 GMT 2023)
 
