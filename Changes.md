@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [3.3.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.2) (Tue Feb 28 11:28:31 GMT 2023)
+
+* Add `1.0` to the list of options for required version of `search` interface, since it's apparently had a major release for some reason. Fixes ZF-85.
+
 ## [3.3.1](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.1) (Fri Feb 24 19:26:47 GMT 2023)
 
 * Bump required version of graphql interface to v1.3. Fixes ZF-83.
