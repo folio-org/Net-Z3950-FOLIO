@@ -34,6 +34,10 @@ sub makeHoldings {
 	       ['itemId', '1234567890'],
 	       ['enumAndChron', 'Spring edition'],
 	   ], 'Net::z3950::FOLIO::OPACXMLRecord::item'),
+	   bless([
+	       ['itemId', '1234567891'],
+	       ['enumAndChron', 'Summer edition'],
+	   ], 'Net::z3950::FOLIO::OPACXMLRecord::item'),
       ]],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::holding'),
     bless([
@@ -224,6 +228,12 @@ BEGIN {
 		enumAndChron => $censorVowels,
 	    }
 	  }, '0.circulations.0.enumAndChron', 'Spr*ng *d*t**n', 'substitute item-level field'
+	],
+	[ makeHoldings(), {
+	    circulation => {
+		enumAndChron => $censorVowels,
+	    }
+	  }, '0.circulations.1.enumAndChron', 'S*mm*r *d*t**n', 'substitute second item-level field'
 	],
 	[ makeHoldings(), {
 	    circulation => {
