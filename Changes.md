@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 3.3.3 (IN PROGRESS)
+
+* Post-processing is applied to all circulations within an OPAC XML holdings record, not just the first. Fixes ZF-86.
+
 ## [3.3.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.2) (Tue Feb 28 11:28:31 GMT 2023)
 
 * Add `1.0` to the list of options for required version of `search` interface, since it's apparently had a major release for some reason. Fixes ZF-85.
