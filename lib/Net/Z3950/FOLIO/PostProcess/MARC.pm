@@ -95,15 +95,13 @@ sub gatherMarcFields {
 
 
 sub marcFieldOrSubfield {
-    my($marc, $fieldname) = @_;
+    my($marc, $fieldname, $index) = @_;
 
     my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
-    if ($subtag) {
-	return $marc->subfield($tag, $subtag);
-    } else {
-	my $field = $marc->field($tag);
-	return $field ? $field->data() : undef;
-    }
+    my @fields = $marc->field($tag);
+    my $field = $fields[$index || 0];
+    return undef if !$field;
+    return $subtag ? $field->subfield($subtag) : $field->data();
 }
 
 
