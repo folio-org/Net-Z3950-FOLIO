@@ -24,9 +24,10 @@ sub postProcessMARCRecord {
 
 	my $getFieldFromRecord = sub {
 	    my($fieldname) = @_;
-	    # Use the $fieldCount'th instance of field $tag
-	    return (marcFieldOrSubfield($newMarc, $fieldname, $fieldCount) ||
-		    marcFieldOrSubfield($marc, $fieldname, $fieldCount) ||
+
+	    # Use the $fieldCount'th instance of field $tag only if substituting from the same field
+	    return (marcFieldOrSubfield($newMarc, $fieldname, $fieldCount, $tag) ||
+		    marcFieldOrSubfield($marc, $fieldname, $fieldCount, $tag) ||
 		    '');
 	};
 
@@ -99,9 +100,10 @@ sub gatherMarcFields {
 
 
 sub marcFieldOrSubfield {
-    my($marc, $fieldname, $index) = @_;
+    my($marc, $fieldname, $index, $useIndexIfmatchTag) = @_;
 
     my($tag, $subtag) = ($fieldname =~ /(\d+)\$?(.*)/);
+    $index = 0 if defined $useIndexIfmatchTag && $tag ne $useIndexIfmatchTag;
     my @fields = $marc->field($tag);
     my $field = $fields[$index || 0];
     return undef if !$field;
