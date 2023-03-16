@@ -15,16 +15,20 @@ sub postProcessMARCRecord {
     my $newMarc = new MARC::Record();
     $newMarc->leader($marc->leader());
 
-    my $getFieldFromRecord = sub {
-	my($fieldname) = @_;
-	return (marcFieldOrSubfield($newMarc, $fieldname) ||
-		marcFieldOrSubfield($marc, $fieldname) ||
-		'');
-    };
-
     my @fields = gatherMarcFields($marc, $cfg);
+    my %fieldCountByTag = ();
     foreach my $field (@fields) {
 	my $tag = $field->tag();
+	my $fieldCount = $fieldCountByTag{$tag} || 0;
+	$fieldCountByTag{$tag} = $fieldCount+1;
+
+	my $getFieldFromRecord = sub {
+	    my($fieldname) = @_;
+	    # Use the $fieldCount'th instance of field $tag
+	    return (marcFieldOrSubfield($newMarc, $fieldname, $fieldCount) ||
+		    marcFieldOrSubfield($marc, $fieldname, $fieldCount) ||
+		    '');
+	};
 
 	my $newField;
 	if ($field->is_control_field())	{
