@@ -198,6 +198,10 @@ BEGIN {
 	],
 	[ $marc, {}, '952$d/0', 'cn1', 'null transformation in first copy of a field' ],
 	[ $marc, {}, '952$d/1', 'cn2', 'null transformation in second copy of a field' ],
+	[ $marc, {
+	    '952$d' => { op => 'regsub', pattern => '(.*)', replacement => '$1 %{952$v} - %{952$b}' }
+	  }, '952$d/0', 'cn1 v1 - 123', 'substitutions in first copy of a field'
+	],
     );
     @postProcessHoldingsTests = (
 	# OPAC record, ruleset, field, expected, caption
