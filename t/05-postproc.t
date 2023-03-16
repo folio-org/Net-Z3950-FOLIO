@@ -206,6 +206,10 @@ BEGIN {
 	    '952$d' => { op => 'regsub', pattern => '(.*)', replacement => '$1 %{952$v} - %{952$b}' }
 	  }, '952$d/1', 'cn2 v2 - 234', 'substitutions in second copy of a field'
 	],
+	[ $marc, {
+	    '952$d' => { op => 'regsub', pattern => '(.*)', replacement => '$1 %{952$v} - %{999$z}' }
+	  }, '952$d/1', 'cn2 v2 - water', 'substitutions in second copy from a separate field'
+	],
     );
     @postProcessHoldingsTests = (
 	# OPAC record, ruleset, field, expected, caption
