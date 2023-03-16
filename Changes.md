@@ -3,7 +3,7 @@
 ## 3.3.3 (IN PROGRESS)
 
 * Post-processing is applied to all circulations within an OPAC XML holdings record, not just the first. Fixes ZF-86.
-* When substituting into a MARC subfield from other subfields of the same field, use the values from the same instance of that field. Values from other fields and subfields ate still included from the first available instance, which is what you expect. Fixes ZF-87.
+* When substituting into a MARC subfield from other subfields of the same field, use the values from the same instance of that field. Values from other fields and subfields are still included from the first available instance, which is what you expect. Fixes ZF-87.
 
 ## [3.3.2](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.2) (Tue Feb 28 11:28:31 GMT 2023)
 
