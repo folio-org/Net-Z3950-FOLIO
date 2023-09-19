@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## [3.3.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.4) (Tue Sep 19 13:32:33 BST 2023)
+
+* Make `Dockerfile` more resilient, due to problems building v3.3.3.
+
 ## [3.3.3](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.3) (Tue Sep 19 12:42:27 BST 2023)
 
 * Post-processing is applied to all circulations within an OPAC XML holdings record, not just the first. Fixes ZF-86.
