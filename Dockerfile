@@ -1,4 +1,4 @@
-FROM perl:5-slim as base
+FROM perl:5.38.0-slim-bullseye as base
 
 WORKDIR /usr/src/app
 
