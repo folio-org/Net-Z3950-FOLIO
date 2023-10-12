@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## [3.3.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.5) (IN PROGRESS)
+## [3.3.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.5)(Tue Oct 20 19:52:37 EDT 2023)
 
 * `Dockerfile` specifies versions of Debian and Perl.
 
