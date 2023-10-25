@@ -139,12 +139,16 @@ sub _mergeConfig {
 	login => 1,
 	indexMap => 1,
 	marcHoldings => 1,
+	fieldDefinitions => {
+	    holding => 1,
+	    circulation => 1,
+	},
     );
 
     foreach my $key (keys (%complex_keys)) {
 	if (defined $overlay->{$key}) {
 	    if (ref $base->{$key} eq 'HASH') {
-		_mergeHash($base->{$key}, $overlay->{$key});
+		_mergeHash($base->{$key}, $overlay->{$key}, $complex_keys{$key});
 	    } else {
 		$base->{$key} = $overlay->{$key};
 	    }
@@ -160,10 +164,14 @@ sub _mergeConfig {
 
 
 sub _mergeHash {
-    my($base, $overlay) = @_;
+    my($base, $overlay, $keysOfsubStructures) = @_;
 
     foreach my $key (sort keys %$overlay) {
-	$base->{$key} = $overlay->{$key};
+	if (ref $keysOfsubStructures eq 'HASH' && $keysOfsubStructures->{$key}) {
+	    _mergeHash($base->{$key}, $overlay->{$key}, $keysOfsubStructures->{$key});
+	} else {
+	    $base->{$key} = $overlay->{$key};
+	}
     }
 }
 
