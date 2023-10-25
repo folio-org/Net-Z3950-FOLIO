@@ -134,8 +134,14 @@ sub _expandScalarVariableReference {
 sub _mergeConfig {
     my($base, $overlay) = @_;
 
-    my @known_keys = qw(okapi login indexMap marcHoldings);
-    foreach my $key (@known_keys) {
+    my %complex_keys = (
+	okapi => 1,
+	login => 1,
+	indexMap => 1,
+	marcHoldings => 1,
+    );
+
+    foreach my $key (keys (%complex_keys)) {
 	if (defined $overlay->{$key}) {
 	    if (ref $base->{$key} eq 'HASH') {
 		_mergeHash($base->{$key}, $overlay->{$key});
@@ -146,7 +152,7 @@ sub _mergeConfig {
     }
 
     foreach my $key (sort keys %$overlay) {
-	if (!grep { $key eq $_ } @known_keys) {
+	if (!$complex_keys{$key}) {
 	    $base->{$key} = $overlay->{$key};
 	}
     }
