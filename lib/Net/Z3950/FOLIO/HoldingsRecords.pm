@@ -6,9 +6,10 @@ use warnings;
 
 sub makeHoldingsRecords {
     my($rec, $marc) = @_;
+    my $cfg = $rec->rs()->session()->{cfg}; # XXX maybe make an accessor method
     my $holdings = $rec->jsonStructure()->{holdingsRecords2};
 
-    return [ map { _makeSingleHoldingsRecord($_, $marc) } @$holdings ];
+    return [ map { _makeSingleHoldingsRecord($_, $marc, $cfg) } @$holdings ];
 }
 
 
@@ -43,7 +44,7 @@ sub makeHoldingsRecords {
 # holdings or volume level, only at the item level.
 #
 sub _makeSingleHoldingsRecord {
-    my($holding, $marc) = @_;
+    my($holding, $marc, $cfg) = @_;
 
     my $nucCode;
     my $localLocation;
@@ -55,7 +56,7 @@ sub _makeSingleHoldingsRecord {
 	$shelvingLocation = $location->{name};
     }
 
-    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems}, $location, $holding->{permanentLocation});
+    my $itemObjects = _makeItemRecords($holding->{bareHoldingsItems}, $cfg, $location, $holding->{permanentLocation});
 
     return bless [
         [ 'typeOfRecord', substr($marc->leader(), 5, 1) ], # LDR 06
@@ -155,13 +156,13 @@ sub _makeTermsUseRepro {
 
 
 sub _makeItemRecords {
-    my($items, $defaultLocation, $defaultPermamentLocation) = @_;
-    return [ map { _makeSingleItemRecord($_, $defaultLocation, $defaultPermamentLocation) } @$items ];
+    my($items, $cfg, $defaultLocation, $defaultPermamentLocation) = @_;
+    return [ map { _makeSingleItemRecord($_, $cfg, $defaultLocation, $defaultPermamentLocation) } @$items ];
 }
 
 
 sub _makeSingleItemRecord {
-    my($item, $defaultLocation, $defaultPermamentLocation) = @_;
+    my($item, $cfg, $defaultLocation, $defaultPermamentLocation) = @_;
 
     my @tmp;
     push @tmp, $item->{enumeration} if $item->{enumeration};
@@ -172,7 +173,7 @@ sub _makeSingleItemRecord {
     return bless [
 	[ 'availableNow', _makeAvailableNow($item), 'value' ],
 	[ 'availabilityDate', _makeAvailabilityDate($item) ],
-        [ 'availableThru', _makeAvailableThru($item) ],
+        [ 'availableThru', _makeAvailableThru($item, $cfg) ],
         [ 'restrictions', _makeRestrictions($item) ],
         [ 'itemId', $item->{barcode} ],
 	# XXX Determining a correct value for <renewable> would be
@@ -263,7 +264,17 @@ sub _makeAvailabilityDate {
 # be called "availableThru", but ¯\_(ツ)_/¯
 #
 sub _makeAvailableThru {
-    my($item) = @_;
+    my($item, $cfg) = @_;
+    # use Data::Dumper; $Data::Dumper::INDENT = 2; print "_makeAvailableThru: cfg = ", Dumper($cfg);
+    if ($cfg->{fieldDefinitions} &&
+	$cfg->{fieldDefinitions}->{circulation} &&
+	$cfg->{fieldDefinitions}->{circulation}->{availableThru}) {
+	my $field = $cfg->{fieldDefinitions}->{circulation}->{availableThru};
+	# warn "using field '$field' for availableThru";
+	# XXX We may need more sophisticated interpolation from the item record and maybe even the holding or instance
+	return $item->{$field};
+    }
+
     return ($item->{materialType} || {})->{name};
 }
 
