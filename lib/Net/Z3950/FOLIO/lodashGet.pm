@@ -17,7 +17,7 @@ sub _compilePath {
 	}
 
 	my($head, $sep, $tail) = @match;
-	push @components, $head;
+	push @components, $head if $head ne '';
 	if ($sep ne '.') {
 	    $sep =~ s/\]\.?//;
 	    push @components, substr($sep, 1) + 0;
