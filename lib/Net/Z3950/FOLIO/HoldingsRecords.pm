@@ -4,6 +4,9 @@ use strict;
 use warnings;
 
 
+use Net::Z3950::FOLIO::lodashGet qw(lodashGet);
+
+
 sub makeHoldingsRecords {
     my($rec, $marc) = @_;
     my $cfg = $rec->rs()->session()->{cfg}; # XXX maybe make an accessor method
@@ -272,7 +275,7 @@ sub _makeAvailableThru {
 	my $field = $cfg->{fieldDefinitions}->{circulation}->{availableThru};
 	# warn "using field '$field' for availableThru";
 	# XXX We may need more sophisticated interpolation from the item record and maybe even the holding or instance
-	return $item->{$field};
+	return lodashGet($item, $field);
     }
 
     return ($item->{materialType} || {})->{name};
