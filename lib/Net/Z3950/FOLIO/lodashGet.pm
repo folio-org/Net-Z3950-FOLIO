@@ -5,16 +5,45 @@ use warnings;
 use Data::Dumper; $Data::Dumper::INDENT = 2;
 
 
+sub _compilePath {
+    my($path) = @_;
+    my @components;
+
+    while ($path) {
+	my @match = $path =~ /^([^.\[]*)(\.|\[\d+\]\.?)(.*)/;
+	if (!@match) {
+	    push @components, $path;
+	    last;
+	}
+
+	my($head, $sep, $tail) = @match;
+	push @components, $head;
+	if ($sep ne '.') {
+	    $sep =~ s/\]\.?//;
+	    push @components, substr($sep, 1) + 0;
+	}
+
+	$path = $tail;
+    }
+
+    return @components;
+}
+
+
 sub lodashGet {
     my($data, $path) = @_;
     # warn "starting with ", Dumper($data);
 
-    # XXX should be much more powerful, e.g. handing "[1]"
-    my @components = split(/\./, $path);
+    my @components = _compilePath($path);
     while (@components) {
 	my $component = shift @components;
-	$data = $data->{$component};
-	# warn "moved down from '$component' to ", Dumper($data);
+	if (ref $data eq 'HASH') {
+	    $data = $data->{$component};
+	} else {
+	    # Assume it's an array
+	    $data = $data->[$component];
+	}
+	warn "moved down from '$component' to ", Dumper($data);
     }
 
     # warn "got ", (defined $data ? "'$data'" : 'UNDEF');
@@ -24,7 +53,7 @@ sub lodashGet {
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(lodashGet);
+our @EXPORT_OK = qw(_compilePath lodashGet);
 
 
 1;
