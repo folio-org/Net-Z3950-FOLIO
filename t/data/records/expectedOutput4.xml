@@ -32,7 +32,7 @@
       <circulations>
         <circulation>
           <availableNow value="0" />
-          <availableThru>29</availableThru>
+          <availableThru>Missing</availableThru>
           <restrictions>Missing</restrictions>
           <itemId>01234567890</itemId>
           <renewable value="" />
@@ -42,7 +42,7 @@
         </circulation>
         <circulation>
           <availableNow value="0" />
-          <availableThru>March</availableThru>
+          <availableThru>Available</availableThru>
           <itemId>9876543210</itemId>
           <renewable value="" />
           <onHold value="" />
@@ -67,7 +67,7 @@
       <circulations>
         <circulation>
           <availableNow value="0" />
-          <availableThru>March</availableThru>
+          <availableThru>Available</availableThru>
           <itemId>9876543210</itemId>
           <renewable value="" />
           <onHold value="" />
