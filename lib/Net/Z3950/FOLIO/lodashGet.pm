@@ -43,7 +43,7 @@ sub lodashGet {
 	    # Assume it's an array
 	    $data = $data->[$component];
 	}
-	warn "moved down from '$component' to ", Dumper($data);
+	# warn "moved down from '$component' to ", Dumper($data);
     }
 
     # warn "got ", (defined $data ? "'$data'" : 'UNDEF');
