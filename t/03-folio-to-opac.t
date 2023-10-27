@@ -21,6 +21,8 @@ use IO::File;
 use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
 use Test::More tests => 5;
+use Test::Differences;
+oldstyle_diff;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::OPACXMLRecord;
 use DummyRecord;
@@ -43,7 +45,7 @@ for (my $testNo = 1; $testNo <= 4; $testNo++) {
     my $rec = new DummyRecord($folioHoldings, $dummyMarc, $dummyCfg);
     # use Data::Dumper; $Data::Dumper::INDENT = 2; warn "Config =", Dumper($rec->rs()->session()->{cfg});
     my $holdingsXml = Net::Z3950::FOLIO::OPACXMLRecord::makeOPACXMLRecord($rec, $dummyMarc);
-    is($holdingsXml, $expected, "generated holdings $i match expected XML");
+    eq_or_diff($holdingsXml, $expected, "generated holdings $i match expected XML");
 }
 
 
