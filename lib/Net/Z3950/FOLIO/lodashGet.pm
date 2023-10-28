@@ -44,6 +44,7 @@ sub lodashGet {
 	    $data = $data->[$component];
 	}
 	# warn "moved down from '$component' to ", Dumper($data);
+	return undef if !defined $data;
     }
 
     # warn "got ", (defined $data ? "'$data'" : 'UNDEF');
