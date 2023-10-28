@@ -35,7 +35,7 @@ for (my $testNo = 1; $testNo <= 4; $testNo++) {
     my $dummyCfg = $testNo ne 4 ? undef : {
 	fieldDefinitions => {
 	    circulation => {
-		availableThru => 'status.name',
+		availableThru => 'temporaryLocation.servicePoints[0].discoveryDisplayName',
 	    }
 	},
     };
