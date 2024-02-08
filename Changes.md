@@ -3,6 +3,7 @@
 ## 3.4.0 (IN PROGRESS)
 
 * Make source of availableThru value in OPAC record configurable. Fixes ZF-90.
+* Add support for stripping ligatures and modifier letters to stripDiacritics. Fixes ZF-92.
 
 ## [3.3.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.5)(Tue Oct 20 19:52:37 EDT 2023)
 
