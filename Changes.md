@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 3.4.0 (IN PROGRESS)
+## 3.4.0 (Fri  9 Feb 2024 16:47:17 GMT)
 
 * Make source of availableThru value in OPAC record configurable. Fixes ZF-90.
 * Add support for stripping ligatures and modifier letters to stripDiacritics. Fixes ZF-92.
