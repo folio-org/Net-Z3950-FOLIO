@@ -78,8 +78,8 @@ sub _makeSingleHoldingsRecord {
         [ '_callNumberSuffix', $holding->{callNumberSuffix} ],
         [ 'shelvingData', _makeShelvingData($holding) ],
         [ 'copyNumber', $holding->{copyNumber} ], # 852 $t
-        [ 'publicNote', _noteOfType($holding->{notes}, qr/public/i) ], # 852 $z
-        [ 'reproductionNote', _noteOfType($holding->{notes}, qr/reproduction/i) ], # 843
+        [ 'publicNote', _makePublicNote($holding) ], # 852 $z
+        [ 'reproductionNote', _notesOfType($holding->{notes}, qr/reproduction/i) ], # 843
         [ 'termsUseRepro', _makeTermsUseRepro($marc) ], # 845
         [ 'circulations', $itemObjects, undef, 1 ],
     ], 'Net::z3950::FOLIO::OPACXMLRecord::holding';
@@ -118,6 +118,67 @@ sub _makeShelvingData {
 }
 
 
+# This field is rather overloaded. It must contain not only holdings
+# notes of type "public" and similar, but also any holdings statements
+# (each potentially consisting of statement, note and staffNote) along
+# with the same thing for holdingsStatementsForSupplements and
+# holdingsStatementsForIndexes.
+#
+# Here's how we do this:
+# * Each entry is newline-separated
+# * Each holdings statement is included
+# * Each holdings-for-supplements statement is included, prefixed with "SUPPLEMENT: "
+# * Each holdings-for-indexes statement is included, prefixed with "INDEX: "
+# * Any public notes are included
+#
+# When there is more than one statement in any of the categories
+# (holdings, holdings for supplements, holdings for indexes), they are
+# all numbered within that category. When there is only one statement
+# in a category, it is not numbered.
+#
+# This means that in the common case of a single holdings statement,
+# it will appear alone and unadorned.
+
+sub _makePublicNote {
+    my($holding) = @_;
+
+    my @notes;
+    push @notes, _holdingsStatements($holding->{holdingsStatements}, undef);
+    push @notes, _holdingsStatements($holding->{holdingsStatementsForSupplements}, "SUPPLEMENT");
+    push @notes, _holdingsStatements($holding->{holdingsStatementsForIndexes}, "INDEX");
+    push @notes, _notesOfType($holding->{notes}, qr/public/i);
+
+    @notes = grep { defined } @notes;
+    return undef if @notes == 0;
+    return join("\n", @notes);
+}
+
+
+sub _holdingsStatements {
+    my($statements, $caption) = @_;
+    return undef if !defined $statements || @$statements == 0;
+
+    my @res = map {
+	my $s = $statements->[$_-1];
+	my $res;
+	if (defined $caption && @$statements > 1) {
+	    $res = "$caption $_: ";
+	} elsif (defined $caption) {
+	    $res = "$caption: ";
+	} elsif (@$statements > 1) {
+	    $res = "$_: ";
+	}
+
+	$res .= $s->{statement};
+	$res .= " [NOTE: " . $s->{note} . "]" if $s->{note};
+	$res .= " [STAFF NOTE: " . $s->{staffNote} . "]" if $s->{staffNote};
+	$res;
+    } 1..@$statements;
+
+    return join("\n", @res);
+}
+
+
 # In the FOLIO inventory model, instances, holdings records and items
 # can all have a set of zero or more notes, each of which has a note
 # type. These note types are drawn from three separate vocabularies
@@ -129,17 +190,22 @@ sub _makeShelvingData {
 # known UUIDS -- and pull out the text of notes of the appropriate
 # type.
 #
-# For this to work, though, we will need mod-graphql to populate the
-# note-type objects.
+# When there is more than one note of a given type, we return a single
+# string containing each note on a line of its own preceded by its
+# ordinal number. This number is omitted when there is a single note.
 #
-sub _noteOfType {
+sub _notesOfType {
     my($notes, $regexp) = @_;
 
+    my @notes;
     foreach my $note (@$notes) {
 	my $type = $note->{holdingsNoteType};
-	return $note->{note} if $type && $type->{name} =~ $regexp;
+	push @notes, $note->{note} if $type && $type->{name} =~ $regexp;
     }
-    return undef;
+
+    return undef if @notes == 0;
+    return $notes[0] if @notes == 1;
+    return join("\n", map { "$_: " . $notes[$_-1] } 1..@notes);
 }
 
 
@@ -336,7 +402,7 @@ sub _makeYearCaption {
 
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(makeHoldingsRecords);
+our @EXPORT_OK = qw(makeHoldingsRecords _makeSingleHoldingsRecord);
 
 
 1;
