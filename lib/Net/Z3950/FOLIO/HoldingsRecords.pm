@@ -156,7 +156,7 @@ sub _makePublicNote {
 
 sub _holdingsStatements {
     my($statements, $caption) = @_;
-    return undef if !defined $statements;
+    return undef if !defined $statements || @$statements == 0;
 
     my @res = map {
 	my $s = $statements->[$_-1];
