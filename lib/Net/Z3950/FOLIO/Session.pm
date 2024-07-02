@@ -43,7 +43,7 @@ sub login {
     _throw(1014, "credentials not supplied")
 	if !defined $username || !defined $password;
 
-    my $url = $cfg->{okapi}->{url} . '/bl-users/login';
+    my $url = $cfg->{okapi}->{url} . '/authn/login-with-expiry';
     my $req = $this->_makeHTTPRequest(POST => $url);
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
@@ -52,7 +52,8 @@ sub login {
     _throw(1014, $res->content())
 	if !$res->is_success();
 
-    $this->{token} = $res->header('X-Okapi-token');
+    my $json = decode_json($res->content());
+    $this->{accessTokenExpiration} = $json->{accessTokenExpiration};
 }
 
 
@@ -274,7 +275,6 @@ sub _makeHTTPRequest() {
     $req->header('X-Okapi-tenant' => $this->{cfg}->{okapi}->{tenant});
     $req->header('Content-type' => 'application/json');
     $req->header('Accept' => 'application/json');
-    $req->header('X-Okapi-token' => $this->{token}) if $this->{token};
     return $req;
 }
 
