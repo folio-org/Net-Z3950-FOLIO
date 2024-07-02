@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 4.0.0 (IN PROGRESS)
+
+* **Breaking change**: uses new-style FOLIO authentication with expiring-and-refreshing tokens instead of old-style authentication, which is deprecated. This version of the Z39.50 server is fine to use with any FOLIO back-end based on release Poppy or later; prior versions (v3.4.0 and earlier) **will no longer work** with FOLIO back-ends based on release Ramsons or later. Fixes ZF-91.
+
 ## 3.4.0 (Fri  9 Feb 2024 16:47:17 GMT)
 
 * Make source of availableThru value in OPAC record configurable. Fixes ZF-90.
