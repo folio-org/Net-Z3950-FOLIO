@@ -10,6 +10,7 @@ WriteMakefile(
 	LWP::UserAgent => 6.05,
 	LWP::Protocol::https => 6.04,
 	HTTP::Cookies => 6.10,
+	DateTime => 1.65,
 	Mozilla::CA => 20200520,
 	Cpanel::JSON::XS => 4.08,
 	MARC::Record => 2.0,
