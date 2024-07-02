@@ -8,6 +8,7 @@ use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::SimpleServer;
 use ZOOM; # For ZOOM::Exception
 use LWP::UserAgent;
+use HTTP::Cookies;
 use MARC::Record;
 use MARC::File::XML (BinaryEncoding => 'utf8', RecordFormat => 'USMARC');
 use Data::Dumper; $Data::Dumper::Indent = 1;
@@ -66,13 +67,17 @@ sub new {
     my $class = shift();
     my($cfgbase) = @_;
 
+    my $ua = new LWP::UserAgent();
+    my $jar = HTTP::Cookies->new();
+    $ua->cookie_jar($jar);
+    $ua->agent("z2folio $VERSION");
+
     my $this = bless {
 	cfgbase => $cfgbase || 'config',
-	ua => new LWP::UserAgent(),
+	ua => $ua,
 	sessions => {}, # Maps database name to session object
     }, $class;
 
-    $this->{ua}->agent("z2folio $VERSION");
     $this->{server} = Net::Z3950::SimpleServer->new(
 	GHANDLE => $this,
 	INIT =>    \&_init_handler_wrapper,
