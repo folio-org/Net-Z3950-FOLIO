@@ -53,7 +53,22 @@ sub login {
 	if !$res->is_success();
 
     my $json = decode_json($res->content());
-    $this->{accessTokenExpiration} = $json->{accessTokenExpiration};
+    my $isoString = $json->{accessTokenExpiration};
+    # Format: 2024-07-02T16:48:56Z
+    my $match = ($isoString =~ /(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z/);
+    _throw(2, "Non-ISO date returned as accessTokenExpiration: $isoString")
+	if !$match;
+
+    my($year, $mon, $mday, $hour, $min, $sec) = $match;
+    my $dt = new DateTime(
+	year       => $year,
+	month      => $mon,
+	day        => $mday,
+	hour       => $hour,
+	minute     => $min,
+	second     => $sec,
+    );
+    $this->{accessTokenExpiration} = $dt;
 }
 
 
