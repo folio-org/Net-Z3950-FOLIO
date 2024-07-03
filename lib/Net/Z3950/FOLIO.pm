@@ -67,14 +67,8 @@ sub new {
     my $class = shift();
     my($cfgbase) = @_;
 
-    my $ua = new LWP::UserAgent();
-    my $jar = HTTP::Cookies->new();
-    $ua->cookie_jar($jar);
-    $ua->agent("z2folio $VERSION");
-
     my $this = bless {
 	cfgbase => $cfgbase || 'config',
-	ua => $ua,
 	sessions => {}, # Maps database name to session object
     }, $class;
 

@@ -16,8 +16,14 @@ sub new {
     my $class = shift();
     my($ghandle, $name) = @_;
 
+    my $ua = new LWP::UserAgent();
+    my $jar = HTTP::Cookies->new();
+    $ua->cookie_jar($jar);
+    $ua->agent("z2folio $Net::Z3950::FOLIO::VERSION");
+
     return bless {
 	ghandle => $ghandle,
+	ua => $ua,
 	name => $name,
 	resultsets => {}, # indexed by setname
     }, $class;
@@ -34,7 +40,6 @@ sub reloadConfigFile {
 
 sub login {
     my $this = shift(); 
-    my $ghandle = $this->{ghandle};
     my($user, $pass) = @_;
 
     my $cfg = $this->{cfg};
@@ -48,7 +53,7 @@ sub login {
     my $req = $this->_makeHTTPRequest(POST => $url);
     $req->content(qq[{ "username": "$username", "password": "$password" }]);
     # warn "req=", $req->content();
-    my $res = $ghandle->{ua}->request($req);
+    my $res = $this->{ua}->request($req);
     # warn "res=", $res->content();
     _throw(1014, $res->content())
 	if !$res->is_success();
@@ -101,7 +106,6 @@ sub rerunSearch {
 
 sub doSearch {
     my $this = shift();
-    my $ghandle = $this->{ghandle};
     my($rs, $offset, $limit) = @_;
 
     my $okapiCfg = $this->{cfg}->{okapi};
@@ -131,7 +135,7 @@ sub doSearch {
 	variables => \%variables,
     );
     $req->content(encode_json(\%body));
-    my $res = $ghandle->{ua}->request($req);
+    my $res = $this->{ua}->request($req);
     _throw(3, $res->content()) if !$res->is_success();
 
     my $obj = decode_json($res->content());
@@ -163,7 +167,7 @@ sub _getSRSRecords {
 
     my $req = $this->_makeHTTPRequest(POST => $okapiCfg->{url} . '/source-storage/source-records?idType=INSTANCE');
     $req->content(encode_json(\@ids));
-    my $res = $this->{ghandle}->{ua}->request($req);
+    my $res = $this->{ua}->request($req);
     my $content = $res->content();
     _throw(3, $content) if !$res->is_success();
 
