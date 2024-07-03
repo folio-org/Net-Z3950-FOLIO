@@ -3,6 +3,7 @@ package Net::Z3950::FOLIO::Session;
 use strict;
 use warnings;
 
+use DateTime;
 use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::FOLIO::Config;
 use Net::Z3950::FOLIO::ResultSet;
@@ -59,7 +60,7 @@ sub login {
     _throw(2, "Non-ISO date returned as accessTokenExpiration: $isoString")
 	if !$match;
 
-    my($year, $mon, $mday, $hour, $min, $sec) = $match;
+    my($year, $mon, $mday, $hour, $min, $sec) = ($1, $2, $3, $4, $5, $6);
     my $dt = new DateTime(
 	year       => $year,
 	month      => $mon,
@@ -68,7 +69,19 @@ sub login {
 	minute     => $min,
 	second     => $sec,
     );
-    $this->{accessTokenExpiration} = $dt;
+    my $timeoutEpoch = $dt->epoch();
+
+    my $now = DateTime->now();
+    my $nowEpoch = $now->epoch();
+    my $secs = $timeoutEpoch - $nowEpoch;
+    warn "isoString='$isoString' dt='$dt' timeoutEpoch='$timeoutEpoch' nowEpoch='$nowEpoch' secs='$secs'";
+
+    # Choose when to get a new token. One simple option would be when
+    # half of the allocated time has expired. Another would be a
+    # constant time (e.g. one minute) before the expiry is due. For
+    # now, we'll go with a very short timeout so we can see it in
+    # action.
+    $this->{accessTokenExpiration} = $nowEpoch + 10;
 }
 
 
