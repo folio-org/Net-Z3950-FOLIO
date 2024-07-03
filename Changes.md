@@ -187,5 +187,5 @@
 
 ## To do
 
-* Determine FOLIO tenant from database name, and postpone initialisation and authentication until we know that (ZF-2).
 * Automatic generation of MARC records (ZF-14). Thi will need a non-trivial version of `etc/folio2marcxml.xsl` (ZF-8).
+
