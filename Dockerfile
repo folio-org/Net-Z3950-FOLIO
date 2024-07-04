@@ -26,6 +26,8 @@ RUN apt-get update \
  && cpan Cpanel::JSON::XS \
  && cpan LWP::UserAgent \
  && cpan LWP::Protocol::https \
+ && cpan HTTP::Cookies \
+ && cpan DateTime \
  && cpan Mozilla::CA \
  && cpan MARC::Record \
  && cpan Net::Z3950::PQF \
