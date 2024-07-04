@@ -157,6 +157,7 @@ sub _search_handler {
 
     my $session = $ghandle->getSession($base);
     $args->{HANDLE} = $session;
+    $session->maybeRefreshToken();
 
     if ($args->{CQL}) {
 	$session->{cql} = $args->{CQL};
@@ -174,6 +175,7 @@ sub _search_handler {
 sub _fetch_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
+    $session->maybeRefreshToken();
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
     _throw(30, $args->{SETNAME}) if !$rs; # Result set does not exist
@@ -237,6 +239,7 @@ sub _fetch_handler {
 sub _delete_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
+    $session->maybeRefreshToken();
 
     my $setname = $args->{SETNAME};
     if ($session->{resultsets}->{$setname}) {
@@ -251,8 +254,8 @@ sub _delete_handler {
 
 sub _sort_handler {
     my($args) = @_;
-    my $ghandle = $args->{GHANDLE};
     my $session = $args->{HANDLE};
+    $session->maybeRefreshToken();
 
     my $setnames = $args->{INPUT};
     _throw(230, '1') if @$setnames > 1; # Sort: too many input results

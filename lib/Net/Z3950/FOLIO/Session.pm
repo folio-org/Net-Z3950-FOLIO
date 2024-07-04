@@ -58,11 +58,37 @@ sub login {
     _throw(1014, $res->content())
 	if !$res->is_success();
 
+    $this->_setRefreshTokenExpiration($res);
+}
+
+
+sub _setRefreshTokenExpiration {
+    my $this = shift();    
+    my($res) = @_;
+
     my $json = decode_json($res->content());
-    my $isoString = $json->{accessTokenExpiration};
+    my $refreshTokenEpoch = _isoStringToEpoch($json->{refreshTokenExpiration});
+    my $accessTokenEpoch = _isoStringToEpoch($json->{accessTokenExpiration});
+    my $minEpoch = $refreshTokenEpoch < $accessTokenEpoch ? $refreshTokenEpoch : $accessTokenEpoch;
+    my $nowEpoch = DateTime->now()->epoch();
+    my $secs = $minEpoch - $nowEpoch;
+    warn 'refresh token expires in ', $refreshTokenEpoch-$nowEpoch, ' seconds, access token in ', $accessTokenEpoch-$nowEpoch;
+
+    # Choose when to get a new token, based on when the shorter-lived
+    # of the two tokens expires. One simple option would be when half
+    # of the allocated time has expired. Another would be a constant
+    # time (e.g. one minute) before the expiry is due. For now, we'll
+    # go with the second.
+    $this->{refreshTokenExpiration} = $minEpoch - 60;
+}
+
+
+sub _isoStringToEpoch {
+    my($isoString) = @_;
+    
     # Format: 2024-07-02T16:48:56Z
     my $match = ($isoString =~ /(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z/);
-    _throw(2, "Non-ISO date returned as accessTokenExpiration: $isoString")
+    _throw(2, "Non-ISO date returned as refreshTokenExpiration: $isoString")
 	if !$match;
 
     my($year, $mon, $mday, $hour, $min, $sec) = ($1, $2, $3, $4, $5, $6);
@@ -74,19 +100,31 @@ sub login {
 	minute     => $min,
 	second     => $sec,
     );
-    my $timeoutEpoch = $dt->epoch();
 
-    my $now = DateTime->now();
-    my $nowEpoch = $now->epoch();
-    my $secs = $timeoutEpoch - $nowEpoch;
-    warn "isoString='$isoString' dt='$dt' timeoutEpoch='$timeoutEpoch' nowEpoch='$nowEpoch' secs='$secs'";
+    return $dt->epoch();
+}
 
-    # Choose when to get a new token. One simple option would be when
-    # half of the allocated time has expired. Another would be a
-    # constant time (e.g. one minute) before the expiry is due. For
-    # now, we'll go with a very short timeout so we can see it in
-    # action.
-    $this->{accessTokenExpiration} = $nowEpoch + 10;
+sub maybeRefreshToken {
+    my $this = shift();
+
+    my $ua = $this->{ua};
+    my $cj = $ua->cookie_jar();
+    if ($cj->as_string()) {
+	# We have some cookies, so initial login must have succeeded
+	my $now = DateTime->now();
+	my $nowEpoch = $now->epoch();
+	if ($nowEpoch > $this->{refreshTokenExpiration}) {
+	    warn "update required";
+	    my $url = $this->{cfg}->{okapi}->{url} . '/authn/refresh';
+	    my $req = $this->_makeHTTPRequest(POST => $url);
+	    # No content required
+	    my $res = $this->{ua}->request($req);
+	    _throw(1014, $res->content())
+		if !$res->is_success();
+
+	    $this->_setRefreshTokenExpiration($res);
+	}
+    }
 }
 
 
