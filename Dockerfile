@@ -32,8 +32,7 @@ RUN apt-get update \
  && cpan MARC::Record \
  && cpan Net::Z3950::PQF \
  && cpan Unicode::Diacritic::Strip \
-# Tests are very very slow AND sometimes time out
- && cpan -T -f -i Net::Z3950::ZOOM \
+ && cpan Net::Z3950::ZOOM \
  && cpan Net::Z3950::SimpleServer \
  && apt-get autoremove -y --purge \
       build-essential \
