@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 4.0.1 (IN PROGRESS)
+
+* Side-loading mod-graphql now works under RTR. Fixes ZF-108.
+
 ## 4.0.0 (Thu  4 Jul 17:34:07 BST 2024)
 
 * **Breaking change**: uses new-style FOLIO authentication with expiring-and-refreshing tokens instead of old-style authentication, which is deprecated. This version of the Z39.50 server is fine to use with any FOLIO back-end based on release Poppy or later; prior versions (v3.4.0 and earlier) **will no longer work** with FOLIO back-ends based on release Ramsons or later. Fixes ZF-91.
@@ -12,7 +16,7 @@
 
 ## [3.3.5](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.5)(Tue Oct 20 19:52:37 EDT 2023)
 
-* `Dockerfile` specifies versions of Debian and Perl.
+* `Dockerfile` specifies versions of Debian and Perl, released for Poppy. Fixes ZF-94.
 
 ## [3.3.4](https://github.com/folio-org/Net-Z3950-FOLIO/tree/v3.3.4) (Tue Sep 19 13:37:37 BST 2023)
 
