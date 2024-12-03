@@ -30,6 +30,7 @@ etc/config.able.json
 etc/config.atplt.json
 etc/config.bugfest_nolana.json
 etc/config.bugfest_orchid.json
+etc/config.bugfest_ramsons.json
 etc/config.chicago.json
 etc/config.dummy.json
 etc/config.fieldPerItem.json
@@ -41,6 +42,7 @@ etc/config.lehigh.json
 etc/config.local.json
 etc/config.localgql.json
 etc/config.marcHoldings.json
+etc/config.snapshot-2.json
 etc/config.snapshot.json
 etc/config.unsuppressed-holdings.json
 etc/config.unsuppressed-items.json
