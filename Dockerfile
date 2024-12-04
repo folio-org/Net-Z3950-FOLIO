@@ -13,7 +13,7 @@ RUN apt-get update \
       libexpat1-dev \
       software-properties-common \
       wget \
-      libparams-validate-perl \
+      libparams-validationcompiler-perl \
  && mkdir -p /etc/apt/keyrings \
  && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian bullseye main' > /etc/apt/sources.list.d/indexdata.list \
