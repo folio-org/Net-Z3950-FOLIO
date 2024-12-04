@@ -20,6 +20,7 @@ RUN apt-get update \
  && apt-get install -y \
       libyaz5-dev \
       yaz \
+ && cpan Params::ValidationCompiler \
  && cpan XML::Simple \
 # Tests fail
  && cpan -f -i MARC::File::XML \
@@ -34,7 +35,6 @@ RUN apt-get update \
  && cpan Unicode::Diacritic::Strip \
  && cpan Net::Z3950::ZOOM \
  && cpan Net::Z3950::SimpleServer \
- && cpan Params::ValidationCompiler \
  && apt-get autoremove -y --purge \
       build-essential \
       gcc \
