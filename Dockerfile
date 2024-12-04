@@ -34,7 +34,7 @@ RUN apt-get update \
  && cpan Unicode::Diacritic::Strip \
  && cpan Net::Z3950::ZOOM \
  && cpan Net::Z3950::SimpleServer \
- && cpan Params::ValidationCompiler.pm \
+ && cpan Params::ValidationCompiler \
  && apt-get autoremove -y --purge \
       build-essential \
       gcc \
