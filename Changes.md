@@ -3,6 +3,7 @@
 ## 4.0.1 (IN PROGRESS)
 
 * Side-loading mod-graphql now works under RTR. Fixes ZF-108.
+* Information about loans (specifically, availability date) can be obtained by using an extended database name: see [**Obtaining information about loans** in the top-level `README.md`](README.md#obtaining-information-about-loans) for details. Fixes ZF-96.
 
 ## 4.0.0 (Thu  4 Jul 17:34:07 BST 2024)
 
