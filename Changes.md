@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 4.0.1 (IN PROGRESS)
+## 4.0.1 (Thu  5 Dec 2024 17:06:48 GMT)
 
 * Side-loading mod-graphql now works under RTR. Fixes ZF-108.
 * Information about loans (specifically, availability date) can be obtained by using an extended database name: see [**Obtaining information about loans** in the top-level `README.md`](README.md#obtaining-information-about-loans) for details. Fixes ZF-96.
