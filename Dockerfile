@@ -1,50 +1,42 @@
-FROM perl:5.38.0-slim-bullseye as base
+FROM debian:bullseye as base
 
 WORKDIR /usr/src/app
 
-RUN apt-get update \
- && apt-get upgrade -y \
- && apt-get install -y \
+RUN  apt-get update \
+  && apt-get install -y \
       apt-transport-https \
-      build-essential \
       ca-certificates \
-      gcc \
       gnupg \
-      libexpat1-dev \
       software-properties-common \
       wget \
-      libparams-validationcompiler-perl \
- && mkdir -p /etc/apt/keyrings \
- && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
- && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian bullseye main' > /etc/apt/sources.list.d/indexdata.list \
- && apt-get update \
- && apt-get install -y \
+  && mkdir -p /etc/apt/keyrings \
+  && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
+  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian bullseye main' > /etc/apt/sources.list.d/indexdata.list \
+  && apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y \
+      build-essential \
+      gcc \
+      libexpat1-dev \
       libyaz5-dev \
       yaz \
- && cpan XML::Simple \
-# Tests fail
- && cpan -f -i MARC::File::XML \
- && cpan Cpanel::JSON::XS \
- && cpan LWP::UserAgent \
- && cpan LWP::Protocol::https \
- && cpan HTTP::Cookies \
- && cpan DateTime \
- && cpan Mozilla::CA \
- && cpan MARC::Record \
- && cpan Net::Z3950::PQF \
- && cpan Unicode::Diacritic::Strip \
- && cpan Net::Z3950::ZOOM \
- && cpan Net::Z3950::SimpleServer \
- && apt-get autoremove -y --purge \
-      build-essential \
-      gcc \
-      gnupg \
-      software-properties-common \
-      wget \
- && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm/
+      libparams-validationcompiler-perl \
+      libxml-simple-perl \
+      libmarc-xml-perl \
+      libcpanel-json-xs-perl \
+      libwww-perl \
+      liblwp-protocol-https-perl \
+      libhttp-cookies-perl \
+      libdatetime-perl \
+      libmarc-record-perl \
+      libtest-differences-perl \
+  && cpan Mozilla::CA \
+  && cpan Unicode::Diacritic::Strip \
+  && cpan Net::Z3950::PQF \
+  && cpan Net::Z3950::ZOOM \
+  && cpan Net::Z3950::SimpleServer 
 
 FROM base as test
-RUN cpan Test::Differences
 COPY Makefile.PL .
 COPY etc/ etc/
 COPY lib/ lib/
@@ -53,6 +45,13 @@ RUN perl Makefile.PL \
  && make test
 
 FROM base as runtime
+RUN apt-get autoremove -y --purge \
+      build-essential \
+      gcc \
+      gnupg \
+      software-properties-common \
+      wget \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm/
 COPY . .
 EXPOSE 9997
 # Since we often run under Kubernetes, which probes the port repeatedly, session-logging becomes noise, hence -v-session
