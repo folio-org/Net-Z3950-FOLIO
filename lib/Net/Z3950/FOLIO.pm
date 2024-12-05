@@ -175,6 +175,8 @@ sub _search_handler {
 sub _fetch_handler {
     my($args) = @_;
     my $session = $args->{HANDLE};
+    _throw(30, $args->{SETNAME}) if !$session;
+
     $session->maybeRefreshToken();
 
     my $rs = $session->{resultsets}->{$args->{SETNAME}};
