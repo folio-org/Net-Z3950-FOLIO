@@ -1,8 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 4.0.2 (IN PROGRESS)
+## 4.1.0 (IN PROGRESS)
 
 * Update module descriptor to depend on `login` interface (and not to depend on `search`). Fixes ZF-98.
+* When a MARC record cannot be obtained from SRS, provide a surrogate diagnostic rather than failing the entire request. Fixes ZF-65.
 
 ## 4.0.1 (Thu  5 Dec 2024 17:06:48 GMT)
 
