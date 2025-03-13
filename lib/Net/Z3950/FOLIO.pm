@@ -19,7 +19,7 @@ use Net::Z3950::FOLIO::RPN;
 use Net::Z3950::FOLIO::SurrogateDiagnostic;
 
 
-our $VERSION = 'v4.0.1';
+our $VERSION = 'v4.1.0';
 
 
 sub FORMAT_USMARC { '1.2.840.10003.5.10' }
