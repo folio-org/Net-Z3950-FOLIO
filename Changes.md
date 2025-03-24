@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 4.1.1 (IN PROGRESS)
+## 4.1.1 (Mon 24 Mar 2025 12:53:38 GMT)
 
 * Reinstate ability to fetch more than 10 holdings records, and more than 10 items within a holdings area, as was originally fixed in ZF-42 but inadvertently regressed in the move to mod-search (ZF-62). This time, it fixes ZF-110.
 
