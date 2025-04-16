@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 4.1.2
+
+* When a MARC record has multiple 999ff fields, the FOLIO ID will now be taken from the first of these that has a `$i` subfield, rather than always using the last. This means that composite records from ETL process, which may have multiple 999ff fields, can now be retrieved. Fixes ZF-112.
+
 ## 4.1.1 (Mon 24 Mar 2025 12:53:38 GMT)
 
 * Reinstate ability to fetch more than 10 holdings records, and more than 10 items within a holdings area, as was originally fixed in ZF-42 but inadvertently regressed in the move to mod-search (ZF-62). This time, it fixes ZF-110.
