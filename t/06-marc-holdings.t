@@ -6,22 +6,23 @@ use warnings;
 use IO::File;
 use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
-use Test::More tests => 3;
+use Test::More tests => 4;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 use DummyRecord;
 
 for (my $i = 1; $i <= 1; $i++) {
-    for (my $j = 1; $j <= 2; $j++) {
+    for (my $j = 1; $j <= 3; $j++) {
 	my $cfg = new Net::Z3950::FOLIO::Config('t/data/config/foo', 'marcHoldings',
-						$j == 2 ? 'fieldPerItem' : undef);
+						$j == 2 ? 'fieldPerItem' : undef,
+						$j == 3 ? 'restrictToItem' : undef);
 	#use Data::Dumper; $Data::Dumper::INDENT = 2; warn "j=$j, config", Dumper($cfg);
 	my $dummyMarc = makeDummyMarc();
-	my $expected = readFile("t/data/records/expectedMarc$i" . ($j == 2 ? 'byItem' : '') . ".marc");
+	my $expected = readFile("t/data/records/expectedMarc$i" . ($j == 2 ? 'byItem' : '') . ($j == 3 ? 'singleItem' : '') . ".marc");
 	my $folioJson = readFile("t/data/records/input$i.json");
 	my $folioHoldings = decode_json(qq[{ "holdingsRecords2": $folioJson }]);
 	my $rec = new DummyRecord($folioHoldings, $dummyMarc);
-	insertMARCHoldings($rec, $dummyMarc, $cfg);
+	insertMARCHoldings($rec, $dummyMarc, $cfg, '9876543210');
 	my $marcString = $dummyMarc->as_formatted() . "\n";
 	is($marcString, $expected, "generated holdings $i match expected MARC");
     }
