@@ -6,16 +6,17 @@ use warnings;
 use IO::File;
 use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
-use Test::More tests => 4;
+use Test::More tests => 5;
 BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 use DummyRecord;
 
 for (my $i = 1; $i <= 1; $i++) {
-    for (my $j = 1; $j <= 3; $j++) {
+    for (my $j = 1; $j <= 4; $j++) {
 	my $cfg = new Net::Z3950::FOLIO::Config('t/data/config/foo', 'marcHoldings',
 						$j == 2 ? 'fieldPerItem' : undef,
-						$j == 3 ? 'restrictToItem' : undef);
+						$j == 3 ? 'restrictToItem' : undef,
+						$j == 4 ? 'holdingsInEachItem' : undef);
 	#use Data::Dumper; $Data::Dumper::INDENT = 2; warn "j=$j, config", Dumper($cfg);
 	my $dummyMarc = makeDummyMarc();
 	my $expected = readFile("t/data/records/expectedMarc$i" . ($j == 2 ? 'byItem' : '') . ($j == 3 ? 'singleItem' : '') . ".marc");
