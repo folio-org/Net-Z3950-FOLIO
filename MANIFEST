@@ -99,6 +99,7 @@ t/data/fetch/marc1.xml
 t/data/fetch/sorted1.json
 t/data/records/expectedMarc1.marc
 t/data/records/expectedMarc1fieldPerItem.marc
+t/data/records/expectedMarc1fieldPerItemholdingsInEachItem.marc
 t/data/records/expectedMarc1holdingsInEachItem.marc
 t/data/records/expectedMarc1restrictToItem.marc
 t/data/records/expectedOutput1.xml
