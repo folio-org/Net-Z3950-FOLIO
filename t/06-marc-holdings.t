@@ -1,18 +1,14 @@
-# Before 'make install' is performed this script should be runnable with
-# 'make test'. After 'make install' it should work as 'perl Net-Z3950-FOLIO.t'
-
 use strict;
 use warnings;
 use IO::File;
 use MARC::Record;
 use Cpanel::JSON::XS qw(decode_json);
-use Test::More tests => 6;
-BEGIN { use_ok('Net::Z3950::FOLIO') };
 use Net::Z3950::FOLIO::MARCHoldings qw(insertMARCHoldings);
 use DummyRecord;
 
-for (my $i = 1; $i <= 1; $i++) {
-    my @tests = (
+BEGIN {
+    use vars qw(@tests);
+    @tests = (
 	# testName, configName1, configName2
 	[ '[regular]', undef ],
 	[ 'fieldPerItem', 'fieldPerItem' ],
@@ -20,7 +16,13 @@ for (my $i = 1; $i <= 1; $i++) {
 	[ 'holdingsInEachItem', 'holdingsInEachItem' ],
 	[ 'fieldPerItem with holdings', 'fieldPerItem', 'holdingsInEachItem' ],
     );
+}
 
+use Test::More tests => 1 + scalar(@tests);
+
+BEGIN { use_ok('Net::Z3950::FOLIO') };
+
+for (my $i = 1; $i <= 1; $i++) {
     foreach my $test (@tests) {
 	my($testName, $configName1, $configName2) = @$test;
 
