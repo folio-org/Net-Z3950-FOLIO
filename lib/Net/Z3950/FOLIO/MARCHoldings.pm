@@ -18,7 +18,9 @@ sub insertMARCHoldings {
 	for (my $j = 0; $j < @$itemObjects; $j++) {
 	    my $itemMap = _listOfPairs2map($itemObjects->[$j]);
 	    next if $marcCfg->{restrictToItem} && $barcode && $itemMap->{itemId} ne $barcode;
-	    $marcField = _addSubfields(undef, $marcCfg, $marcCfg->{holdingsElements}, $holdingsMap) if $nitems == 0;
+	    if ($nitems == 0 || $marcCfg->{holdingsInEachItem}) {
+		$marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{holdingsElements}, $holdingsMap)
+	    }
 	    $marcField = _addSubfields($marcField, $marcCfg, $marcCfg->{itemElements}, $itemMap);
 	    $nitems++;
 	    if ($marcCfg->{fieldPerItem} && $marcField) {
