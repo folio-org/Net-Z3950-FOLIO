@@ -3,6 +3,7 @@
 ## 4.1.2
 
 * When a MARC record has multiple 999ff fields, the FOLIO ID will now be taken from the first of these that has a `$i` subfield, rather than always using the last. This means that composite records from ETL process, which may have multiple 999ff fields, can now be retrieved. Fixes ZF-112.
+* New `holdingsInEachItem` configuration entry causes each item's field in MARC holdings to carry its own copy of the holdings fields. Fixes ZF-105.
 
 ## 4.1.1 (Mon 24 Mar 2025 12:53:38 GMT)
 
