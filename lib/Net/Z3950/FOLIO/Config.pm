@@ -36,18 +36,31 @@ sub _compileConfig {
 	_mergeConfig($cfg, $overlay);
     }
 
-    my $gqlfile = $cfg->{graphqlQuery}
-        or die "$0: no GraphQL query file defined";
-
     my $path = $cfgbase;
     if ($path =~ /\//) {
 	$path =~ s/(.*)?\/.*/$1/;
-	$gqlfile = "$path/$gqlfile";
+    } else {
+	$path = '.';
     }
-    my $fh = new IO::File("<$gqlfile")
-	or die "$0: can't open GraphQL query file '$gqlfile': $!";
+
+    my $gqlfile = $cfg->{graphqlQuery}
+        or die "$0: no GraphQL query file defined";
+    my $fh = new IO::File("<$path/$gqlfile")
+	or die "$0: can't open GraphQL query file '$path/$gqlfile': $!";
     { local $/; $cfg->{graphql} = <$fh> };
     $fh->close();
+
+    my $esets = $cfg->{xmlElementSets};
+    if ($esets) {
+	foreach my $setname (keys %$esets) {
+	    my $filename = $esets->{$setname};
+	    warn "considering eset '$setname' at file '$path/$filename'";
+	    my $fh = new IO::File("<$path/$filename")
+		or die "$0: can't open XSLT stylesheet file '$path/$filename': $!";
+	    { local $/; $esets->{$setname} = <$fh> };
+	    $fh->close();
+	}
+    }
 
     return $cfg;
 }
