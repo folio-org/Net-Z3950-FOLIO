@@ -260,6 +260,10 @@ Net::Z3950::FOLIO::Config - configuration file for the FOLIO Z39.50 gateway
 	  }
 	}
       }
+    },
+    "xmlElementSets": {
+      "testmarc": "xslt/folio2marcxml.xsl",
+      "testopac": "xslt/folio2opac.xsl"
     }
   }
 
@@ -699,6 +703,11 @@ For example, the MARC post-processing directive
 Says first to remove all diacritics from the C<245$a> (title) field of
 the MARC record (so that for example C<é> becomes C<e>), then to
 replace all vowels with asterisks.
+
+
+=head2 C<xmlElementSets>
+
+If provided, a mapping of XML element-set names to the names of XSLT stylesheets, relative to the location of the top-level configuration file. These stylesheets must be provided as part of the broader configuration. When an XML record is requested in non-standard format (i.e. record-syntax is C<xml> and element-set name is not C<raw>, C<usmarc> or C<opac>), the raw XML record is processed using the nominated XSLT stylesheet and the reslt is returned. This facility can be used to provide clients with, for example, MODS records.
 
 
 =head1 CONFIGURATION STACKING
