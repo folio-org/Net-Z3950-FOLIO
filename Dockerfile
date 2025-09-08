@@ -30,6 +30,7 @@ RUN  apt-get update \
       libdatetime-perl \
       libmarc-record-perl \
       libtest-differences-perl \
+      libxml-xslt-perl \
   && cpan Mozilla::CA \
   && cpan Unicode::Diacritic::Strip \
   && cpan Net::Z3950::PQF \
