@@ -13,15 +13,15 @@ sub transformXMLRecord {
     my $xsltText = $cfg->{xmlElementSets}->{$comp};
     return undef if !$xsltText;
 
-    //warn "*** comp=$comp, rec=$rec ==", $rec;
+    #warn "*** comp=$comp, rec=$rec ==", $rec;
     my $xslt = XML::XSLT->new(Source => \$xsltText, warnings => 1);
-    //warn "xslt = $xslt";
+    #warn "xslt = $xslt";
     my $raw = $rec->prettyXML();
-    //warn "raw = $raw";
+    #warn "raw = $raw";
     my $dom = $xslt->transform(\$raw);
-    //warn "dom = $dom";
+    #warn "dom = $dom";
     my $transformed = $dom->toString;
-    //warn "transformed = $transformed";
+    #warn "transformed = $transformed";
     $xslt->dispose();
 
     return $transformed;
