@@ -54,7 +54,6 @@ sub _compileConfig {
     if ($esets) {
 	foreach my $setname (keys %$esets) {
 	    my $filename = $esets->{$setname};
-	    warn "considering eset '$setname' at file '$path/$filename'";
 	    my $fh = new IO::File("<$path/$filename")
 		or die "$0: can't open XSLT stylesheet file '$path/$filename': $!";
 	    { local $/; $esets->{$setname} = <$fh> };
