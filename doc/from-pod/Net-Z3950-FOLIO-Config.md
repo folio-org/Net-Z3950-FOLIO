@@ -464,7 +464,9 @@ replace all vowels with asterisks.
 
 ## `xmlElementSets`
 
-If provided, a mapping of XML element-set names to the names of XSLT stylesheets, relative to the location of the top-level configuration file. These stylesheets must be provided as part of the broader configuration. When an XML record is requested in non-standard format (i.e. record-syntax is `xml` and element-set name is not `raw`, `usmarc` or `opac`), the raw XML record is processed using the nominated XSLT stylesheet and the reslt is returned. This facility can be used to provide, for example, MODS records.
+If provided, a mapping of XML element-set names to the names of XSLT 1.0 stylesheets, relative to the location of the top-level configuration file. These stylesheets must be provided as part of the broader configuration. When an XML record is requested in non-standard format (i.e. record-syntax is `xml` and element-set name is not `raw`, `usmarc` or `opac`), the raw XML record is processed using the nominated XSLT stylesheet and the reslt is returned. This facility can be used to provide clients with, for example, MODS records.
+
+**NOTE.** Only XSLT 1.0 is supported: not XSLT 2.0. (There seems to be no Perl module that implements XSLT 2.0.)
 
 # CONFIGURATION STACKING
 
