@@ -11,6 +11,7 @@ sub transformXMLRecord {
 
     return undef if !$cfg->{xmlElementSets};
     my $xsltText = $cfg->{xmlElementSets}->{$comp};
+    #warn "*** xsltText = ", $xsltText;
     return undef if !$xsltText;
 
     #warn "*** comp=$comp, rec=$rec ==", $rec;
