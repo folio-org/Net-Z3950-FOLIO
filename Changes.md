@@ -2,7 +2,7 @@
 
 ## 4.3.0 (IN PROGRESS)
 
-* New `xmlElementSets` configuration entry, a mapping of XML element-set names to XSLT stylesheets, which can be used to provide XML records in formats such as MODS. Fixes ZF-114.
+* New `xmlElementSets` configuration entry, a mapping of XML element-set names to XSLT 1.0 stylesheets, which can be used to provide XML records in formats such as MODS. Fixes ZF-114.
 
 ## 4.2.0 (Wed 18 Jun 2025 12:33:06 CEST)
 
