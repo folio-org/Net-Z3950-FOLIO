@@ -31,10 +31,19 @@
         </mods:titleInfo>
     </xsl:template>
     
-    <xsl:template match="id">
-        
+    <xsl:template match="contributors" mode="instance">
+        <mods:name>
+            <mods:displayForm><xsl:value-of select="name"/></mods:displayForm>
+        </mods:name>
     </xsl:template>
-
+    
+    <xsl:template match="publication" mode="instance">
+        <mods:originInfo>
+            <mods:publisher><xsl:value-of select="publisher"/></mods:publisher>
+            <mods:dateIssued encoding="w3cdtf" keyDate="yes"><xsl:value-of select="dateOfPublication"/></mods:dateIssued>
+        </mods:originInfo>
+    </xsl:template>
+    
     <xsl:template match="bareHoldingsItems" mode="holdings"> <!-- mapping each item of all holdings on mods:copyInformation -->
         <mods:copyInformation>
             <xsl:apply-templates select="materialType" mode="item"/>
