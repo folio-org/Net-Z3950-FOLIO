@@ -3,7 +3,8 @@ query($cql: String, $offset: Int, $limit: Int) {
     totalRecords
     instances {
       id
-      hrid title # Not used by the Z-server but useful for debugging
+      hrid
+      title # Not used by the Z-server but useful for debugging
       holdingsRecords2(limit: 100) {
         temporaryLocation {
           institution { name }
