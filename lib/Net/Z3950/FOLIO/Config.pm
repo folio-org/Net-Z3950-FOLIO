@@ -55,7 +55,7 @@ sub _compileConfig {
 	foreach my $setname (keys %$esets) {
 	    my $filename = $esets->{$setname};
 	    my $fh = new IO::File("<$path/$filename")
-		or die "$0: can't open XSLT stylesheet file '$path/$filename': $!";
+		or Net::Z3950::FOLIO::_throw(1, "can't open XSLT stylesheet file '$path/$filename': $!");
 	    { local $/; $esets->{$setname} = <$fh> };
 	    $fh->close();
 	}
@@ -706,7 +706,9 @@ replace all vowels with asterisks.
 
 =head2 C<xmlElementSets>
 
-If provided, a mapping of XML element-set names to the names of XSLT stylesheets, relative to the location of the top-level configuration file. These stylesheets must be provided as part of the broader configuration. When an XML record is requested in non-standard format (i.e. record-syntax is C<xml> and element-set name is not C<raw>, C<usmarc> or C<opac>), the raw XML record is processed using the nominated XSLT stylesheet and the reslt is returned. This facility can be used to provide clients with, for example, MODS records.
+If provided, a mapping of XML element-set names to the names of XSLT 1.0 stylesheets, relative to the location of the top-level configuration file. These stylesheets must be provided as part of the broader configuration. When an XML record is requested in non-standard format (i.e. record-syntax is C<xml> and element-set name is not C<raw>, C<usmarc> or C<opac>), the raw XML record is processed using the nominated XSLT stylesheet and the reslt is returned. This facility can be used to provide clients with, for example, MODS records.
+
+B<NOTE.> Only XSLT 1.0 is supported: not XSLT 2.0. (There seems to be no Perl module that implements XSLT 2.0.)
 
 
 =head1 CONFIGURATION STACKING
