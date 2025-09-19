@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 4.3.0 (IN PROGRESS)
+## 4.3.0 (Fri 19 Sep 2025 18:25:22 BST)
 
 * New `xmlElementSets` configuration entry, a mapping of XML element-set names to XSLT 1.0 stylesheets, which can be used to provide XML records in formats such as MODS. Fixes ZF-114.
 
