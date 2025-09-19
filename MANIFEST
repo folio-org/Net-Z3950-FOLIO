@@ -52,6 +52,7 @@ etc/instances.graphql-query
 etc/mod-search-with-loans.graphql-query
 etc/mod-search.graphql-query
 etc/xslt/folio2marcxml.xsl
+etc/xslt/folio2mods.xsl
 etc/xslt/folio2opac.xsl
 etc/yazgfs.xml
 lib/DummyRecord.pm
