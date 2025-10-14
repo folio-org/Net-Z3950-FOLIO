@@ -7,7 +7,6 @@ RUN  apt-get update \
       apt-transport-https \
       ca-certificates \
       gnupg \
-      software-properties-common \
       wget \
   && mkdir -p /etc/apt/keyrings \
   && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
@@ -50,7 +49,6 @@ RUN apt-get autoremove -y --purge \
       build-essential \
       gcc \
       gnupg \
-      software-properties-common \
       wget \
  && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm/
 COPY . .
