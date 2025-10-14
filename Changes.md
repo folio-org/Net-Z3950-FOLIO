@@ -3,6 +3,7 @@
 ## (IN PROGRESS)
 
 * Add holdings `hrid` to the GraphQL query. (Related to ZF-114.)
+* Updates for mods and new dc mapping
 
 ## 4.3.0 (Fri 19 Sep 2025 18:25:22 BST)
 
