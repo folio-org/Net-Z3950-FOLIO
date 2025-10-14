@@ -1,4 +1,4 @@
-FROM debian:trixie as base
+FROM debian:trixie AS base
 
 WORKDIR /usr/src/app
 
