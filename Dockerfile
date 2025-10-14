@@ -10,7 +10,7 @@ RUN  apt-get update \
       wget \
   && mkdir -p /etc/apt/keyrings \
   && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
-  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian bullseye main' > /etc/apt/sources.list.d/indexdata.list \
+  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian trixie main' > /etc/apt/sources.list.d/indexdata.list \
   && apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y \
