@@ -1,4 +1,4 @@
-FROM debian:bullseye as base
+FROM debian:trixie as base
 
 WORKDIR /usr/src/app
 
