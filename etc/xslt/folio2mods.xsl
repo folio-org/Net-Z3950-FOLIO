@@ -5,7 +5,7 @@
     version="1.0">
     <xsl:output encoding="UTF-8" method="xml" indent="yes"/>
 
-    <!-- Mapping from FOLIO raw format to mods for the FOLIO Z39.50/SRU server 
+    <!-- Mapping from FOLIO raw format to MODS for the FOLIO Z39.50/SRU server 
          Marko Knepper, UB Mainz 2025, Apache 2.0 -->
 
     <xsl:template match="opt|record">
