@@ -4,6 +4,7 @@
 
 * Add holdings `hrid` to the GraphQL query. (Related to ZF-114.)
 * Upgrade Docker base image from Debian bullseye to trixie. Fixes ZF-120.
+* Updates for mods and new dc mapping
 
 ## 4.3.0 (Fri 19 Sep 2025 18:25:22 BST)
 
