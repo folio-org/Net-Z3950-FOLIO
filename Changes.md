@@ -1,9 +1,10 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## (IN PROGRESS)
+## 4.4.0 (IN PROGRESS)
 
 * Add holdings `hrid` to the GraphQL query. (Related to ZF-114.)
 * Upgrade Docker base image from Debian bullseye to trixie. Fixes ZF-120.
+* Update MODS mapping, and add new DC (Dublin Core) mapping. Both due to Marko Knepper! Fixes ZF-121.
 
 ## 4.3.0 (Fri 19 Sep 2025 18:25:22 BST)
 
