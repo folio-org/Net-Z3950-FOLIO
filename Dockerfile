@@ -10,7 +10,7 @@ RUN  apt-get update \
       wget \
   && mkdir -p /etc/apt/keyrings \
   && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
-  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] http://ftp.indexdata.dk/debian trixie main' > /etc/apt/sources.list.d/indexdata.list \
+  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] https://ftp.indexdata.com/debian trixie main' > /etc/apt/sources.list.d/indexdata.list \
   && apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y \
@@ -36,7 +36,7 @@ RUN  apt-get update \
   && cpan Net::Z3950::ZOOM \
   && cpan Net::Z3950::SimpleServer 
 
-FROM base as test
+FROM base AS test
 COPY Makefile.PL .
 COPY etc/ etc/
 COPY lib/ lib/
@@ -44,7 +44,7 @@ COPY t/ t/
 RUN perl Makefile.PL \
  && make test
 
-FROM base as runtime
+FROM base AS runtime
 RUN apt-get autoremove -y --purge \
       build-essential \
       gcc \
@@ -54,5 +54,5 @@ RUN apt-get autoremove -y --purge \
 COPY . .
 EXPOSE 9997
 # Since we often run under Kubernetes, which probes the port repeatedly, session-logging becomes noise, hence -v-session
-CMD perl -I lib bin/z2folio -c etc/config -- -f etc/yazgfs.xml -v-session
+CMD ["perl", "-I", "lib", "bin/z2folio", "-c", "etc/config", "--", "-f", "etc/yazgfs.xml", "-v-session"]
 
