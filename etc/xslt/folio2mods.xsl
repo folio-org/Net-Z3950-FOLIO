@@ -5,7 +5,7 @@
     version="1.0">
     <xsl:output encoding="UTF-8" method="xml" indent="yes"/>
 
-    <!-- Mapping from FOLIO raw format to MODS for the FOLIO Z39.50/SRU server 
+    <!-- Mapping from FOLIO raw format to mods for the FOLIO Z39.50/SRU server 
          Marko Knepper, UB Mainz 2025, Apache 2.0 -->
 
     <xsl:template match="opt|record">
@@ -427,10 +427,10 @@
         </xsl:if>
     </xsl:template>
    
-    <xsl:template match="callNumber[text()]" mode="holdings">
+    <xsl:template match="callNumber" mode="holdings">
         <mods:shelfLocator>
             <xsl:if test="../callNumberPrefix/text()"><xsl:value-of select="../callNumberPrefix"/><xsl:text> </xsl:text></xsl:if>
-            <xsl:value-of select="."/>
+                <xsl:value-of select="."/>
             <xsl:if test="../callNumberSuffix/text()"><xsl:text> </xsl:text><xsl:value-of select="../callNumberSuffix"/></xsl:if>
         </mods:shelfLocator>
     </xsl:template>
@@ -448,15 +448,18 @@
             </xsl:choose>
             <xsl:apply-templates select="effectiveCallNumberComponents" mode="item"/>
             <xsl:apply-templates select="../notes" mode="item"/>
-            <xsl:apply-templates select="chronology|copyNumber" mode="item"/>
-            <xsl:apply-templates select="barcode|hrid" mode="item"/>
+            <xsl:apply-templates select="chronology" mode="item"/>
+            <xsl:apply-templates select="barcode" mode="item"/>
+            <xsl:apply-templates select="copyNumber" mode="item"/>
+            <xsl:apply-templates select="hrid" mode="item"/>
+            <xsl:apply-templates select="id" mode="item"/>
         </mods:copyInformation>
     </xsl:template>
     
     <xsl:template match="effectiveCallNumberComponents" mode="item">
         <mods:shelfLocator>
             <xsl:if test="prefix/text()"><xsl:value-of select="prefix"/><xsl:text> </xsl:text></xsl:if>
-            <xsl:value-of select="callNumber"/>
+               <xsl:value-of select="callNumber"/>
             <xsl:if test="suffix/text()"><xsl:text> </xsl:text><xsl:value-of select="suffix"/></xsl:if>
         </mods:shelfLocator>
     </xsl:template>
@@ -473,16 +476,28 @@
         <mods:itemIdentifier type="hrid"><xsl:value-of select="."/></mods:itemIdentifier>
     </xsl:template>
     
-    <xsl:template match="materialType" mode="item">
+    <xsl:template match="copyNumber" mode="item">
+        <xsl:if test="text()">
+            <mods:itemIdentifier type="copyNumber"><xsl:value-of select="."/></mods:itemIdentifier>
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template match="bareHoldingsItems/id" mode="item"> <!-- mode not reliable in libxslt -->
+        <mods:itemIdentifier type="uuid"><xsl:value-of select="."/></mods:itemIdentifier>
+    </xsl:template>
+    
+    <xsl:template match="materialType" mode="item"> 
         <mods:form><xsl:value-of select="name"/></mods:form>
     </xsl:template>
     
-    <xsl:template match="notes" mode="item">
+    <xsl:template match="holdingsRecords2/notes" mode="item">
         <mods:note type="{holdingsNoteType/name}"><xsl:value-of select="note"/></mods:note>
     </xsl:template>
 
-    <xsl:template match="chronology[text()]|copyNumber[text()]" mode="item">
-        <mods:enumerationAndChronology unitType="1"><xsl:value-of select="."/></mods:enumerationAndChronology>
+    <xsl:template match="chronology" mode="item">
+        <xsl:if test="text()">
+            <mods:enumerationAndChronology unitType="1"><xsl:value-of select="."/></mods:enumerationAndChronology>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="text()" mode="instance"/>
