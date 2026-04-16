@@ -8,17 +8,15 @@ RUN  apt-get update \
       ca-certificates \
       gnupg \
       wget \
-  && mkdir -p /etc/apt/keyrings \
-  && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
-  && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] https://ftp.indexdata.com/debian trixie main' > /etc/apt/sources.list.d/indexdata.list \
   && apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y \
       build-essential \
       gcc \
       libexpat1-dev \
-      libyaz5-dev \
+      libyaz-dev \
       yaz \
+      pkg-config \
       libparams-validationcompiler-perl \
       libxml-simple-perl \
       libmarc-xml-perl \
