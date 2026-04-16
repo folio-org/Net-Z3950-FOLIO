@@ -2,8 +2,10 @@ FROM debian:trixie AS base
 
 WORKDIR /usr/src/app
 
-RUN  apt-get update \
-  && apt-get install -y \
+RUN  rm -rf /var/lib/apt/lists/* \
+  && apt clean \
+  && apt update \
+  && apt install -y \
       apt-transport-https \
       ca-certificates \
       gnupg \
@@ -12,9 +14,11 @@ RUN  apt-get update \
 RUN mkdir -p /etc/apt/keyrings \
   && wget https://ftp.indexdata.com/debian/indexdata.asc -O /etc/apt/keyrings/indexdata.asc \
   && echo 'deb [signed-by=/etc/apt/keyrings/indexdata.asc] https://download.indexdata.com/debian trixie main' > /etc/apt/sources.list.d/indexdata.list \
-  && apt-get update \
-  # && apt-get upgrade -y \
-  && apt-get install -y \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt clean \
+  && apt update \
+  # && apt upgrade -y \
+  && apt install -y \
       build-essential \
       gcc \
       libexpat1-dev \
