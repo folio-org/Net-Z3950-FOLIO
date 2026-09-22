@@ -28,8 +28,13 @@ jobs:
       - name: Install system dependencies
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends build-essential libssl-dev libexpat1-dev \
-                                                     libyaz-dev yaz \
+          apt-get install -y --no-install-recommends build-essential \
+                                                     gcc \
+                                                     libssl-dev \
+                                                     libexpat1-dev \
+                                                     libyaz-dev \
+                                                     yaz \
+                                                     pkg-config \
                                                      libparams-validationcompiler-perl \
                                                      libxml-simple-perl \
                                                      libmarc-xml-perl \
