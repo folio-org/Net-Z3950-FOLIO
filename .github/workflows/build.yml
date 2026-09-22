@@ -17,7 +17,7 @@ jobs:
   # container (no Docker build needed yet — this is fast feedback).
   # ---------------------------------------------------------------------
   build-and-test:
-    name: Lint & Test (Perl)
+    name: Build & Test (Perl)
     runs-on: ubuntu-latest
     container:
       image: perl:5.38-slim
@@ -76,7 +76,7 @@ jobs:
   # ---------------------------------------------------------------------
   build-and-push:
     name: Build & Push Docker Image
-    needs: lint-and-test
+    needs: build-and-test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
