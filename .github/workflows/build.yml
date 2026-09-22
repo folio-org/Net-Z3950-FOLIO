@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+    branches: [master]
+
+env:
+  REGISTRY: 
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ---------------------------------------------------------------------
+  # Lint + test the Perl code itself, running directly inside a Perl
+  # container (no Docker build needed yet — this is fast feedback).
+  # ---------------------------------------------------------------------
+  lint-and-test:
+    name: Lint & Test (Perl)
+    runs-on: ubuntu-latest
+    container:
+      image: perl:5.38-slim
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends build-essential libssl-dev libexpat1-dev \
+                                                     libyaz-dev yaz \
+                                                     libparams-validationcompiler-perl \
+                                                     libxml-simple-perl \
+                                                     libmarc-xml-perl \
+                                                     libcpanel-json-xs-perl \
+                                                     libwww-perl \
+                                                     liblwp-protocol-https-perl \
+                                                     libhttp-cookies-perl \
+                                                     libdatetime-perl \
+                                                     libmarc-record-perl \
+                                                     libtest-differences-perl \
+                                                     libxml-xslt-perl 
+             
+          rm -rf /var/lib/apt/lists/*
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v4
+        with:
+          path: local
+          key: cpan-${{ runner.os }}-${{ hashFiles('cpanfile') }}
+          restore-keys: |
+            cpan-${{ runner.os }}-
+
+      - name: Install cpanminus and project dependencies
+        run: |
+          cpan App::cpanminus
+          cpanm --local-lib=local --notest --installdeps --with-develop --with-test .
+          echo "PERL5LIB=$PWD/local/lib/perl5" >> "$GITHUB_ENV"
+          echo "PATH=$PWD/local/bin:$PATH" >> "$GITHUB_ENV"
+
+      - name: Run Perl::Critic
+        run: perlcritic --severity 3 lib/ bin/
+
+      - name: Run test suite
+        run: perl Makefile.PL && make test
+
+  # ---------------------------------------------------------------------
+  # Build the application image and push it, but only for pushes (not
+  # PRs) and only once the tests above have passed.
+  # ---------------------------------------------------------------------
+  build-and-push:
+    name: Build & Push Docker Image
+    needs: lint-and-test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata (tags/labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
