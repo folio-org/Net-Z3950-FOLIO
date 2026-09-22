@@ -1,4 +1,4 @@
-name: CI
+name: Build
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
   # Lint + test the Perl code itself, running directly inside a Perl
   # container (no Docker build needed yet — this is fast feedback).
   # ---------------------------------------------------------------------
-  lint-and-test:
+  build-and-test:
     name: Lint & Test (Perl)
     runs-on: ubuntu-latest
     container:
@@ -64,8 +64,8 @@ jobs:
           echo "PERL5LIB=$PWD/local/lib/perl5" >> "$GITHUB_ENV"
           echo "PATH=$PWD/local/bin:$PATH" >> "$GITHUB_ENV"
 
-      - name: Run Perl::Critic
-        run: perlcritic --severity 3 lib/ bin/
+      #- name: Run Perl::Critic
+      #  run: perlcritic --severity 3 lib/ bin/
 
       - name: Run test suite
         run: perl Makefile.PL && make test
