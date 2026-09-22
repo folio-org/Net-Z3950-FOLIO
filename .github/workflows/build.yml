@@ -34,18 +34,7 @@ jobs:
                                                      libexpat1-dev \
                                                      libyaz-dev \
                                                      yaz \
-                                                     pkg-config \
-                                                     libparams-validationcompiler-perl \
-                                                     libxml-simple-perl \
-                                                     libmarc-xml-perl \
-                                                     libcpanel-json-xs-perl \
-                                                     libwww-perl \
-                                                     liblwp-protocol-https-perl \
-                                                     libhttp-cookies-perl \
-                                                     libdatetime-perl \
-                                                     libmarc-record-perl \
-                                                     libtest-differences-perl \
-                                                     libxml-xslt-perl 
+                                                     pkg-config 
              
           rm -rf /var/lib/apt/lists/*
 
