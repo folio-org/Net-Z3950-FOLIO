@@ -140,10 +140,6 @@ jobs:
   update-module-descriptor:
     name: Update module descriptor
     needs: [ set-shared-variables, version-number ]
-    with:
-      artifact-id: ${{ needs.version-number.outputs.artifact-id }}
-      artifact-version: ${{ needs.version-number.outputs.version-number }}
-      docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
     runs-on: ubuntu-latest
 
     steps:
