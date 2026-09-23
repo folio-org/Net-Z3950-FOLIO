@@ -1,11 +1,9 @@
-name: mod-z3950-ci
+name: mod-z3950 GHA Workflow
 
 on:
   push:
-    branches: [master]
-    tags: ['v*']
   pull_request:
-    branches: [master]
+  workflow_dispatch:
 
 jobs:
   set-shared-variables:
@@ -108,28 +106,17 @@ jobs:
       # container used by build-and-test. Fine as long as this script only
       # uses core Perl modules; otherwise it needs its own dependency install.
       - name: Create Module Descriptor
-        run: ./descriptors/transform-descriptor.pl descriptors/ModuleDescriptor-template.json > ModuleDescriptor.json
-
-      # FIX: this was missing entirely. docker-description.yml (when
-      # publish-module-descriptor is true) and maven-module-descriptor-publish.yml
-      # (always) both call actions/download-artifact@v8 expecting an artifact
-      # named exactly "ModuleDescriptor.json" to already exist in this run.
-      # Without uploading it here, both of those jobs fail outright.
-      - name: Upload Module Descriptor artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ModuleDescriptor.json
-          path: ModuleDescriptor.json
+        run: ./descriptors/transform-descriptor.pl descriptors/ModuleDescriptor-template.json > ModuleDescriptor-tmp.json
 
       - name: Get project artifact-id
         id: get-artifact-id
         run: |
-          echo artifact-id="$(jq -r .id ModuleDescriptor.json | cut -d '-' -f -2 | xargs)" | tee -a "$GITHUB_OUTPUT"
+          echo artifact-id="$(jq -r .id ModuleDescriptor-tmp.json | cut -d '-' -f -2 | xargs)" | tee -a "$GITHUB_OUTPUT"
 
       - name: Get project version
         id: get-version
         run: |
-          echo project-version="$(jq -r .id ModuleDescriptor.json | cut -d '-' -f 3- | xargs)" | tee -a "$GITHUB_OUTPUT"
+          echo project-version="$(jq -r .id ModuleDescriptor-tmp.json | cut -d '-' -f 3- | xargs)" | tee -a "$GITHUB_OUTPUT"
 
       - id: calculate
         if: ${{ needs.set-shared-variables.outputs.is-release == 'false' }}
@@ -149,6 +136,18 @@ jobs:
       - id: final
         name: Get version from previous steps
         run: echo version=${{ steps.calculate.outputs.version }}${{ steps.tag-version.outputs.version }} | tee -a "$GITHUB_OUTPUT"
+
+      - name: Update module descriptor id with correct version
+        run: jq '.id = "${{ steps.get-artifact-id.outputs.artifact-id }}-${{ steps.final.outputs.version }}"' ModuleDescriptor-tmp.json > ModuleDescriptor.json
+
+      - name: Print module descriptor
+        run: cat ModuleDescriptor.json
+
+      - name: Upload Module Descriptor artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ModuleDescriptor.json
+          path: ModuleDescriptor.json
 
   docker-publish:
     needs: [set-shared-variables, version-number]
