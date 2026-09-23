@@ -7,17 +7,20 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  FOLIO_REGISTRY: https://folio-registry.dev.folio.org
-  # docker-publish.yml's docker-label-documentation is a *string* used
-  # directly as the OCI "org.opencontainers.image.documentation" label,
-  # not a toggle. Default to the repo's own GitHub URL.
-  DOCKER_LABEL_DOCUMENTATION: ${{ github.event.repository.html_url }}
-  # docker-description.yml's publish-module-descriptor is a required
-  # boolean. Centralized here as a lowercase 'true'/'false' string, and
-  # wrapped with `== 'true'` at each call site so a real boolean is passed
-  # rather than a raw string.
-  PUBLISH_MODULE_DESCRIPTOR: 'true'
+# NOTE: there's no top-level `env:` block here. The three values that used
+# to live in one (FOLIO_REGISTRY, DOCKER_LABEL_DOCUMENTATION,
+# PUBLISH_MODULE_DESCRIPTOR) were only ever consumed from jobs.*.with, and
+# that context can see github/needs/vars/inputs/secrets — but NOT env. That
+# was a real bug: GitHub Actions rejects `${{ env.X }}` there outright
+# ("Unrecognized named-value: 'env'"), and it was present even in the
+# original file's use of `env.FOLIO_REGISTRY`. Each value is now inlined
+# directly at its one call site below instead.
+
+# NOTE: the old top-level `secrets:` block was removed. It's only valid
+# under `on.workflow_call.secrets` (i.e. for a workflow that others call).
+# This workflow is triggered directly by push/pull_request, so it isn't
+# reusable and doesn't need to declare accepted secrets — it already has
+# access to repo/org secrets via `secrets.<NAME>` wherever they're used.
 
 jobs:
   set-shared-variables:
@@ -219,7 +222,10 @@ jobs:
       # Wrapping in `== 'true'` produces a real boolean instead of forwarding
       # a raw string, so it can't silently mismatch the callee's type check.
       docker-push: ${{ needs.set-shared-variables.outputs.do-docker-push == 'true' }}
-      docker-label-documentation: ${{ env.DOCKER_LABEL_DOCUMENTATION }}
+      # FIX: env context isn't available in a reusable-workflow-call job's
+      # with: block. github context is, so use the repo's URL directly —
+      # this is a string label (OCI documentation URL), not a toggle.
+      docker-label-documentation: ${{ github.event.repository.html_url }}
     secrets:
       dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -233,9 +239,9 @@ jobs:
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
       docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
       repo-description: ${{ needs.set-shared-variables.outputs.repo-description }}
-      # FIX: publish-module-descriptor is a required boolean in
-      # docker-description.yml — wrap for a real boolean value.
-      publish-module-descriptor: ${{ env.PUBLISH_MODULE_DESCRIPTOR == 'true' }}
+      # FIX: env context isn't available here either. This is a required
+      # boolean with no need for indirection, so it's just a literal.
+      publish-module-descriptor: true
     secrets:
       dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -270,7 +276,10 @@ jobs:
       needs.set-shared-variables.outputs.do-docker-push == 'true'
     uses: folio-org/.github/.github/workflows/maven-module-descriptor-publish.yml@v1
     with:
-      module-descriptor-registry: ${{ env.FOLIO_REGISTRY }}
+      # FIX: env context isn't available here — this was broken the same
+      # way in the original file, just never surfaced until now.
+      module-descriptor-registry: https://folio-registry.dev.folio.org
     secrets:
       registry-username: ${{ secrets.FOLIO_REGISTRY_USERNAME }}
+      # FIX: typo'd secret name (FOLIO_REGISTRU_PASSWORD) corrected.
       registry-password: ${{ secrets.FOLIO_REGISTRY_PASSWORD }}
