@@ -30,7 +30,7 @@ RUN   apt-get update && apt-get install -y \
 
 # cpanminus makes dependency installs faster and quieter than plain cpan
 COPY cpanfile ./
-RUN cpan App::cpanminus && RUN cpanm --notest --installdeps .
+RUN cpan App::cpanminus && cpanm --notest --installdeps .
 
 # ----- Test -------
 FROM base AS test
