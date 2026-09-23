@@ -137,8 +137,19 @@ jobs:
         name: Get version from previous steps
         run: echo version=${{ steps.calculate.outputs.version }}${{ steps.tag-version.outputs.version }} | tee -a "$GITHUB_OUTPUT"
 
+  update-module-descriptor:
+    needs: [ set-shared-variables, version-number ]
+    runs-on: ubuntu-latest
+    with:
+      artifact-id: ${{ needs.version-number.outputs.artifact-id }}
+      artifact-version: ${{ needs.version-number.outputs.version-number }}
+      docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
+      
       - name: Update module descriptor id with correct version
-        run: jq '.id = "${{ steps.get-artifact-id.outputs.artifact-id }}-${{ steps.final.outputs.version }}"' ModuleDescriptor-tmp.json > ModuleDescriptor.json
+        run: jq '.id = "${{ artifact-id }}-${{ version }}"' ModuleDescriptor-tmp.json > ModuleDescriptor-id.json
+ 
+      - name: Update module descriptor docker image
+        run: jq '.launchDescriptor.dockerImage = "${{ docker-registry }}/$${{ artifact-id }}:${{ version }}"' ModuleDescriptor-id.json > ModuleDescriptor.json
 
       - name: Print module descriptor
         run: cat ModuleDescriptor.json
