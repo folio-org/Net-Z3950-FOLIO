@@ -3,7 +3,6 @@ FROM perl:5.38-slim AS base
 
 # System packages commonly needed to build CPAN modules with XS/C dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      build-essential \
       libssl-dev \
       libexpat1-dev \
       ca-certificates \
