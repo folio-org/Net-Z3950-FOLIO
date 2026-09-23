@@ -1,4 +1,4 @@
-name: Build
+name: mod-z3950-ci
 
 on:
   push:
@@ -8,14 +8,160 @@ on:
     branches: [master]
 
 env:
-  REGISTRY: 
-  IMAGE_NAME: ${{ github.repository }}
+  FOLIO_REGISTRY: https://folio-registry.dev.folio.org
+  # docker-publish.yml's docker-label-documentation is a *string* used
+  # directly as the OCI "org.opencontainers.image.documentation" label,
+  # not a toggle. Default to the repo's own GitHub URL.
+  DOCKER_LABEL_DOCUMENTATION: ${{ github.event.repository.html_url }}
+  # docker-description.yml's publish-module-descriptor is a required
+  # boolean. Centralized here as a lowercase 'true'/'false' string, and
+  # wrapped with `== 'true'` at each call site so a real boolean is passed
+  # rather than a raw string.
+  PUBLISH_MODULE_DESCRIPTOR: 'true'
 
 jobs:
-  # ---------------------------------------------------------------------
-  # Lint + test the Perl code itself, running directly inside a Perl
-  # container (no Docker build needed yet — this is fast feedback).
-  # ---------------------------------------------------------------------
+  set-shared-variables:
+    name: Set shared variables
+    runs-on: ubuntu-latest
+    outputs:
+      is-release: ${{ steps.logic.outputs.is-release }}
+      is-main-branch: ${{ steps.vars1.outputs.is-main-branch }}
+      branch-name: ${{ steps.vars1.outputs.branch-name }}
+      do-docker-push: ${{ steps.vars2.outputs.do-docker-push }}
+      docker-registry: ${{ steps.logic.outputs.docker-registry }}
+      repo-name: ${{ steps.vars1.outputs.repo-name }}
+      repo-description: ${{ steps.vars1.outputs.repo-description }}
+
+    steps:
+      - id: logic
+        name: Determine default values
+        shell: python
+        run: |
+          import os
+          import re
+
+          ref = "${{ github.ref }}"
+          print("We are on ref:", ref)
+          if re.match(r'^refs/tags/v\d+\..+', ref):
+            print("  We are on a tag vX.Y")
+            is_release = True
+            docker_registry = "folioorg"
+          else:
+            print("  We are not on a version tag")
+            is_release = False
+            docker_registry = "folioci"
+
+          # NOTE: emit lowercase true/false. The called reusable workflows
+          # (docker-publish.yml, docker-description.yml) do plain lowercase
+          # shell comparisons like [ "$X" = "true" ], and boolean-typed
+          # workflow_call inputs need to line up with that convention —
+          # Python's str(bool) produces "True"/"False", which would silently
+          # fail those checks.
+          output = open(os.environ['GITHUB_OUTPUT'], 'a')
+          output.write("is-release=" + str(is_release).lower() + "\n")
+          output.write(f"docker-registry={docker_registry}\n")
+          output.close()
+
+      - id: vars1
+        name: Determine first set of other variables
+        env:
+          # Pulling these into env: instead of interpolating ${{ }} directly
+          # into the shell script avoids breakage/injection if the repo
+          # description ever contains quotes or shell metacharacters.
+          REPO_DESCRIPTION: ${{ github.event.repository.description }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          echo "repo-name=${GITHUB_REPOSITORY##*/}" | tee -a "$GITHUB_OUTPUT"
+          echo "repo-description=${REPO_DESCRIPTION}" | tee -a "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "branch-name=${GITHUB_HEAD_REF}" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "branch-name=${GITHUB_REF_NAME}" | tee -a "$GITHUB_OUTPUT"
+          fi
+          # On a fork, the default branch might not be "master":
+          if [ "${GITHUB_REF_NAME}" == "${DEFAULT_BRANCH}" ]; then
+            echo "is-main-branch=true" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "is-main-branch=false" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - id: vars2
+        name: Determine second set of other variables
+        env:
+          IS_RELEASE: ${{ steps.logic.outputs.is-release }}
+          IS_MAIN_BRANCH: ${{ steps.vars1.outputs.is-main-branch }}
+        run: |
+          if [ "${IS_RELEASE}" == "true" ]; then
+            echo "do-docker-push=true" | tee -a "$GITHUB_OUTPUT"
+          elif [ "${IS_MAIN_BRANCH}" == "true" ]; then
+            echo "do-docker-push=true" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "do-docker-push=false" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+  version-number:
+    name: Get CI version number
+    needs: set-shared-variables
+    runs-on: ubuntu-latest
+
+    outputs:
+      version-number: ${{ steps.final.outputs.version }}
+      artifact-id: ${{ steps.get-artifact-id.outputs.artifact-id }}
+      project-version: ${{ steps.get-version.outputs.project-version }}
+
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v6
+
+      - name: Fetch git tags
+        run: git fetch --prune --prune-tags --force --depth=1
+
+      # NOTE: this runs on the bare runner, not inside the perl:5.38-slim
+      # container used by build-and-test. Fine as long as this script only
+      # uses core Perl modules; otherwise it needs its own dependency install.
+      - name: Create Module Descriptor
+        run: ./descriptors/transform-descriptor.pl descriptors/ModuleDescriptor-template.json > ModuleDescriptor.json
+
+      # FIX: this was missing entirely. docker-description.yml (when
+      # publish-module-descriptor is true) and maven-module-descriptor-publish.yml
+      # (always) both call actions/download-artifact@v8 expecting an artifact
+      # named exactly "ModuleDescriptor.json" to already exist in this run.
+      # Without uploading it here, both of those jobs fail outright.
+      - name: Upload Module Descriptor artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ModuleDescriptor.json
+          path: ModuleDescriptor.json
+
+      - name: Get project artifact-id
+        id: get-artifact-id
+        run: |
+          echo artifact-id="$(jq -r .id ModuleDescriptor.json | cut -d '-' -f -2 | xargs)" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Get project version
+        id: get-version
+        run: |
+          echo project-version="$(jq -r .id ModuleDescriptor.json | cut -d '-' -f 3- | xargs)" | tee -a "$GITHUB_OUTPUT"
+
+      - id: calculate
+        if: ${{ needs.set-shared-variables.outputs.is-release == 'false' }}
+        name: Calculate version number, if not a release tag
+        run: |
+          base_number=2000
+          build_number=$(( base_number + GITHUB_RUN_NUMBER ))
+          echo version="${{ steps.get-version.outputs.project-version }}.${build_number}" | tee -a "$GITHUB_OUTPUT"
+
+      - id: tag-version
+        if: ${{ needs.set-shared-variables.outputs.is-release == 'true' }}
+        name: Get release tag version number, if applicable
+        run: echo "version=${GITHUB_REF#refs/tags/v}" | tee -a "$GITHUB_OUTPUT"
+
+      # used to aggregate tag and non-tag versions into a single output
+      # the irrelevant one will be an empty string
+      - id: final
+        name: Get version from previous steps
+        run: echo version=${{ steps.calculate.outputs.version }}${{ steps.tag-version.outputs.version }} | tee -a "$GITHUB_OUTPUT"
+
   build-and-test:
     name: Build & Test (Perl)
     runs-on: ubuntu-latest
@@ -23,7 +169,7 @@ jobs:
       image: perl:5.38-slim
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install system dependencies
         run: |
@@ -34,8 +180,8 @@ jobs:
                                                      libexpat1-dev \
                                                      libyaz-dev \
                                                      yaz \
-                                                     pkg-config 
-             
+                                                     pkg-config
+
           rm -rf /var/lib/apt/lists/*
 
       - name: Cache CPAN modules
@@ -59,48 +205,72 @@ jobs:
       - name: Run test suite
         run: perl Makefile.PL && make test
 
-  # ---------------------------------------------------------------------
-  # Build the application image and push it, but only for pushes (not
-  # PRs) and only once the tests above have passed.
-  # ---------------------------------------------------------------------
-  build-and-push:
-    name: Build & Push Docker Image
-    needs: build-and-test
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  docker-publish:
+    needs: [set-shared-variables, version-number, build-and-test]
+    uses: folio-org/.github/.github/workflows/docker-publish.yml@v1
+    with:
+      is-release: ${{ needs.set-shared-variables.outputs.is-release }}
+      # FIX: artifact-id is produced by version-number, not
+      # set-shared-variables (that job has no such output).
+      artifact-id: ${{ needs.version-number.outputs.artifact-id }}
+      artifact-version: ${{ needs.version-number.outputs.version-number }}
+      docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
+      # FIX: docker-push is declared `type: boolean` in docker-publish.yml.
+      # Wrapping in `== 'true'` produces a real boolean instead of forwarding
+      # a raw string, so it can't silently mismatch the callee's type check.
+      docker-push: ${{ needs.set-shared-variables.outputs.do-docker-push == 'true' }}
+      docker-label-documentation: ${{ env.DOCKER_LABEL_DOCUMENTATION }}
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  docker-description:
+    name: Publish image description
+    needs: [set-shared-variables, version-number, docker-publish]
+    uses: folio-org/.github/.github/workflows/docker-description.yml@v1
+    with:
+      # FIX: same artifact-id source correction as docker-publish above.
+      artifact-id: ${{ needs.version-number.outputs.artifact-id }}
+      docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
+      repo-description: ${{ needs.set-shared-variables.outputs.repo-description }}
+      # FIX: publish-module-descriptor is a required boolean in
+      # docker-description.yml — wrap for a real boolean value.
+      publish-module-descriptor: ${{ env.PUBLISH_MODULE_DESCRIPTOR == 'true' }}
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  report-testing-variables:
+    needs: [set-shared-variables, version-number, docker-publish]
+    uses: folio-org/.github/.github/workflows/docker-report-testing-variables.yml@v1
+    with:
+      is-release: ${{ needs.set-shared-variables.outputs.is-release }}
+      # FIX: same artifact-id source correction as above.
+      artifact-id: ${{ needs.version-number.outputs.artifact-id }}
+      artifact-version: ${{ needs.version-number.outputs.version-number }}
+      # FIX: docker-push is boolean here too.
+      docker-push: ${{ needs.set-shared-variables.outputs.do-docker-push == 'true' }}
 
-      - name: Extract image metadata (tags/labels)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=sha
-
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+  publish-module-descriptor:
+    name: Publish Module Descriptor
+    needs:
+      [
+        set-shared-variables,
+        version-number,
+        build-and-test,
+        docker-publish
+      ]
+    # FIX: needs list had "built-and-test" (typo, unknown job) instead of
+    # "build-and-test". The old condition also referenced
+    # needs.get-module-descriptor / needs.build, jobs that don't exist
+    # anywhere in this file (leftover from a different template) — dropped,
+    # since do-docker-push already encodes "is-release OR is-main-branch".
+    if: |
+      !cancelled() &&
+      needs.set-shared-variables.outputs.do-docker-push == 'true'
+    uses: folio-org/.github/.github/workflows/maven-module-descriptor-publish.yml@v1
+    with:
+      module-descriptor-registry: ${{ env.FOLIO_REGISTRY }}
+    secrets:
+      registry-username: ${{ secrets.FOLIO_REGISTRY_USERNAME }}
+      registry-password: ${{ secrets.FOLIO_REGISTRY_PASSWORD }}
