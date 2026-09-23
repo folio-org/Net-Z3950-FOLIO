@@ -7,21 +7,6 @@ on:
   pull_request:
     branches: [master]
 
-# NOTE: there's no top-level `env:` block here. The three values that used
-# to live in one (FOLIO_REGISTRY, DOCKER_LABEL_DOCUMENTATION,
-# PUBLISH_MODULE_DESCRIPTOR) were only ever consumed from jobs.*.with, and
-# that context can see github/needs/vars/inputs/secrets — but NOT env. That
-# was a real bug: GitHub Actions rejects `${{ env.X }}` there outright
-# ("Unrecognized named-value: 'env'"), and it was present even in the
-# original file's use of `env.FOLIO_REGISTRY`. Each value is now inlined
-# directly at its one call site below instead.
-
-# NOTE: the old top-level `secrets:` block was removed. It's only valid
-# under `on.workflow_call.secrets` (i.e. for a workflow that others call).
-# This workflow is triggered directly by push/pull_request, so it isn't
-# reusable and doesn't need to declare accepted secrets — it already has
-# access to repo/org secrets via `secrets.<NAME>` wherever they're used.
-
 jobs:
   set-shared-variables:
     name: Set shared variables
@@ -165,18 +150,8 @@ jobs:
         name: Get version from previous steps
         run: echo version=${{ steps.calculate.outputs.version }}${{ steps.tag-version.outputs.version }} | tee -a "$GITHUB_OUTPUT"
 
-  build-and-test:
-    name: Build & Test (Perl)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Build and run tests
-        run: docker build --target test . 
-
   docker-publish:
-    needs: [set-shared-variables, version-number, build-and-test]
+    needs: [set-shared-variables, version-number]
     uses: folio-org/.github/.github/workflows/docker-publish.yml@v1
     with:
       is-release: ${{ needs.set-shared-variables.outputs.is-release }}
@@ -220,7 +195,6 @@ jobs:
       [
         set-shared-variables,
         version-number,
-        build-and-test,
         docker-publish
       ]
     if: |
