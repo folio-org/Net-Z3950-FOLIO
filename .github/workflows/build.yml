@@ -153,7 +153,7 @@ jobs:
         run: jq '.id = "${{ needs.version-number.outputs.artifact-id }}-${{ needs.version-number.outputs.version-number }}"' ModuleDescriptor-tmp.json > ModuleDescriptor-id.json
  
       - name: Update module descriptor docker image
-        run: jq '.launchDescriptor.dockerImage = "${{ needs.set-shared-variables.outputs.docker-registry }}/$${{ needs.version-number.outputs.artifact-id }}:${{ needs.version-number.outputs.version-number }}"' ModuleDescriptor-id.json > ModuleDescriptor.json
+        run: jq '.launchDescriptor.dockerImage = "${{ needs.set-shared-variables.outputs.docker-registry }}/${{ needs.version-number.outputs.artifact-id }}:${{ needs.version-number.outputs.version-number }}"' ModuleDescriptor-id.json > ModuleDescriptor.json
 
       - name: Print module descriptor
         run: cat ModuleDescriptor.json
@@ -183,7 +183,7 @@ jobs:
 
   docker-description:
     name: Publish image description
-    needs: [set-shared-variables, version-number, docker-publish]
+    needs: [set-shared-variables, version-number, update-module-descriptor, docker-publish]
     uses: folio-org/.github/.github/workflows/docker-description.yml@v1
     with:
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
