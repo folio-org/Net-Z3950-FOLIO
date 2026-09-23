@@ -138,12 +138,17 @@ jobs:
         run: echo version=${{ steps.calculate.outputs.version }}${{ steps.tag-version.outputs.version }} | tee -a "$GITHUB_OUTPUT"
 
   update-module-descriptor:
+    name: Update module descriptor
     needs: [ set-shared-variables, version-number ]
-    runs-on: ubuntu-latest
     with:
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
       artifact-version: ${{ needs.version-number.outputs.version-number }}
       docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ${{ github.repository }}
+        uses: actions/checkout@v6
       
       - name: Update module descriptor id with correct version
         run: jq '.id = "${{ artifact-id }}-${{ version }}"' ModuleDescriptor-tmp.json > ModuleDescriptor-id.json
