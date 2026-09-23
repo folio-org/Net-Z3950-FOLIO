@@ -168,53 +168,18 @@ jobs:
   build-and-test:
     name: Build & Test (Perl)
     runs-on: ubuntu-latest
-    container:
-      image: perl:5.38-slim
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install system dependencies
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends build-essential \
-                                                     gcc \
-                                                     libssl-dev \
-                                                     libexpat1-dev \
-                                                     libyaz-dev \
-                                                     yaz \
-                                                     pkg-config
-
-          rm -rf /var/lib/apt/lists/*
-
-      - name: Cache CPAN modules
-        uses: actions/cache@v4
-        with:
-          path: local
-          key: cpan-${{ runner.os }}-${{ hashFiles('cpanfile') }}
-          restore-keys: |
-            cpan-${{ runner.os }}-
-
-      - name: Install cpanminus and project dependencies
-        run: |
-          cpan App::cpanminus
-          cpanm --local-lib=local --notest --installdeps --with-develop --with-test .
-          echo "PERL5LIB=$PWD/local/lib/perl5" >> "$GITHUB_ENV"
-          echo "PATH=$PWD/local/bin:$PATH" >> "$GITHUB_ENV"
-
-      #- name: Run Perl::Critic
-      #  run: perlcritic --severity 3 lib/ bin/
-
-      - name: Run test suite
-        run: perl Makefile.PL && make test
+      - name: Build and run tests
+        run: docker build --target test . 
 
   docker-publish:
     needs: [set-shared-variables, version-number, build-and-test]
     uses: folio-org/.github/.github/workflows/docker-publish.yml@v1
     with:
       is-release: ${{ needs.set-shared-variables.outputs.is-release }}
-      # FIX: artifact-id is produced by version-number, not
-      # set-shared-variables (that job has no such output).
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
       artifact-version: ${{ needs.version-number.outputs.version-number }}
       docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
@@ -222,9 +187,6 @@ jobs:
       # Wrapping in `== 'true'` produces a real boolean instead of forwarding
       # a raw string, so it can't silently mismatch the callee's type check.
       docker-push: ${{ needs.set-shared-variables.outputs.do-docker-push == 'true' }}
-      # FIX: env context isn't available in a reusable-workflow-call job's
-      # with: block. github context is, so use the repo's URL directly —
-      # this is a string label (OCI documentation URL), not a toggle.
       docker-label-documentation: ${{ github.event.repository.html_url }}
     secrets:
       dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -235,12 +197,9 @@ jobs:
     needs: [set-shared-variables, version-number, docker-publish]
     uses: folio-org/.github/.github/workflows/docker-description.yml@v1
     with:
-      # FIX: same artifact-id source correction as docker-publish above.
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
       docker-registry: ${{ needs.set-shared-variables.outputs.docker-registry }}
       repo-description: ${{ needs.set-shared-variables.outputs.repo-description }}
-      # FIX: env context isn't available here either. This is a required
-      # boolean with no need for indirection, so it's just a literal.
       publish-module-descriptor: true
     secrets:
       dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -251,10 +210,8 @@ jobs:
     uses: folio-org/.github/.github/workflows/docker-report-testing-variables.yml@v1
     with:
       is-release: ${{ needs.set-shared-variables.outputs.is-release }}
-      # FIX: same artifact-id source correction as above.
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
       artifact-version: ${{ needs.version-number.outputs.version-number }}
-      # FIX: docker-push is boolean here too.
       docker-push: ${{ needs.set-shared-variables.outputs.do-docker-push == 'true' }}
 
   publish-module-descriptor:
@@ -266,20 +223,12 @@ jobs:
         build-and-test,
         docker-publish
       ]
-    # FIX: needs list had "built-and-test" (typo, unknown job) instead of
-    # "build-and-test". The old condition also referenced
-    # needs.get-module-descriptor / needs.build, jobs that don't exist
-    # anywhere in this file (leftover from a different template) — dropped,
-    # since do-docker-push already encodes "is-release OR is-main-branch".
     if: |
       !cancelled() &&
       needs.set-shared-variables.outputs.do-docker-push == 'true'
     uses: folio-org/.github/.github/workflows/maven-module-descriptor-publish.yml@v1
     with:
-      # FIX: env context isn't available here — this was broken the same
-      # way in the original file, just never surfaced until now.
       module-descriptor-registry: https://folio-registry.dev.folio.org
     secrets:
       registry-username: ${{ secrets.FOLIO_REGISTRY_USERNAME }}
-      # FIX: typo'd secret name (FOLIO_REGISTRU_PASSWORD) corrected.
       registry-password: ${{ secrets.FOLIO_REGISTRY_PASSWORD }}
