@@ -26,7 +26,7 @@ RUN   apt-get update && apt-get install -y \
       libdatetime-perl \
       libmarc-record-perl \
       libtest-differences-perl \
-      libxml-xslt-perl \
+      libxml-xslt-perl
 
 # cpanminus makes dependency installs faster and quieter than plain cpan
 COPY cpanfile ./
