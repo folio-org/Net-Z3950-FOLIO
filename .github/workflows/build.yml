@@ -137,7 +137,7 @@ jobs:
         run: |
           base_number=2000
           build_number=$(( base_number + GITHUB_RUN_NUMBER ))
-          echo version="${{ steps.get-version.outputs.project-version }}.${build_number}" | tee -a "$GITHUB_OUTPUT"
+          echo version="${{ steps.get-version.outputs.project-version }}-SNAPSHOT.${build_number}" | tee -a "$GITHUB_OUTPUT"
 
       - id: tag-version
         if: ${{ needs.set-shared-variables.outputs.is-release == 'true' }}
