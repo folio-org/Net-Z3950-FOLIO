@@ -78,6 +78,7 @@ t/06-marc-holdings.t
 t/07-fetch.t
 t/08-short-session.t
 t/09-lodashGet.t
+t/10-marc2folioid.t
 t/data/config/dummy.graphql-query
 t/data/config/foo.atplt.json
 t/data/config/foo.bar.json

@@ -66,8 +66,10 @@ sub _marc2folioId {
 
     my @fields999 = $marc->field(999);
     foreach my $field999 (@fields999) {
-	my $folioId = $field999->subfield('i');
-	return $folioId if $folioId;
+	if ($field999->indicator(1) eq 'f' && $field999->indicator(2) eq 'f') {
+	    my $folioId = $field999->subfield('i');
+	    return $folioId if $folioId;
+	}
     }
     return undef;
 }
@@ -153,6 +155,10 @@ sub _sanitizeTree {
         }
     }
 }
+
+
+use Exporter qw(import);
+our @EXPORT_OK = qw(_marc2folioId); # For testing only
 
 
 1;

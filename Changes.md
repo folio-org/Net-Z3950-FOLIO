@@ -1,5 +1,9 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
+## 4.2.1 (IN PROGRESS)
+
+* Avoid "missing MARC record" error when a MARC record contains an extra 999 field which is not the last field but contains a subfield $i. This is a regression that was introduced in v4.2.0 as a side-effect of ZF-112. Fixes ZF-123.
+
 ## 4.2.0 (Wed 18 Jun 2025 12:33:06 CEST)
 
 * When a MARC record has multiple 999ff fields, the FOLIO ID will now be taken from the first of these that has a `$i` subfield, rather than always using the last. This means that composite records from ETL process, which may have multiple 999ff fields, can now be retrieved. Fixes ZF-112.
