@@ -1,6 +1,6 @@
 # Revision history for Perl extension Net::Z3950::FOLIO.
 
-## 4.2.1 (IN PROGRESS)
+## 4.2.1 (Thu 24 Sep 2026 21:38:56 BST)
 
 * Avoid "missing MARC record" error when a MARC record contains an extra 999 field which is not the last field but contains a subfield $i. This is a regression that was introduced in v4.2.0 as a side-effect of ZF-112. Fixes ZF-123.
 
