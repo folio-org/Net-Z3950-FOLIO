@@ -151,7 +151,7 @@ jobs:
 
       - name: Update module descriptor id with correct version
         run: jq '.id = "${{ needs.version-number.outputs.artifact-id }}-${{ needs.version-number.outputs.version-number }}"' ModuleDescriptor-tmp.json > ModuleDescriptor-id.json
- 
+
       - name: Update module descriptor docker image
         run: jq '.launchDescriptor.dockerImage = "${{ needs.set-shared-variables.outputs.docker-registry }}/${{ needs.version-number.outputs.artifact-id }}:${{ needs.version-number.outputs.version-number }}"' ModuleDescriptor-id.json > ModuleDescriptor.json
 
@@ -159,7 +159,7 @@ jobs:
         run: cat ModuleDescriptor.json
 
       - name: Upload Module Descriptor artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ModuleDescriptor.json
           path: ModuleDescriptor.json
