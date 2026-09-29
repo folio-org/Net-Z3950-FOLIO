@@ -184,6 +184,9 @@ jobs:
   docker-description:
     name: Publish image description
     needs: [set-shared-variables, version-number, update-module-descriptor, docker-publish]
+    if: |
+      !cancelled() &&
+      needs.set-shared-variables.outputs.do-docker-push == 'true'
     uses: folio-org/.github/.github/workflows/docker-description.yml@v1
     with:
       artifact-id: ${{ needs.version-number.outputs.artifact-id }}
