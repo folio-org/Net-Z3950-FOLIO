@@ -4,6 +4,7 @@
     "tenant": "uchicago"
   },
   "login": {
+    "_COMMENT": "This needs the VPN id-dev-folio-dev-eks-1-non-split",
     "username": "${OKAPI_USER-edgeZ3950}",
     "password": "${OKAPI_CHICAGO_PASSWORD}"
   },
