@@ -1,16 +1,15 @@
+# ---- Base image ---------
 FROM debian:trixie AS base
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-RUN  apt-get update \
-  && apt-get install -y \
+# System packages commonly needed to build CPAN modules with XS/C dependencies
+RUN   apt-get update && apt-get install -y \
       apt-transport-https \
       ca-certificates \
       gnupg \
       wget \
-  && apt-get update \
-  && apt-get upgrade -y \
-  && apt-get install -y \
+  && apt-get update && apt-get upgrade -y && apt-get install -y \
       build-essential \
       gcc \
       libexpat1-dev \
@@ -27,21 +26,22 @@ RUN  apt-get update \
       libdatetime-perl \
       libmarc-record-perl \
       libtest-differences-perl \
-      libxml-xslt-perl \
-  && cpan Mozilla::CA \
-  && cpan Unicode::Diacritic::Strip \
-  && cpan Net::Z3950::PQF \
-  && cpan Net::Z3950::ZOOM \
-  && cpan Net::Z3950::SimpleServer 
+      libxml-xslt-perl
 
+# cpanminus makes dependency installs faster and quieter than plain cpan
+COPY cpanfile ./
+RUN cpan App::cpanminus && cpanm --notest --installdeps .
+
+# ----- Test -------
 FROM base AS test
+
 COPY Makefile.PL .
 COPY etc/ etc/
 COPY lib/ lib/
 COPY t/ t/
-RUN perl Makefile.PL \
- && make test
+RUN perl Makefile.PL && make test
 
+# ---- Runtime -------
 FROM base AS runtime
 RUN apt-get autoremove -y --purge \
       build-essential \
@@ -50,7 +50,9 @@ RUN apt-get autoremove -y --purge \
       wget \
  && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm/
 COPY . .
+
 EXPOSE 9997
+
 # Since we often run under Kubernetes, which probes the port repeatedly, session-logging becomes noise, hence -v-session
 CMD ["perl", "-I", "lib", "bin/z2folio", "-c", "etc/config", "--", "-f", "etc/yazgfs.xml", "-v-session"]
 
