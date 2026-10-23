@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Unicode::Diacritic::Strip 'strip_diacritics';
+use Unicode::Diacritic::Strip qw(strip_diacritics fast_strip);
 
 
 sub transform {
@@ -42,13 +42,23 @@ sub applyStripDiacritics {
 
     my $result = $value;
 
-    $result = strip_diacritics($result);
+    ### explain
+
+    # There is a bug in `fast_strip`, in that it messes with the thorn
+    # characters by converting them into combining sequences. (It
+    # doesn't do this with any other characters to my knowledge.) Then
+    # the combining sequence is not picked up by substitutions
+    # before. We work around this bug in the underlying library by
+    # mapping the upper- and lower-case thorn characters to “TH” and
+    # “th” respectively before calling the library functions.
+    $result =~ s/þ/th/g;
+    $result =~ s/Þ/TH/g;
+
+    $result = fast_strip(strip_diacritics($result));
 
     # Special cases required in ZF-31, but apparently not implemented by strip_diacritics
     $result =~ s/ß/ss/g;
     $result =~ s/ẞ/SS/g;
-    $result =~ s/þ/th/g;
-    $result =~ s/Þ/TH/g;
     $result =~ s/Đ/D/g;
     $result =~ s/ð/d/g;
     $result =~ s/Æ/AE/g;
