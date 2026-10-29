@@ -3,6 +3,7 @@
 ## 4.4.2 (IN PROGRESS)
 
 * Fix problems with certain diacritics stripping. Fixes ZF-125.
+* Corectly interpret UTF-8 search terms. Fixes ZF-119.
 
 ## 4.4.1 (Thu 30 Apr 2026 13:06:47 BST)
 
