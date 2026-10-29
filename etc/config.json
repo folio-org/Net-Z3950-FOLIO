@@ -18,6 +18,10 @@
     "1108": "source",
     "1155": "source",
     "1211": "oclc",
+    "9994": {
+      "cql": "title",
+      "relation": "all"
+    },
     "9997": "allTitles",
     "9998": {
       "cql": "item.barcode",

@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use Encode qw(encode);
 use Net::Z3950::PQF;
 
 BEGIN {
@@ -7,6 +8,10 @@ BEGIN {
     @tests = (
 	# Simple term
 	[ 'water', 'keyword=water' ],
+
+	# Non-ASCII terms
+	[ encode('UTF-8', 'münchen'), 'keyword=münchen' ],
+	[ encode('UTF-8', '朝鮮問題'), 'keyword=朝鮮問題' ],
 
 	# Result-set ID
 	[ '@set foo', 'cql.resultSetId="bar"' ], # Uses dummy result-set: see below

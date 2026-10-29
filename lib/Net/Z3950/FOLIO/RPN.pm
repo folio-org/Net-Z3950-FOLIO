@@ -3,6 +3,8 @@
 
 package Net::Z3950::RPN::Term;
 
+use Encode qw(decode);
+
 sub _throw { return Net::Z3950::FOLIO::_throw(@_); }
 
 sub toCQL {
@@ -52,7 +54,11 @@ sub _CQLTerm {
 
     my($left_anchor, $right_anchor) = (0, 0);
     my($left_truncation, $right_truncation) = (0, 0);
-    my $term = $self->{term};
+
+    # The term comes to us as a sequence of bytes that make up UTF-8 characters
+    # We have to decode it into a sequence of UTF-characters
+    $term = decode('UTF-8', $self->{term});
+
     my $attrs = $self->{attributes};
 
     if (defined $field && $field =~ /(.*?)\/(.*)/) {

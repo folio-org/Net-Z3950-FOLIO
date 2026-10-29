@@ -4,6 +4,7 @@ use 5.008000;
 use strict;
 use warnings;
 
+use Encode qw(decode);
 use Cpanel::JSON::XS qw(decode_json encode_json);
 use Net::Z3950::SimpleServer;
 use ZOOM; # For ZOOM::Exception
@@ -172,7 +173,7 @@ sub _search_handler {
     } else {
 	my $type1 = $args->{RPN}->{query};
 	$session->{cql} = $type1->toCQL($session, $args->{RPN}->{attributeSet});
-	warn "search: translated '" . $args->{QUERY} . "' to '" . $session->{cql} . "'\n";
+	warn "search: translated '" . decode('UTF-8', $args->{QUERY}) . "' to '" . $session->{cql} . "'\n";
     }
 
     $session->{sortspec} = undef;
