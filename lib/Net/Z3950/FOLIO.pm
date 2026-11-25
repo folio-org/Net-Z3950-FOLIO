@@ -169,7 +169,7 @@ sub _search_handler {
     $session->maybeRefreshToken();
 
     if ($args->{CQL}) {
-	$session->{cql} = $args->{CQL};
+	$session->{cql} = decode('UTF-8', $args->{CQL});
     } else {
 	my $type1 = $args->{RPN}->{query};
 	$session->{cql} = $type1->toCQL($session, $args->{RPN}->{attributeSet});
